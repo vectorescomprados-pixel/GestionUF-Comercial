@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - Enterprise Gold</title>
+    <title>GestiónUF Pro - Enterprise Gold V2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #f0f2f5; --card: #ffffff; --primary: #2563eb; --danger: #e11d48; --text: #1f293b; --border: #e5e7eb; --warning: #f59e0b; --success: #22c55e; }
@@ -40,16 +40,29 @@
     <button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
     <input type="file" id="csv-file" accept=".csv" class="hidden">
 
+    <!-- PANTALLA LOGIN -->
     <div id="login-screen" class="modal">
         <div class="modal-content">
             <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
             <input id="login-user" placeholder="Usuario">
             <input id="login-pass" type="password" placeholder="Contraseña">
             <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
-            <button id="btn-recover-open" class="btn ghost" style="width:100%; margin-top:10px">SOPORTE TÉCNICO</button>
+            <button id="btn-recover-trigger" class="btn ghost" style="width:100%; margin-top:10px">SOPORTE TÉCNICO</button>
         </div>
     </div>
 
+    <!-- MODAL SOPORTE / RECUPERAR -->
+    <div id="modal-recovery" class="modal hidden">
+        <div class="modal-content">
+            <h3>Restablecer Acceso</h3>
+            <p style="font-size: 12px; margin: 10px 0;">Ingrese el código maestro de soporte para resetear la clave de Administrador.</p>
+            <input id="recovery-code" type="password" placeholder="Código Maestro">
+            <button id="btn-do-recovery" class="btn primary" style="width:100%">RESETEAR CLAVE</button>
+            <button id="btn-close-recovery" class="btn ghost" style="width:100%; margin-top:10px">VOLVER</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
             <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● EN LÍNEA - SISTEMA PROTEGIDO</div>
@@ -81,11 +94,12 @@
         </div>
     </div>
 
+    <!-- MODAL SALIDA -->
     <div id="modal-logout" class="modal hidden">
         <div class="modal-content" style="text-align:center">
             <i class="fas fa-sign-out-alt" style="font-size:40px; color:var(--danger); margin-bottom:15px"></i>
             <h3>Finalizar Sesión</h3>
-            <p style="margin:10px 0; font-size:14px; opacity:0.8">¿Está seguro que desea salir del sistema de gestión?</p>
+            <p style="margin:10px 0; font-size:14px; opacity:0.8">¿Está seguro que desea salir del sistema?</p>
             <div class="grid-btns-2">
                 <button id="btn-logout-confirm" class="btn danger">SALIR AHORA</button>
                 <button id="btn-logout-cancel" class="btn ghost">CANCELAR</button>
@@ -93,11 +107,12 @@
         </div>
     </div>
 
+    <!-- MODAL CONFIRMACIÓN ADMIN -->
     <div id="modal-confirm" class="modal hidden">
         <div class="modal-content" style="text-align:center">
             <h3>Seguridad Requerida</h3>
             <p id="confirm-msg" style="margin:10px 0; font-size:13px"></p>
-            <input id="confirm-pass" type="password" placeholder="Clave Administrativa" autocomplete="off">
+            <input id="confirm-pass" type="password" placeholder="Clave Administrativa">
             <div class="grid-btns-2">
                 <button id="btn-confirm-yes" class="btn primary">AUTORIZAR</button>
                 <button id="btn-confirm-no" class="btn danger">CANCELAR</button>
@@ -105,6 +120,7 @@
         </div>
     </div>
 
+    <!-- MODAL FORMULARIO -->
     <div id="modal-form" class="modal hidden">
         <div class="modal-content">
             <h3 id="form-title" style="text-align:center; margin-bottom:15px">Ficha de Unidad</h3>
@@ -128,10 +144,12 @@
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
         
         let departamentos = [], editId = null, pendingAction = null;
+        const MASTER_CODE = "1131552679";
         
-        // CONFIGURACIÓN DE ROLES
+        // CONFIGURACIÓN DE ROLES (Admin puede cambiar su pass en localStorage)
+        const getAdminPass = () => localStorage.getItem("admin_pass") || "admin123";
         const ROLES = {
-            admin: { pass: "admin123" },
+            admin: { getPass: () => getAdminPass() },
             operador: { pass: "1234" }
         };
 
@@ -145,22 +163,34 @@
             lp.scrollTop = lp.scrollHeight;
         };
 
-        // LOGIN
+        // --- FUNCIONES DE LOGIN Y RECUPERACIÓN ---
         document.getElementById("btn-login").onclick = () => {
             const u = document.getElementById("login-user").value.toLowerCase();
             const p = document.getElementById("login-pass").value;
-            if(ROLES[u] && ROLES[u].pass === p) {
+            const targetPass = (u === "admin") ? ROLES.admin.getPass() : (ROLES[u] ? ROLES[u].pass : null);
+            
+            if(targetPass && p === targetPass) {
                 localStorage.setItem("uf_auth", "true");
                 localStorage.setItem("uf_user", u);
                 location.reload();
             } else alert("Usuario o clave incorrectos");
         };
 
+        document.getElementById("btn-recover-trigger").onclick = () => document.getElementById("modal-recovery").classList.remove("hidden");
+        document.getElementById("btn-close-recovery").onclick = () => document.getElementById("modal-recovery").classList.add("hidden");
+        document.getElementById("btn-do-recovery").onclick = () => {
+            if(document.getElementById("recovery-code").value === MASTER_CODE) {
+                localStorage.setItem("admin_pass", "admin123");
+                alert("Clave de Admin reseteada a: admin123");
+                location.reload();
+            } else alert("Código Maestro Inválido");
+        };
+
+        // --- LÓGICA DE APLICACIÓN ---
         if(localStorage.getItem("uf_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
             
-            // Ajuste visual según Rol
             const user = getCurrentUser();
             if(user === "operador") {
                 document.querySelectorAll(".admin-only").forEach(el => el.classList.add("hidden"));
@@ -174,18 +204,14 @@
             });
         }
 
-        // RENDER CON RESTRICCIÓN DE BOTONES
         function render(data) {
             const list = document.getElementById("list");
             const user = getCurrentUser();
             list.innerHTML = "";
             data.forEach(d => {
-                const tp = String(d.TelefonoPropietario || "").trim();
-                const ti = String(d.TelefonoInquilino || "").trim();
-                const telActivo = tp || ti || "";
-
+                const tel = String(d.TelefonoPropietario || d.TelefonoInquilino || "").trim();
                 const div = document.createElement("div");
-                div.className = `item ${(!tp && !ti) ? 'no-phone' : ''}`;
+                div.className = `item ${!tel ? 'no-phone' : ''}`;
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center">
                         <div><b>UF: ${d.UF}</b><small>${d.Propietario || '---'}</small></div>
@@ -196,50 +222,39 @@
                         </div>
                     </div>
                     <div id="det-${d.id}" class="details hidden">
-                        <p><b>Prop:</b> ${d.Propietario || '---'} (${tp || 'N/C'})</p>
-                        <p><b>Inq:</b> ${d.Inquilino || '---'} (${ti || 'N/C'})</p>
+                        <p>Prop: ${d.Propietario || '---'} (${d.TelefonoPropietario || 'N/C'})</p>
+                        <p>Inq: ${d.Inquilino || '---'} (${d.TelefonoInquilino || 'N/C'})</p>
                         <div class="grid-btns-2">
-                            <a href="tel:${telActivo}" class="btn primary" onclick="writeLog('Llamada a UF ${d.UF}', 'info')"><i class="fas fa-phone"></i> LLAMAR</a>
-                            <a href="https://wa.me/${telActivo.replace(/\D/g,'')}" target="_blank" class="btn" style="background:#22c55e" onclick="writeLog('WhatsApp a UF ${d.UF}', 'info')"><i class="fab fa-whatsapp"></i> CHAT</a>
+                            <a href="tel:${tel}" class="btn primary" onclick="writeLog('Llamada a UF ${d.UF}', 'info')"><i class="fas fa-phone"></i> LLAMAR</a>
+                            <a href="https://wa.me/${tel.replace(/\D/g,'')}" target="_blank" class="btn" style="background:#22c55e" onclick="writeLog('WhatsApp a UF ${d.UF}', 'info')"><i class="fab fa-whatsapp"></i> CHAT</a>
                         </div>
                     </div>`;
                 list.appendChild(div);
             });
         }
 
-        // BUSCADOR Y FILTROS (REPARADOS)
+        // --- BUSCADOR Y TEMA (REPARADOS) ---
+        document.getElementById("btn-theme").onclick = () => {
+            document.body.classList.toggle("dark-mode");
+            writeLog("Cambió el tema visual", "info");
+        };
+
         const buscar = () => {
             const v = document.getElementById("search-input").value.toLowerCase().trim();
-            const res = departamentos.filter(d => 
-                String(d.UF).toLowerCase().includes(v) || 
-                String(d.Propietario || "").toLowerCase().includes(v)
-            );
-            render(res);
+            render(departamentos.filter(d => String(d.UF).toLowerCase().includes(v) || String(d.Propietario || "").toLowerCase().includes(v)));
             writeLog(`Búsqueda: "${v}"`, "info");
         };
         document.getElementById("btn-search").onclick = buscar;
-        document.getElementById("search-input").onkeyup = (e) => e.key === "Enter" && buscar();
-        
-        document.getElementById("btn-clear").onclick = () => {
-            document.getElementById("search-input").value = "";
-            render(departamentos);
-        };
-
+        document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; render(departamentos); };
         document.getElementById("btn-filter-empty").onclick = () => {
-            const vacios = departamentos.filter(d => !String(d.TelefonoPropietario||"").trim() && !String(d.TelefonoInquilino||"").trim());
-            render(vacios);
-            writeLog("Filtrado de unidades sin contacto", "warn");
+            render(departamentos.filter(d => !String(d.TelefonoPropietario||"").trim() && !String(d.TelefonoInquilino||"").trim()));
         };
 
-        // SALIDA PRO
+        // --- GESTIÓN DE SALIDA Y MODALES ---
         document.getElementById("btn-logout-trigger").onclick = () => document.getElementById("modal-logout").classList.remove("hidden");
         document.getElementById("btn-logout-cancel").onclick = () => document.getElementById("modal-logout").classList.add("hidden");
-        document.getElementById("btn-logout-confirm").onclick = () => {
-            localStorage.clear();
-            location.reload();
-        };
+        document.getElementById("btn-logout-confirm").onclick = () => { localStorage.clear(); location.reload(); };
 
-        // ACCIONES ADMINISTRATIVAS
         window.askConfirm = (msg, type, id = null) => {
             pendingAction = { type, id };
             document.getElementById("confirm-msg").innerText = msg;
@@ -248,7 +263,7 @@
         };
 
         document.getElementById("btn-confirm-yes").onclick = async () => {
-            if(document.getElementById("confirm-pass").value !== ROLES.admin.pass) return alert("Clave Incorrecta");
+            if(document.getElementById("confirm-pass").value !== getAdminPass()) return alert("Clave Incorrecta");
             if(pendingAction.type === 'delete') await deleteDoc(doc(db, "departamentos", pendingAction.id));
             if(pendingAction.type === 'deleteAll') {
                 const s = await getDocs(collection(db, "departamentos"));
@@ -258,40 +273,29 @@
         };
 
         document.getElementById("btn-save").onclick = async () => {
-            const d = { 
-                UF: document.getElementById("f-uf").value, 
-                Propietario: document.getElementById("f-prop").value, 
-                TelefonoPropietario: document.getElementById("f-telp").value, 
-                Inquilino: document.getElementById("f-inq").value, 
-                TelefonoInquilino: document.getElementById("f-teli").value 
-            };
+            const d = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
             if(editId) await updateDoc(doc(db, "departamentos", editId), d);
             else await addDoc(collection(db, "departamentos"), d);
-            writeLog(`Guardó cambios en UF ${d.UF}`, "success");
             document.getElementById("modal-form").classList.add("hidden");
         };
 
         window.editUF = (id) => {
             editId = id; const d = departamentos.find(x => x.id === id);
-            document.getElementById("f-uf").value = d.UF || "";
-            document.getElementById("f-prop").value = d.Propietario || "";
-            document.getElementById("f-telp").value = d.TelefonoPropietario || "";
-            document.getElementById("f-inq").value = d.Inquilino || "";
-            document.getElementById("f-teli").value = d.TelefonoInquilino || "";
+            document.getElementById("f-uf").value = d.UF; document.getElementById("f-prop").value = d.Propietario;
+            document.getElementById("f-telp").value = d.TelefonoPropietario; document.getElementById("f-inq").value = d.Inquilino;
+            document.getElementById("f-teli").value = d.TelefonoInquilino;
             document.getElementById("modal-form").classList.remove("hidden");
         };
 
-        // LOGS Y EXPORT
         document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
         document.getElementById("btn-download-log").onclick = () => {
             const blob = new Blob([document.getElementById("log-panel").innerText], {type:'text/plain'});
-            const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download="Log_Auditoria.txt"; a.click();
+            const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download="Log_UF.txt"; a.click();
         };
 
-        // COHETE
+        document.getElementById("btn-add").onclick = () => { editId = null; document.getElementById("modal-form").classList.remove("hidden"); };
         window.onscroll = () => document.getElementById("btn-rocket").style.display = window.scrollY > 300 ? "flex" : "none";
         document.getElementById("btn-rocket").onclick = () => window.scrollTo({top:0, behavior:'smooth'});
-
         document.querySelectorAll("#btn-cancel, #btn-confirm-no").forEach(b => b.onclick = () => document.querySelectorAll(".modal").forEach(m => m.id!=="login-screen" && m.classList.add("hidden")));
     </script>
 </body>
