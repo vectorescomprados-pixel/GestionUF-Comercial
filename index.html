@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - Enterprise Gold V2</title>
+    <title>GestiónUF Pro - Enterprise Gold V2 (Fix Enter)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #f0f2f5; --card: #ffffff; --primary: #2563eb; --danger: #e11d48; --text: #1f293b; --border: #e5e7eb; --warning: #f59e0b; --success: #22c55e; }
@@ -146,7 +146,6 @@
         let departamentos = [], editId = null, pendingAction = null;
         const MASTER_CODE = "1131552679";
         
-        // CONFIGURACIÓN DE ROLES (Admin puede cambiar su pass en localStorage)
         const getAdminPass = () => localStorage.getItem("admin_pass") || "admin123";
         const ROLES = {
             admin: { getPass: () => getAdminPass() },
@@ -164,7 +163,7 @@
         };
 
         // --- FUNCIONES DE LOGIN Y RECUPERACIÓN ---
-        document.getElementById("btn-login").onclick = () => {
+        const ejecutarLogin = () => {
             const u = document.getElementById("login-user").value.toLowerCase();
             const p = document.getElementById("login-pass").value;
             const targetPass = (u === "admin") ? ROLES.admin.getPass() : (ROLES[u] ? ROLES[u].pass : null);
@@ -176,15 +175,24 @@
             } else alert("Usuario o clave incorrectos");
         };
 
+        document.getElementById("btn-login").onclick = ejecutarLogin;
+
+        // EVENTOS ENTER EN LOGIN
+        document.getElementById("login-user").onkeyup = (e) => e.key === "Enter" && document.getElementById("login-pass").focus();
+        document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && ejecutarLogin();
+
         document.getElementById("btn-recover-trigger").onclick = () => document.getElementById("modal-recovery").classList.remove("hidden");
         document.getElementById("btn-close-recovery").onclick = () => document.getElementById("modal-recovery").classList.add("hidden");
-        document.getElementById("btn-do-recovery").onclick = () => {
+        
+        const ejecutarRecuperacion = () => {
             if(document.getElementById("recovery-code").value === MASTER_CODE) {
                 localStorage.setItem("admin_pass", "admin123");
                 alert("Clave de Admin reseteada a: admin123");
                 location.reload();
             } else alert("Código Maestro Inválido");
         };
+        document.getElementById("btn-do-recovery").onclick = ejecutarRecuperacion;
+        document.getElementById("recovery-code").onkeyup = (e) => e.key === "Enter" && ejecutarRecuperacion();
 
         // --- LÓGICA DE APLICACIÓN ---
         if(localStorage.getItem("uf_auth") === "true") {
@@ -233,7 +241,7 @@
             });
         }
 
-        // --- BUSCADOR Y TEMA (REPARADOS) ---
+        // --- BUSCADOR Y TEMA ---
         document.getElementById("btn-theme").onclick = () => {
             document.body.classList.toggle("dark-mode");
             writeLog("Cambió el tema visual", "info");
@@ -245,6 +253,10 @@
             writeLog(`Búsqueda: "${v}"`, "info");
         };
         document.getElementById("btn-search").onclick = buscar;
+
+        // EVENTO ENTER EN BUSCADOR
+        document.getElementById("search-input").onkeyup = (e) => e.key === "Enter" && buscar();
+
         document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; render(departamentos); };
         document.getElementById("btn-filter-empty").onclick = () => {
             render(departamentos.filter(d => !String(d.TelefonoPropietario||"").trim() && !String(d.TelefonoInquilino||"").trim()));
