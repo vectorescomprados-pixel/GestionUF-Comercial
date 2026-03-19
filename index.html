@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - V5.1 Final Blindada</title>
+    <title>GestiónUF Pro - V5.2 Blindaje Total</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0b141a; --card: #111b21; --primary: #2563eb; --danger: #e11d48; --text: #e9edef; --border: #222d34; --ghost: #3b4a54; --warning: #f59e0b; --success: #22c55e; }
@@ -13,9 +13,9 @@
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
 
-        /* CABECERA SEGÚN FOTO */
+        /* CABECERA (FOTO 1) */
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 20px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        .content-body { margin-top: 490px; width: 100%; padding-bottom: 80px; }
+        .content-body { margin-top: 495px; width: 100%; padding-bottom: 80px; }
 
         .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
         .btn { height: 44px; border-radius: 10px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; text-decoration: none; }
@@ -24,26 +24,26 @@
         input { width: 100%; height: 46px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: #1c272f; color: white; font-size: 15px; }
 
         /* REGISTROS (FOTO 1) */
-        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid var(--border); border-left: 6px solid #111b21; }
+        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid var(--border); border-left: 6px solid #111b21; transition: 0.3s; }
         .item.no-data { border-left-color: var(--warning); }
-        .item-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .item-top { display: flex; justify-content: space-between; align-items: center; }
         .item b { color: #2563eb; font-size: 16px; }
-        .item small { display: block; color: #888; font-size: 14px; margin-bottom: 8px; }
+        .item small { display: block; color: #888; font-size: 14px; margin-top: 4px; }
         .actions-icons { display: flex; gap: 18px; font-size: 18px; }
-        .fa-eye { color: #e9edef; } .fa-edit { color: #2563eb; } .fa-trash { color: #e11d48; cursor: pointer; }
+        .fa-eye { color: #e9edef; cursor: pointer; } .fa-edit { color: #2563eb; cursor: pointer; } .fa-trash { color: #e11d48; cursor: pointer; }
 
-        .details-box { margin-top: 10px; border-top: 1px dashed #333; padding-top: 10px; font-size: 14px; }
-        .details-box p { margin: 5px 0; }
-        .details-box b { color: var(--primary); font-size: 14px; }
+        .details-box { margin-top: 15px; border-top: 1px solid #222d34; padding-top: 10px; }
+        .details-box p { margin: 8px 0; font-size: 14px; }
+        .details-box b { color: #2563eb; }
 
         /* MODALES (FOTO 2) */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: #1c272f; padding: 25px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center; border: 1px solid var(--border); }
-        .logout-icon { font-size: 40px; color: var(--danger); margin-bottom: 15px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: #1c272f; padding: 25px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #333; }
+        .logout-icon { font-size: 45px; color: #e11d48; margin-bottom: 15px; }
 
-        /* CONSOLA */
-        #log-container { background: #000; border-radius: 10px; margin-top: 10px; border: 1px solid #333; height: 110px; position: relative; }
-        #log-panel { padding: 10px; font-size: 10px; height: 100%; overflow-y: auto; font-family: monospace; color: #0f0; }
+        /* LOG / CONSOLA */
+        #log-container { background: #000; border-radius: 10px; margin-top: 10px; border: 1px solid #333; height: 110px; position: relative; overflow: hidden; }
+        #log-panel { padding: 10px; font-size: 10px; height: 100%; overflow-y: auto; font-family: 'Courier New', monospace; color: #00ff00; text-align: left; }
 
         #rocket { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: white; border: 2px solid white; display: none; z-index: 2000; cursor: pointer; }
     </style>
@@ -56,20 +56,20 @@
     <div id="modal-logout" class="modal hidden">
         <div class="modal-content">
             <div class="logout-icon"><i class="fas fa-sign-out-alt"></i></div>
-            <h3 style="color: white; margin-bottom: 8px;">Finalizar Sesión</h3>
-            <p style="color: #888; font-size: 14px; margin-bottom: 20px;">¿Desea cerrar el sistema de gestión de forma segura?</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <button onclick="location.reload()" class="btn danger">SALIR</button>
+            <h3 style="color: white; margin-bottom: 10px; font-size: 20px;">Finalizar Sesión</h3>
+            <p style="color: #a0a0a0; font-size: 14px; margin-bottom: 25px;">¿Desea cerrar el sistema de gestión de forma segura?</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <button id="confirm-exit-btn" class="btn danger">SALIR</button>
                 <button onclick="closeModals()" class="btn ghost">CANCELAR</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL SEGURIDAD REQUERIDA (BLINDADO) -->
+    <!-- MODAL SEGURIDAD (PARA RESPALDO Y LOG) -->
     <div id="modal-auth" class="modal hidden">
         <div class="modal-content">
             <h3 style="color: white; margin-bottom: 10px;">Seguridad Requerida</h3>
-            <p id="auth-desc" style="color: #888; font-size: 14px; margin-bottom: 15px;"></p>
+            <p id="auth-desc" style="color: #888; font-size: 13px; margin-bottom: 15px;"></p>
             <input id="auth-pass" type="password" placeholder="Clave Administrativa">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <button id="auth-confirm-btn" class="btn primary">AUTORIZAR</button>
@@ -82,32 +82,39 @@
     <div id="main-screen" class="wrap">
         <div class="main-header">
             <div style="text-align:center; font-size:10px; color:#22c55e; margin-bottom:10px; font-weight:bold;">● EN LÍNEA - SEGURIDAD ACTIVA</div>
+            
             <div class="grid-btns">
-                <button onclick="document.getElementById('log-container').classList.toggle('hidden')" class="btn ghost">HISTORIAL</button>
+                <button id="btn-historial" class="btn ghost">HISTORIAL</button>
                 <button onclick="document.body.classList.toggle('light-mode')" class="btn ghost">TEMA</button>
-                <button id="btn-cerrar-trigger" class="btn danger">CERRAR</button>
+                <button id="btn-cerrar-open" class="btn danger">CERRAR</button>
             </div>
+
             <div class="grid-btns">
-                <button id="btn-nueva-uf-open" class="btn primary">NUEVA UF</button>
-                <button id="btn-import-trigger" class="btn ghost">IMPORTAR</button>
-                <button id="btn-backup-trigger" class="btn ghost">RESPALDO</button>
+                <button id="btn-add-new" class="btn primary">NUEVA UF</button>
+                <button id="btn-import-csv" class="btn ghost">IMPORTAR</button>
+                <button id="btn-export-csv" class="btn ghost">RESPALDO</button>
             </div>
-            <input id="search-input" placeholder="Buscar por Unidad o Apellido...">
+
+            <input id="search-input" type="text" placeholder="Buscar por Unidad o Apellido...">
+
             <div class="grid-btns">
-                <button id="btn-buscar-main" class="btn primary">BUSCAR</button>
-                <button id="btn-limpiar-main" class="btn ghost">LIMPIAR</button>
-                <button id="btn-filter-disp" class="btn warning">SIN DATOS</button>
+                <button id="btn-search-exec" class="btn primary">BUSCAR</button>
+                <button id="btn-clear-search" class="btn ghost">LIMPIAR</button>
+                <button id="btn-show-nodata" class="btn warning">SIN DATOS</button>
             </div>
-            <button id="btn-kill-cloud" class="btn danger" style="width:100%; margin-bottom:10px;">BORRAR TODA LA NUBE</button>
+
+            <button id="btn-danger-wipe" class="btn danger" style="width:100%; margin-bottom:10px;">BORRAR TODA LA NUBE</button>
+            
             <div id="log-container" class="hidden">
-                <button onclick="window.askAuth('log')" style="position:absolute; top:5px; right:5px; font-size:9px; background:#222; color:#fff; border:1px solid #444; border-radius:4px; padding:2px 5px; cursor:pointer;">BAJAR LOG</button>
+                <button id="btn-download-log-exec" style="position:absolute; top:5px; right:5px; font-size:9px; background:#333; color:#fff; border:1px solid #444; padding:3px 6px; border-radius:4px; z-index:5;">BAJAR LOG</button>
                 <div id="log-panel"></div>
             </div>
         </div>
-        <div class="content-body" id="list"></div>
+
+        <div class="content-body" id="list-container"></div>
     </div>
 
-    <!-- FORMULARIO NUEVA UF -->
+    <!-- FORMULARIO REGISTRO -->
     <div id="modal-form" class="modal hidden">
         <div class="modal-content">
             <h3 id="form-title" style="color:white; margin-bottom:15px;">Registro de Unidad</h3>
@@ -116,14 +123,14 @@
             <input id="f-telp" placeholder="Teléfono Propietario">
             <input id="f-inq" placeholder="Inquilino">
             <input id="f-teli" placeholder="Teléfono Inquilino">
-            <div class="grid-btns" style="grid-template-columns: 1fr 1fr;">
-                <button id="btn-save-final" class="btn primary">GUARDAR</button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button id="btn-save-data" class="btn primary">GUARDAR</button>
                 <button onclick="closeModals()" class="btn danger">VOLVER</button>
             </div>
         </div>
     </div>
 
-    <input type="file" id="csv-file" class="hidden">
+    <input type="file" id="input-csv-hidden" class="hidden" accept=".csv">
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -132,109 +139,185 @@
         const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
         
-        let departamentos = [], editId = null, pTask = null;
-        const MASTER = "1131552679";
+        let localData = [], editId = null, pendingAction = null;
+        const MASTER_KEY = "1131552679";
 
-        const logAction = (msg) => {
+        const logMsg = (m) => {
             const p = document.getElementById("log-panel");
-            p.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>`;
+            p.innerHTML += `<div>> ${new Date().toLocaleTimeString()}: ${m}</div>`;
             p.scrollTop = p.scrollHeight;
         };
 
-        // RENDER CON ESTÉTICA DE FOTO 1
+        // CARGA INICIAL
         onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
-            departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            render(departamentos);
+            localData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            render(localData);
         });
 
         function render(data) {
-            const list = document.getElementById("list");
-            list.innerHTML = "";
+            const container = document.getElementById("list-container");
+            container.innerHTML = "";
+            if(data.length === 0) {
+                container.innerHTML = `<div class="item" style="text-align:center; border-left:none; color:#888;">No se encontraron resultados</div>`;
+                return;
+            }
             data.forEach(d => {
-                const s = !d.TelefonoPropietario && !d.TelefonoInquilino;
+                const sinDatos = !d.TelefonoPropietario && !d.TelefonoInquilino;
                 const div = document.createElement("div");
-                div.className = `item ${s ? 'no-data' : ''}`;
+                div.className = `item ${sinDatos ? 'no-data' : ''}`;
                 div.innerHTML = `
                     <div class="item-top">
                         <div><b>UF: ${d.UF}</b></div>
                         <div class="actions-icons">
-                            <i class="fas fa-eye" onclick="toggleDetails('${d.id}')"></i>
-                            <i class="fas fa-edit" onclick="prepEdit('${d.id}')"></i>
-                            <i class="fas fa-trash" onclick="window.askAuth('del', '${d.id}', '${d.UF}')"></i>
+                            <i class="fas fa-eye" onclick="viewItem('${d.id}')"></i>
+                            <i class="fas fa-edit" onclick="editItem('${d.id}')"></i>
+                            <i class="fas fa-trash" onclick="askSecurity('del', '${d.id}', '${d.UF}')"></i>
                         </div>
                     </div>
                     <small>${d.Propietario || '---'}</small>
-                    <div id="det-${d.id}" class="details-box hidden">
+                    <div id="extra-${d.id}" class="details-box hidden">
                         <p><b>Prop:</b> ${d.Propietario || 'N/C'}</p>
                         <p><b>Tel:</b> ${d.TelefonoPropietario || 'N/C'}</p>
                         <p><b>Inq:</b> ${d.Inquilino || 'N/C'}</p>
                         <p><b>Tel:</b> ${d.TelefonoInquilino || 'N/C'}</p>
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
                             <a href="tel:${d.TelefonoPropietario}" class="btn primary"><i class="fas fa-phone"></i>&nbsp;LLAMAR</a>
-                            <a href="https://wa.me/${d.TelefonoPropietario}" class="btn success"><i class="fab fa-whatsapp"></i>&nbsp;CHAT</a>
+                            <a href="https://wa.me/${(d.TelefonoPropietario||'').replace(/\D/g,'')}" class="btn success"><i class="fab fa-whatsapp"></i>&nbsp;CHAT</a>
                         </div>
                     </div>`;
-                list.appendChild(div);
+                container.appendChild(div);
             });
         }
 
-        // FUNCIONES BLINDADAS
-        window.toggleDetails = (id) => document.getElementById(`det-${id}`).classList.toggle("hidden");
-        window.closeModals = () => { document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden')); editId = null; };
+        // BÚSQUEDA Y FILTROS
+        const ejecutarBusqueda = () => {
+            const term = document.getElementById("search-input").value.toLowerCase();
+            const res = localData.filter(d => d.UF.includes(term) || (d.Propietario || "").toLowerCase().includes(term));
+            render(res);
+            logMsg(res.length > 0 ? `ÉXITO: ${res.length} encontrados` : `ERROR: No hay coincidencias para "${term}"`);
+        };
+
+        document.getElementById("btn-search-exec").onclick = ejecutarBusqueda;
+        document.getElementById("search-input").onkeypress = (e) => { if(e.key==='Enter') ejecutarBusqueda(); };
         
-        // MODAL SEGURIDAD UNIFICADO
-        window.askAuth = (task, id, uf) => {
-            pTask = { task, id, uf };
-            document.getElementById("auth-desc").innerText = task === 'del' ? `¿Borrar registro UF ${uf}?` : task === 'log' ? "¿Descargar historial de acciones?" : "¿Confirmar operación crítica?";
+        document.getElementById("btn-clear-search").onclick = () => {
+            document.getElementById("search-input").value = "";
+            render(localData);
+            logMsg("Lista restablecida");
+        };
+
+        document.getElementById("btn-show-nodata").onclick = () => {
+            const res = localData.filter(d => !d.TelefonoPropietario && !d.TelefonoInquilino);
+            render(res);
+            logMsg(`Filtro: ${res.length} UF disponibles`);
+        };
+
+        // MODALES Y SEGURIDAD
+        window.closeModals = () => { 
+            document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden')); 
+            editId = null; 
+        };
+
+        window.askSecurity = (type, id, uf) => {
+            pendingAction = { type, id, uf };
+            document.getElementById("auth-desc").innerText = type === 'del' ? `¿Eliminar la UF ${uf}?` : type === 'export' ? "Confirmar exportación de base de datos" : "¿Descargar historial?";
             document.getElementById("auth-pass").value = "";
             document.getElementById("modal-auth").classList.remove("hidden");
         };
 
         document.getElementById("auth-confirm-btn").onclick = async () => {
-            if(document.getElementById("auth-pass").value !== MASTER) return alert("Clave Incorrecta");
-            if(pTask.task === 'del') { await deleteDoc(doc(db, "departamentos", pTask.id)); logAction(`Eliminada UF ${pTask.uf}`); }
-            if(pTask.task === 'log') {
+            if(document.getElementById("auth-pass").value !== MASTER_KEY) return alert("Clave Incorrecta");
+            
+            if(pendingAction.type === 'del') {
+                await deleteDoc(doc(db, "departamentos", pendingAction.id));
+                logMsg(`REGISTRO ELIMINADO: UF ${pendingAction.uf}`);
+            }
+            if(pendingAction.type === 'export') {
+                let csv = "UF,Propietario,Tel_Prop,Inquilino,Tel_Inq\n";
+                localData.forEach(d => { csv += `${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}\n`; });
+                const blob = new Blob([csv], {type: 'text/csv'});
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob); link.download = `Respaldo_UF_${new Date().toLocaleDateString()}.csv`;
+                link.click();
+                logMsg("RESPALDO: Base de datos exportada");
+            }
+            if(pendingAction.type === 'log') {
                 const blob = new Blob([document.getElementById("log-panel").innerText], {type:'text/plain'});
                 const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download="Log_Sistema.txt"; a.click();
-                logAction("Historial descargado");
-            }
-            if(pTask.task === 'wipe') {
-                const b = writeBatch(db); const s = await getDocs(collection(db, "departamentos"));
-                s.forEach(d => b.delete(d.ref)); await b.commit(); logAction("NUBE VACIADA");
+                logMsg("LOG: Historial descargado");
             }
             closeModals();
         };
 
-        // EVENTOS CABECERA
-        document.getElementById("btn-cerrar-trigger").onclick = () => document.getElementById("modal-logout").classList.remove("hidden");
-        document.getElementById("btn-nueva-uf-open").onclick = () => { document.getElementById("modal-form").classList.remove("hidden"); document.getElementById("f-uf").focus(); };
-        document.getElementById("btn-buscar-main").onclick = () => {
-            const v = document.getElementById("search-input").value.toLowerCase();
-            render(departamentos.filter(d => d.UF.includes(v) || (d.Propietario || "").toLowerCase().includes(v)));
-            logAction(`Búsqueda: ${v}`);
+        // ACCIONES DE CABECERA
+        document.getElementById("btn-cerrar-open").onclick = () => document.getElementById("modal-logout").classList.remove("hidden");
+        document.getElementById("confirm-exit-btn").onclick = () => {
+            logMsg("Cerrando sesión...");
+            setTimeout(() => { window.location.href = "index.html"; }, 500);
         };
-        document.getElementById("btn-limpiar-main").onclick = () => { document.getElementById("search-input").value = ""; render(departamentos); logAction("Lista Limpiada"); };
-        document.getElementById("btn-filter-disp").onclick = () => { render(departamentos.filter(d => !d.TelefonoPropietario && !d.TelefonoInquilino)); logAction("Filtro: Sin Datos"); };
-        document.getElementById("btn-kill-cloud").onclick = () => window.askAuth('wipe');
 
-        // GUARDAR / EDITAR
-        window.prepEdit = (id) => {
-            editId = id; const d = departamentos.find(x => x.id === id);
+        document.getElementById("btn-historial").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
+        document.getElementById("btn-download-log-exec").onclick = () => window.askSecurity('log');
+        document.getElementById("btn-export-csv").onclick = () => window.askSecurity('export');
+        
+        // IMPORTAR CSV
+        document.getElementById("btn-import-csv").onclick = () => document.getElementById("input-csv-hidden").click();
+        document.getElementById("input-csv-hidden").onchange = (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                const lines = ev.target.result.split("\n").slice(1);
+                const batch = writeBatch(db);
+                lines.forEach(line => {
+                    const c = line.split(",");
+                    if(c[0]) batch.set(doc(collection(db, "departamentos")), { UF:c[0], Propietario:c[1], TelefonoPropietario:c[2], Inquilino:c[3], TelefonoInquilino:c[4] });
+                });
+                await batch.commit();
+                logMsg("IMPORTACIÓN: Datos cargados con éxito");
+            };
+            reader.readAsText(file);
+        };
+
+        // GESTIÓN DE REGISTROS
+        window.viewItem = (id) => document.getElementById(`extra-${id}`).classList.toggle("hidden");
+        
+        window.editItem = (id) => {
+            editId = id; const d = localData.find(x => x.id === id);
             document.getElementById("f-uf").value = d.UF; document.getElementById("f-prop").value = d.Propietario;
             document.getElementById("f-telp").value = d.TelefonoPropietario; document.getElementById("f-inq").value = d.Inquilino;
             document.getElementById("f-teli").value = d.TelefonoInquilino;
+            document.getElementById("form-title").innerText = "Editar Unidad";
             document.getElementById("modal-form").classList.remove("hidden");
         };
 
-        document.getElementById("btn-save-final").onclick = async () => {
-            const data = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
-            if(editId) { await updateDoc(doc(db, "departamentos", editId), data); logAction(`UF ${data.UF} Actualizada`); }
-            else { await addDoc(collection(db, "departamentos"), data); logAction(`UF ${data.UF} Creada`); }
+        document.getElementById("btn-add-new").onclick = () => {
+            editId = null;
+            document.getElementById("form-title").innerText = "Nueva Unidad";
+            document.getElementById("modal-form").querySelectorAll("input").forEach(i => i.value = "");
+            document.getElementById("modal-form").classList.remove("hidden");
+        };
+
+        document.getElementById("btn-save-data").onclick = async () => {
+            const data = { 
+                UF: document.getElementById("f-uf").value, 
+                Propietario: document.getElementById("f-prop").value, 
+                TelefonoPropietario: document.getElementById("f-telp").value, 
+                Inquilino: document.getElementById("f-inq").value, 
+                TelefonoInquilino: document.getElementById("f-teli").value 
+            };
+            if(!data.UF) return alert("El campo UF es obligatorio");
+
+            if(editId) {
+                await updateDoc(doc(db, "departamentos", editId), data);
+                logMsg(`ACTUALIZACIÓN: UF ${data.UF} guardada`);
+            } else {
+                await addDoc(collection(db, "departamentos"), data);
+                logMsg(`NUEVO: UF ${data.UF} registrada`);
+            }
             closeModals();
         };
 
-        // ENTER BLINDADO
-        document.getElementById("search-input").onkeypress = (e) => { if(e.key==='Enter') document.getElementById("btn-buscar-main").click(); };
+        // SCROLL
         window.onscroll = () => { document.getElementById("rocket").style.display = window.scrollY > 300 ? "block" : "none"; };
         document.getElementById("rocket").onclick = () => window.scrollTo({top:0, behavior:'smooth'});
 
