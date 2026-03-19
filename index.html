@@ -3,90 +3,101 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - Versión Final Gold</title>
+    <title>GestiónUF Pro - FINAL GOLD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0b141a; --card: #111b21; --primary: #2563eb; --danger: #e11d48; --text: #e9edef; --border: #222d34; --ghost: #4b5563; --warning: #f59e0b; --success: #22c55e; }
+        body.light-mode { --bg: #f0f2f5; --card: #ffffff; --text: #1f293b; --border: #e5e7eb; }
+        
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
 
-        /* CABECERA FIJA ESTILO FOTO */
+        /* CABECERA AJUSTADA - BLOQUE BAJADO */
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border: 2px solid var(--primary); border-top: none; border-radius: 0 0 20px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .content-body { margin-top: 340px; width: 100%; padding-bottom: 80px; }
+        .content-body { margin-top: 360px; width: 100%; padding-bottom: 80px; }
         
-        /* BOTONES */
+        /* BOTONES Y GRID */
         .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
         .btn { height: 44px; border-radius: 10px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; gap: 5px; }
         .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: var(--ghost); } .warning { background: var(--warning); color: #000; }
-        .btn:active { transform: scale(0.98); opacity: 0.8; }
+        
+        /* COHETE */
+        #btn-rocket { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; z-index: 5000; display: none; border: 2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
 
-        /* INPUTS MEJORADOS */
-        input { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: #1c272f !important; color: white !important; font-size: 16px; outline: none; }
-        input:focus { border-color: var(--primary); }
+        /* INPUTS */
+        input { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: #1c272f; color: white; font-size: 16px; }
+        .light-mode input { background: #fff; color: #000; }
 
-        /* LISTADO TIPO CARD */
-        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid var(--border); border-left: 6px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        /* LISTADO Y CARDS */
+        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid var(--border); border-left: 6px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
         .item.no-data { border-left-color: var(--warning); }
-        .item b { color: var(--primary); font-size: 16px; display: block; }
-        .item small { color: #888; font-size: 13px; }
-        .actions { display: flex; gap: 15px; font-size: 18px; }
-        .actions i { cursor: pointer; }
+        .details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--ghost); font-size: 14px; }
+        
+        /* PANEL LOG */
+        #log-panel { background: #000; color: #00ff41; padding: 10px; font-family: monospace; font-size: 10px; height: 100px; overflow-y: auto; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; }
 
         /* MODALES */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: #1c272f; padding: 25px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #333; }
+        .light-mode .modal-content { background: #fff; color: #000; }
     </style>
 </head>
-<body>
+<body class="dark-mode">
 
-    <!-- PANTALLA DE ACCESO -->
+    <button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
+    <input type="file" id="csv-file" class="hidden" accept=".csv">
+
+    <!-- LOGIN -->
     <div id="login-screen" class="modal">
         <div class="modal-content">
             <h2 style="color:var(--primary); margin-bottom:20px;">GestiónUF Pro</h2>
-            <input id="login-user" type="text" placeholder="Usuario" autocomplete="username">
-            <input id="login-pass" type="password" placeholder="Contraseña" autocomplete="current-password">
+            <input id="login-user" type="text" placeholder="Usuario">
+            <input id="login-pass" type="password" placeholder="Contraseña">
             <button id="btn-login-exec" class="btn primary" style="width:100%">ENTRAR</button>
-            <button id="btn-soporte-open" class="btn ghost" style="width:100%; margin-top:15px; font-size:10px;">SOPORTE TÉCNICO</button>
+            <button id="btn-soporte-open" class="btn ghost" style="width:100%; margin-top:10px">SOPORTE</button>
         </div>
     </div>
 
-    <!-- APP PRINCIPAL -->
+    <!-- APP -->
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div style="text-align:center; font-size:10px; color:var(--success); margin-bottom:10px; font-weight:bold;">● EN LÍNEA - SEGURIDAD ACTIVA</div>
+            <div style="text-align:center; font-size:10px; color:var(--success); margin-bottom:8px;">● EN LÍNEA - SEGURIDAD ACTIVA</div>
             <div class="grid-btns">
-                <button id="btn-historial" class="btn ghost">HISTORIAL</button>
+                <button id="btn-log-toggle" class="btn ghost">HISTORIAL</button>
                 <button id="btn-theme" class="btn ghost">TEMA</button>
-                <button id="btn-logout" class="btn danger" style="background:#f97316">SALIR</button>
+                <button id="btn-logout-trigger" class="btn danger">CERRAR</button>
             </div>
             <div class="grid-btns">
-                <button id="btn-nueva-uf" class="btn primary">NUEVA UF</button>
+                <button id="btn-add" class="btn primary">NUEVA UF</button>
                 <button id="btn-import" class="btn ghost">IMPORTAR</button>
-                <button id="btn-respaldo" class="btn ghost">RESPALDO</button>
+                <button id="btn-export" class="btn ghost">RESPALDO</button>
             </div>
-            <input id="search-input" placeholder="Buscar por UF o Nombre...">
+            <input id="search-input" placeholder="Buscar por UF o Apellido...">
             <div class="grid-btns">
-                <button id="btn-buscar" class="btn primary">BUSCAR</button>
-                <button id="btn-limpiar" class="btn ghost">LIMPIAR</button>
-                <button id="btn-filter-empty" class="btn warning" style="background:#fff; color:#000">SIN DATOS</button>
+                <button id="btn-search" class="btn primary">BUSCAR</button>
+                <button id="btn-clear" class="btn ghost">LIMPIAR</button>
+                <button id="btn-filter-empty" class="btn warning">UF DISPONIBLES</button>
             </div>
-            <button id="btn-wipe" class="btn danger" style="width:100%">VACIAR NUBE</button>
+            <button id="btn-wipe" class="btn danger" style="width:100%">BORRAR TODA LA NUBE</button>
         </div>
 
-        <div class="content-body" id="list">
-            <!-- Los datos de Firebase aparecerán aquí -->
+        <div class="content-body">
+            <div id="log-panel" class="hidden"></div>
+            <div id="list"></div>
         </div>
     </div>
 
-    <!-- MODAL FORMULARIO (ALTA/EDICIÓN) -->
+    <!-- MODAL FORMULARIO COMPLETO -->
     <div id="modal-form" class="modal hidden">
         <div class="modal-content">
             <h3 id="form-title" style="margin-bottom:15px">Datos de Unidad</h3>
             <input id="f-uf" placeholder="Unidad (Ej: 001)">
             <input id="f-prop" placeholder="Propietario">
-            <input id="f-telp" placeholder="Teléfono">
+            <input id="f-telp" placeholder="Teléfono Propietario">
+            <input id="f-inq" placeholder="Inquilino">
+            <input id="f-teli" placeholder="Teléfono Inquilino">
             <div class="grid-btns" style="grid-template-columns: 1fr 1fr; margin-top:10px">
                 <button id="btn-save" class="btn primary">GUARDAR</button>
                 <button id="btn-close-form" class="btn danger">CERRAR</button>
@@ -94,14 +105,17 @@
         </div>
     </div>
 
-    <!-- MODAL SOPORTE -->
-    <div id="modal-soporte" class="modal hidden">
+    <!-- MODAL CONFIRMACIÓN (REUTILIZABLE) -->
+    <div id="modal-confirm" class="modal hidden">
         <div class="modal-content">
-            <h3>Soporte Técnico</h3>
-            <p style="font-size:12px; margin:10px 0; color:#888">Ingrese código maestro</p>
-            <input id="soporte-code" type="password" placeholder="Código">
-            <button id="btn-soporte-exec" class="btn primary" style="width:100%">VERIFICAR</button>
-            <button id="btn-soporte-close" class="btn ghost" style="width:100%; margin-top:10px">VOLVER</button>
+            <i class="fas fa-shield-alt" style="font-size:30px; color:var(--primary); margin-bottom:10px"></i>
+            <h3 id="confirm-title">Seguridad Requerida</h3>
+            <p id="confirm-msg" style="font-size:12px; margin:10px 0; opacity:0.8"></p>
+            <input id="confirm-pass" type="password" placeholder="Clave Administrativa">
+            <div class="grid-btns" style="grid-template-columns: 1fr 1fr">
+                <button id="btn-confirm-exec" class="btn primary">AUTORIZAR</button>
+                <button id="btn-confirm-cancel" class="btn danger">VOLVER</button>
+            </div>
         </div>
     </div>
 
@@ -110,145 +124,141 @@
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
-        const app = initializeApp(firebaseConfig); 
-        const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
         
-        let departamentos = [], editId = null;
+        let departamentos = [], editId = null, actionPending = null;
         const MASTER = "1131552679";
 
-        // --- LÓGICA DE ACCESO ---
-        const login = () => {
-            const u = document.getElementById("login-user").value;
-            const p = document.getElementById("login-pass").value;
-            if(u === "admin" && p === "admin") {
-                localStorage.setItem("uf_auth_gold", "true");
-                location.reload();
-            } else { alert("Usuario o Clave incorrectos"); }
-        };
-        document.getElementById("btn-login-exec").onclick = login;
-        document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
+        // LOGS
+        const log = (m) => { const p = document.getElementById("log-panel"); p.innerHTML += `<div>> ${new Date().toLocaleTimeString()}: ${m}</div>`; p.scrollTop = p.scrollHeight; };
 
-        // --- VERIFICAR SESIÓN ---
-        if(localStorage.getItem("uf_auth_gold") === "true") {
+        // LOGIN
+        document.getElementById("btn-login-exec").onclick = () => {
+            if(document.getElementById("login-user").value === "admin" && document.getElementById("login-pass").value === "admin") {
+                localStorage.setItem("uf_gold_auth", "true");
+                location.reload();
+            } else alert("Error de acceso");
+        };
+
+        if(localStorage.getItem("uf_gold_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
-            
-            // Cargar datos en tiempo real
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 render(departamentos);
+                log("Sincronización con Nube OK");
             });
         }
 
-        // --- RENDERIZADO DE LISTA ---
+        // RENDER CON BOTÓN OJO (DETALLES)
         function render(data) {
-            const list = document.getElementById("list");
-            list.innerHTML = "";
-            if(data.length === 0) {
-                list.innerHTML = `<p style="text-align:center; opacity:0.5; margin-top:20px">No hay unidades cargadas</p>`;
-                return;
-            }
+            const list = document.getElementById("list"); list.innerHTML = "";
             data.forEach(d => {
-                const sinTel = !d.TelefonoPropietario;
+                const sinDatos = !d.TelefonoPropietario && !d.TelefonoInquilino;
                 const div = document.createElement("div");
-                div.className = `item ${sinTel ? 'no-data' : ''}`;
+                div.className = `item ${sinDatos ? 'no-data' : ''}`;
                 div.innerHTML = `
-                    <div>
-                        <b>UF: ${d.UF}</b>
-                        <small>${d.Propietario || 'Sin Datos'}</small>
+                    <div style="display:flex; justify-content:space-between; align-items:center">
+                        <div><b>UF: ${d.UF}</b><small>${d.Propietario || 'Sin Nombre'}</small></div>
+                        <div style="display:flex; gap:12px; font-size:18px">
+                            <i class="fas fa-eye" onclick="document.getElementById('det-${d.id}').classList.toggle('hidden')"></i>
+                            <i class="fas fa-edit" style="color:var(--primary)" onclick="window.preEdit('${d.id}')"></i>
+                            <i class="fas fa-trash" style="color:var(--danger)" onclick="window.ask('delete','${d.id}','Borrar UF ${d.UF}')"></i>
+                        </div>
                     </div>
-                    <div class="actions">
-                        <i class="fas fa-edit" style="color:var(--primary)" onclick="window.preEdit('${d.id}')"></i>
-                        <i class="fas fa-trash" style="color:var(--danger)" onclick="window.preDelete('${d.id}', '${d.UF}')"></i>
+                    <div id="det-${d.id}" class="details hidden">
+                        <p><b>Prop:</b> ${d.Propietario || '---'} | <b>Tel:</b> ${d.TelefonoPropietario || 'N/C'}</p>
+                        <p><b>Inq:</b> ${d.Inquilino || '---'} | <b>Tel:</b> ${d.TelefonoInquilino || 'N/C'}</p>
                     </div>`;
                 list.appendChild(div);
             });
         }
 
-        // --- FUNCIONES CRUD ---
-        document.getElementById("btn-nueva-uf").onclick = () => {
-            editId = null;
-            document.getElementById("form-title").innerText = "Nueva Unidad";
-            document.getElementById("f-uf").value = ""; 
-            document.getElementById("f-prop").value = "";
-            document.getElementById("f-telp").value = "";
-            document.getElementById("modal-form").classList.remove("hidden");
+        // CONTROL DE SEGURIDAD REUTILIZABLE
+        window.ask = (type, id, msg) => {
+            actionPending = { type, id };
+            document.getElementById("confirm-msg").innerText = msg;
+            document.getElementById("confirm-pass").value = "";
+            document.getElementById("modal-confirm").classList.remove("hidden");
         };
 
+        document.getElementById("btn-confirm-exec").onclick = async () => {
+            if(document.getElementById("confirm-pass").value !== "admin" && document.getElementById("confirm-pass").value !== MASTER) return alert("Clave Incorrecta");
+            
+            const { type, id } = actionPending;
+            if(type === 'delete') await deleteDoc(doc(db, "departamentos", id));
+            if(type === 'logout') { localStorage.removeItem("uf_gold_auth"); location.reload(); }
+            if(type === 'wipe') {
+                const s = await getDocs(collection(db, "departamentos"));
+                const b = writeBatch(db); s.forEach(d => b.delete(d.ref)); await b.commit();
+                log("NUBE VACIADA");
+            }
+            if(type === 'export') {
+                const csv = "UF,Prop,TelP,Inq,TelI\n" + departamentos.map(d => `${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}`).join("\n");
+                const link = document.createElement("a");
+                link.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+                link.download = "Respaldo_UF.csv"; link.click();
+            }
+            document.getElementById("modal-confirm").classList.add("hidden");
+        };
+
+        // EVENTOS BUSCADOR ENTER
+        document.getElementById("search-input").onkeyup = (e) => { if(e.key === "Enter") document.getElementById("btn-search").click(); };
+        document.getElementById("btn-search").onclick = () => {
+            const v = document.getElementById("search-input").value.toLowerCase();
+            render(departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v)));
+        };
+
+        // UF DISPONIBLES (VACIOS)
+        document.getElementById("btn-filter-empty").onclick = () => {
+            render(departamentos.filter(d => !d.TelefonoPropietario && !d.TelefonoInquilino));
+        };
+
+        // CRUD FORM
+        document.getElementById("btn-add").onclick = () => { editId = null; document.getElementById("modal-form").classList.remove("hidden"); };
         window.preEdit = (id) => {
-            editId = id;
-            const d = departamentos.find(x => x.id === id);
-            document.getElementById("form-title").innerText = "Editar Unidad " + d.UF;
-            document.getElementById("f-uf").value = d.UF;
-            document.getElementById("f-prop").value = d.Propietario || "";
-            document.getElementById("f-telp").value = d.TelefonoPropietario || "";
+            editId = id; const d = departamentos.find(x => x.id === id);
+            document.getElementById("f-uf").value = d.UF; document.getElementById("f-prop").value = d.Propietario || "";
+            document.getElementById("f-telp").value = d.TelefonoPropietario || ""; document.getElementById("f-inq").value = d.Inquilino || "";
+            document.getElementById("f-teli").value = d.TelefonoInquilino || "";
             document.getElementById("modal-form").classList.remove("hidden");
         };
 
         document.getElementById("btn-save").onclick = async () => {
-            const data = {
-                UF: document.getElementById("f-uf").value.trim(),
-                Propietario: document.getElementById("f-prop").value.trim(),
-                TelefonoPropietario: document.getElementById("f-telp").value.trim()
-            };
-            if(!data.UF) return alert("La UF es obligatoria");
-
-            if(editId) {
-                await updateDoc(doc(db, "departamentos", editId), data);
-            } else {
-                await addDoc(collection(db, "departamentos"), data);
-            }
+            const d = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
+            if(editId) await updateDoc(doc(db, "departamentos", editId), d);
+            else await addDoc(collection(db, "departamentos"), d);
             document.getElementById("modal-form").classList.add("hidden");
         };
 
-        window.preDelete = async (id, uf) => {
-            if(confirm(`¿Borrar la unidad ${uf}?`)) {
-                await deleteDoc(doc(db, "departamentos", id));
-            }
-        };
-
-        // --- BUSCADOR ---
-        document.getElementById("btn-buscar").onclick = () => {
-            const queryText = document.getElementById("search-input").value.toLowerCase();
-            const filtrados = departamentos.filter(d => 
-                d.UF.toLowerCase().includes(queryText) || 
-                (d.Propietario || "").toLowerCase().includes(queryText)
-            );
-            render(filtrados);
-        };
-
-        document.getElementById("btn-limpiar").onclick = () => {
-            document.getElementById("search-input").value = "";
-            render(departamentos);
-        };
-
-        // --- VACIAR TODO ---
-        document.getElementById("btn-wipe").onclick = async () => {
-            if(prompt("Escriba 'ELIMINAR' para borrar TODA la base de datos") === "ELIMINAR") {
-                const snap = await getDocs(collection(db, "departamentos"));
+        // IMPORTAR
+        document.getElementById("btn-import").onclick = () => document.getElementById("csv-file").click();
+        document.getElementById("csv-file").onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
                 const batch = writeBatch(db);
-                snap.forEach(d => batch.delete(d.ref));
-                await batch.commit();
-                alert("Nube vaciada correctamente");
-            }
+                ev.target.result.split("\n").slice(1).forEach(l => {
+                    const [u,p,tp,i,ti] = l.split(",");
+                    if(u) batch.set(doc(collection(db, "departamentos")), {UF:u.trim(), Propietario:p, TelefonoPropietario:tp, Inquilino:i, TelefonoInquilino:ti});
+                });
+                await batch.commit(); log("Importación Exitosa");
+            };
+            reader.readAsText(e.target.files[0]);
         };
 
-        // --- OTROS CONTROLES ---
-        document.getElementById("btn-logout").onclick = () => {
-            localStorage.removeItem("uf_auth_gold");
-            location.reload();
-        };
-
+        // BOTONES INTERFAZ
+        document.getElementById("btn-logout-trigger").onclick = () => window.ask('logout',null,'¿Finalizar Sesión?');
+        document.getElementById("btn-export").onclick = () => window.ask('export',null,'¿Descargar copia CSV?');
+        document.getElementById("btn-wipe").onclick = () => window.ask('wipe',null,'¡BORRAR TODA LA BASE DE DATOS!');
+        document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("light-mode");
+        document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-panel").classList.toggle("hidden");
+        document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; render(departamentos); };
         document.getElementById("btn-close-form").onclick = () => document.getElementById("modal-form").classList.add("hidden");
+        document.getElementById("btn-confirm-cancel").onclick = () => document.getElementById("modal-confirm").classList.add("hidden");
         
-        document.getElementById("btn-soporte-open").onclick = () => document.getElementById("modal-soporte").classList.remove("hidden");
-        document.getElementById("btn-soporte-close").onclick = () => document.getElementById("modal-soporte").classList.add("hidden");
-        document.getElementById("btn-soporte-exec").onclick = () => {
-            if(document.getElementById("soporte-code").value === MASTER) {
-                alert("Código Maestro Correcto. Acceso: admin / admin");
-                document.getElementById("modal-soporte").classList.add("hidden");
-            } else { alert("Código Incorrecto"); }
-        };
+        // COHETE
+        window.onscroll = () => document.getElementById("btn-rocket").style.display = window.scrollY > 200 ? "flex" : "none";
+        document.getElementById("btn-rocket").onclick = () => window.scrollTo({top:0, behavior:'smooth'});
 
     </script>
 </body>
