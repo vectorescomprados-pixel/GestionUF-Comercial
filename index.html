@@ -3,49 +3,46 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF V9.6 - Final Design</title>
+    <title>GestiónUF V10.2 - Full Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0d141b; --card: #151f2b; --header-bg: #111b21; --primary: #2563eb; --danger: #e11d48; --text: #e9edef; --border: #222d34; --warning: #f59e0b; --success: #22c55e; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
-        .wrap { width: 95%; max-width: 450px; padding: 10px 0; }
-
-        /* HEADER SEGÚN FOTO */
-        .main-header { background: var(--header-bg); padding: 15px; border-radius: 20px; border-bottom: 2px solid var(--primary); margin-bottom: 20px; }
-        .status-bar { text-align:center; font-size:11px; color:var(--success); margin-bottom:12px; font-weight:bold; letter-spacing: 0.5px; }
-        .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
+        .theme-black { --bg: #000000; --card: #0a0a0a; --header-bg: #050505; }
         
-        .btn { height: 48px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; text-transform: uppercase; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .primary { background: var(--primary); } 
-        .danger { background: var(--danger); } 
-        .ghost { background: #374151; } 
-        .warning { background: var(--warning); color: #000; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; transition: 0.3s; }
+        .wrap { width: 95%; max-width: 450px; padding: 10px 0; padding-bottom: 150px; }
 
-        input { width: 100%; height: 50px; margin: 5px 0 12px 0; border-radius: 10px; border: 1px solid #1c272f; padding: 0 15px; background: #0d141b; color: white; font-size: 15px; outline: none; }
+        /* HEADER */
+        .main-header { background: var(--header-bg); padding: 15px; border-radius: 20px; border-bottom: 2px solid var(--primary); margin-bottom: 20px; }
+        .status-bar { text-align:center; font-size:11px; color:var(--success); margin-bottom:12px; font-weight:bold; }
+        .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
+        .btn { height: 48px; border-radius: 8px; border: none; font-weight: bold; font-size: 10px; cursor: pointer; color: white; text-transform: uppercase; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #374151; } .warning { background: var(--warning); color: #000; }
 
-        /* REGISTROS SEGÚN FOTO */
+        /* REGISTROS CON BORDE NARANJA CURVO */
         .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid #1c272f; position: relative; }
         .no-data { border-left: 6px solid #f59e0b !important; border-top-left-radius: 20px; border-bottom-left-radius: 20px; }
-        .item-top { display: flex; justify-content: space-between; align-items: center; }
-        .item-info b { color: var(--primary); font-size: 16px; }
-        .item-info p { font-size: 14px; margin-top: 3px; color: #ccc; }
-        .item-icons { display: flex; gap: 15px; font-size: 18px; color: #a0a0a0; }
+        .item-icons { display: flex; gap: 18px; font-size: 18px; color: #a0a0a0; }
 
-        /* MODALES CALCADOS */
+        /* CONSOLA HISTORIAL */
+        #console-log { position: fixed; bottom: 0; left: 0; right: 0; height: 120px; background: #000; color: #0f0; font-family: monospace; font-size: 10px; padding: 10px; overflow-y: auto; border-top: 1px solid #333; z-index: 999; display: none; }
+
+        /* MODALES */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: #151f2b; padding: 25px; border-radius: 20px; width: 100%; max-width: 360px; text-align: center; border: 1px solid #222d34; }
-        .logout-icon { font-size: 40px; color: var(--danger); margin-bottom: 15px; }
+        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 100%; max-width: 360px; text-align: center; border: 1px solid #222d34; }
+        input { width: 100%; height: 50px; margin: 8px 0; border-radius: 10px; border: 1px solid #1c272f; padding: 0 15px; background: #000; color: white; outline: none; }
         
         .hidden { display: none !important; }
     </style>
 </head>
-<body>
+<body id="main-body">
 
-    <!-- ACCESO -->
+    <!-- LOGIN CON COHETE 🚀 -->
     <div id="login-screen" class="modal">
         <div class="modal-content">
-            <h2 style="margin-bottom:20px; color:var(--primary)">🚀 GestiónUF</h2>
+            <h1 style="font-size: 40px; margin-bottom: 10px;">🚀</h1>
+            <h2 style="margin-bottom:20px; color:var(--primary)">GestiónUF v10.2</h2>
             <input id="l-user" type="text" placeholder="Usuario">
             <input id="l-pass" type="password" placeholder="Contraseña">
             <button id="btn-login" class="btn primary" style="width:100%; margin-bottom:10px;">ENTRAR</button>
@@ -53,19 +50,19 @@
         </div>
     </div>
 
-    <!-- APP -->
+    <!-- APP PRINCIPAL -->
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
             <div class="status-bar">● EN LÍNEA - SEGURIDAD ACTIVA</div>
             <div class="grid-btns">
-                <button class="btn ghost" onclick="alert('Historial vacío')">HISTORIAL</button>
-                <button class="btn ghost">TEMA</button>
+                <button id="btn-historial" class="btn ghost">HISTORIAL</button>
+                <button id="btn-tema" class="btn ghost">TEMA</button>
                 <button id="btn-open-logout" class="btn danger">CERRAR</button>
             </div>
             <div class="grid-btns">
                 <button id="btn-open-add" class="btn primary">NUEVA UF</button>
-                <button class="btn ghost admin-only">IMPORTAR</button>
-                <button class="btn ghost admin-only">RESPALDO</button>
+                <button id="btn-import" class="btn ghost admin-only">IMPORTAR</button>
+                <button id="btn-users" class="btn ghost admin-only">USUARIOS</button>
             </div>
             <input id="search-input" placeholder="Buscar por Unidad o Apellido...">
             <div class="grid-btns">
@@ -78,11 +75,27 @@
         <div id="list"></div>
     </div>
 
-    <!-- MODAL SEGURIDAD / RECUPERACIÓN (CALCADO) -->
+    <!-- CONSOLA HISTORIAL -->
+    <div id="console-log"><div>> Sistema de auditoría activo...</div></div>
+
+    <!-- MODAL FINALIZAR SESIÓN (FOTO 2) -->
+    <div id="modal-logout" class="modal hidden">
+        <div class="modal-content">
+            <i class="fas fa-sign-out-alt" style="font-size:40px; color:var(--danger); margin-bottom:15px;"></i>
+            <h3>Finalizar Sesión</h3>
+            <p style="margin:15px 0; color:#a0a0a0; font-size: 14px;">¿Desea cerrar el sistema de gestión de forma segura?</p>
+            <div class="grid-btns" style="grid-template-columns: 1fr 1fr">
+                <button id="btn-logout-confirm" class="btn danger">SALIR</button>
+                <button onclick="closeModals()" class="btn ghost">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SEGURIDAD -->
     <div id="modal-sec" class="modal hidden">
         <div class="modal-content">
             <h3 id="sec-title">Seguridad Requerida</h3>
-            <p id="sec-msg" style="margin: 10px 0; color: #888; font-size: 14px;"></p>
+            <p id="sec-msg" style="margin:10px 0; color:#888;"></p>
             <input id="sec-input" type="password" placeholder="Clave Administrativa">
             <div class="grid-btns" style="grid-template-columns: 1fr 1fr">
                 <button id="btn-sec-confirm" class="btn primary">AUTORIZAR</button>
@@ -91,14 +104,15 @@
         </div>
     </div>
 
-    <!-- MODAL FINALIZAR SESIÓN (CALCADO FOTO 2) -->
-    <div id="modal-logout" class="modal hidden">
+    <!-- MODAL FORMULARIO UF -->
+    <div id="modal-form-uf" class="modal hidden">
         <div class="modal-content">
-            <div class="logout-icon"><i class="fas fa-sign-out-alt"></i></div>
-            <h3 style="color: white; margin-bottom: 8px;">Finalizar Sesión</h3>
-            <p style="color: #a0a0a0; font-size: 14px; margin-bottom: 25px;">¿Desea cerrar el sistema de gestión de forma segura?</p>
+            <h3 id="form-title">Nueva Unidad</h3>
+            <input id="f-uf" placeholder="Unidad (Ej: 0001)">
+            <input id="f-prop" placeholder="Nombre Propietario">
+            <input id="f-telp" placeholder="Teléfono">
             <div class="grid-btns" style="grid-template-columns: 1fr 1fr">
-                <button id="btn-logout-confirm" class="btn danger">SALIR</button>
+                <button id="btn-save-uf" class="btn primary">GUARDAR</button>
                 <button onclick="closeModals()" class="btn ghost">CANCELAR</button>
             </div>
         </div>
@@ -106,16 +120,25 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, getDocs, doc, deleteDoc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
         
-        const MASTER_CODE = "1131552679"; //
-        let localData = [], secMode = "";
+        let localData = [], secMode = "", currentEditId = null;
+        const MASTER_CODE = "1131552679";
 
-        // LOGIN LÓGICA
-        const login = async () => {
+        // BLINDAJE DE FUNCIONES GLOBALES
+        window.logAction = (msg) => {
+            const div = document.createElement("div");
+            div.innerText = `> [${new Date().toLocaleTimeString()}] ${msg}`;
+            const box = document.getElementById("console-log");
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        };
+
+        // LOGIN Y EVENTO ENTER
+        const handleLogin = async () => {
             const u = document.getElementById("l-user").value;
             const p = document.getElementById("l-pass").value;
             const q = query(collection(db, "usuarios"), where("user", "==", u), where("pass", "==", p));
@@ -123,22 +146,12 @@
             if(!snap.empty) {
                 localStorage.setItem("uf_login", snap.docs[0].data().role);
                 location.reload();
-            } else alert("Error de acceso");
+            } else alert("Credenciales inválidas");
         };
-        document.getElementById("btn-login").onclick = login;
+        document.getElementById("btn-login").onclick = handleLogin;
+        document.getElementById("l-pass").onkeypress = (e) => { if(e.key === "Enter") handleLogin(); };
 
-        // RECUPERACIÓN ESTÉTICA
-        document.getElementById("btn-open-rescue").onclick = () => {
-            secMode = "RESCUE";
-            document.getElementById("sec-title").innerText = "Seguridad Requerida";
-            document.getElementById("sec-msg").innerText = "Ingrese Código Maestro para resetear";
-            document.getElementById("modal-sec").classList.remove("hidden");
-        };
-
-        // EVENTOS ENTER
-        document.getElementById("search-input").onkeydown = (e) => { if(e.key === "Enter") execSearch(); };
-
-        // SESIÓN
+        // CARGA DE SESIÓN
         const role = localStorage.getItem("uf_login");
         if(role) {
             document.getElementById("login-screen").classList.add("hidden");
@@ -154,59 +167,88 @@
         function render(data) {
             const list = document.getElementById("list"); list.innerHTML = "";
             data.forEach(d => {
-                const hasTel = d.TelefonoPropietario || d.TelefonoInquilino;
                 const div = document.createElement("div");
-                div.className = `item ${!hasTel ? 'no-data' : ''}`;
+                div.className = `item ${!d.TelefonoPropietario ? 'no-data' : ''}`;
                 div.innerHTML = `
-                    <div class="item-top">
-                        <div class="item-info"><b>UF: ${d.UF}</b><p>${d.Propietario || '---'}</p></div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div><b>UF: ${d.UF}</b><p style="font-size:13px; color:#aaa">${d.Propietario || '---'}</p></div>
                         <div class="item-icons">
-                            <i class="far fa-eye"></i><i class="far fa-edit"></i>
+                            <i class="far fa-eye" onclick="window.toggleView('${d.id}')"></i>
+                            <i class="far fa-edit" onclick="window.preEdit('${d.id}')"></i>
                             <i class="fas fa-trash-alt" style="color:var(--danger)" onclick="window.askDel('${d.id}', '${d.UF}')"></i>
                         </div>
+                    </div>
+                    <div id="det-${d.id}" class="details hidden" style="padding-top:10px; border-top:1px solid #222;">
+                        <p>📞 Tel: ${d.TelefonoPropietario || 'Sin Datos'}</p>
                     </div>`;
                 list.appendChild(div);
             });
         }
 
-        // MODALES Y SEGURIDAD
-        window.askDel = (id, uf) => {
-            secMode = id;
-            document.getElementById("sec-title").innerText = "Seguridad Requerida";
-            document.getElementById("sec-msg").innerText = `¿Borrar registro UF ${uf}?`;
+        // ACCIONES DE REGISTRO
+        window.toggleView = (id) => document.getElementById(`det-${id}`).classList.toggle("hidden");
+        
+        window.preEdit = (id) => {
+            currentEditId = id;
+            const d = localData.find(x => x.id === id);
+            document.getElementById("form-title").innerText = "Editar Unidad";
+            document.getElementById("f-uf").value = d.UF;
+            document.getElementById("f-prop").value = d.Propietario;
+            document.getElementById("f-telp").value = d.TelefonoPropietario || "";
+            document.getElementById("modal-form-uf").classList.remove("hidden");
+        };
+
+        document.getElementById("btn-save-uf").onclick = async () => {
+            const uf = document.getElementById("f-uf").value;
+            const payload = { UF: uf, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value };
+            if(currentEditId) await updateDoc(doc(db, "departamentos", currentEditId), payload);
+            else await addDoc(collection(db, "departamentos"), payload);
+            window.logAction(`UF ${uf} guardada con éxito`);
+            closeModals();
+        };
+
+        // ADMIN TOOLS
+        document.getElementById("btn-wipe-all").onclick = () => {
+            secMode = "WIPE";
+            document.getElementById("sec-msg").innerText = "¡ALERTA! Se borrará TODA la base de datos.";
             document.getElementById("modal-sec").classList.remove("hidden");
         };
 
         document.getElementById("btn-sec-confirm").onclick = async () => {
-            const code = document.getElementById("sec-input").value;
-            if(secMode === "RESCUE") {
-                if(code === MASTER_CODE) alert("Código Correcto. Puede cambiar la clave.");
-                else alert("Código Incorrecto");
-            } else {
-                if(code === "admin") {
-                    await deleteDoc(doc(db, "departamentos", secMode));
-                    closeModals();
-                } else alert("Clave Administrativa Incorrecta");
-            }
+            const val = document.getElementById("sec-input").value;
+            if(secMode === "WIPE" && val === "admin") {
+                const batch = writeBatch(db);
+                localData.forEach(d => batch.delete(doc(db, "departamentos", d.id)));
+                await batch.commit();
+                window.logAction("BASE DE DATOS BORRADA");
+                closeModals();
+            } else if(val === "admin" && secMode !== "RESCUE") {
+                await deleteDoc(doc(db, "departamentos", secMode));
+                window.logAction("Registro eliminado");
+                closeModals();
+            } else if(secMode === "RESCUE" && val === MASTER_CODE) {
+                alert("Recuperación activa. Contacte soporte para resetear Admin.");
+                closeModals();
+            } else alert("Clave denegada");
         };
 
-        // CERRAR SESIÓN
+        // UI ACTIONS
+        document.getElementById("btn-historial").onclick = () => {
+            const el = document.getElementById("console-log");
+            el.style.display = el.style.display === "none" ? "block" : "none";
+        };
+        document.getElementById("btn-tema").onclick = () => document.getElementById("main-body").classList.toggle("theme-black");
+        document.getElementById("btn-open-add").onclick = () => { currentEditId = null; document.getElementById("form-title").innerText="Nueva Unidad"; document.getElementById("modal-form-uf").classList.remove("hidden"); };
         document.getElementById("btn-open-logout").onclick = () => document.getElementById("modal-logout").classList.remove("hidden");
         document.getElementById("btn-logout-confirm").onclick = () => { localStorage.clear(); location.reload(); };
-
-        const execSearch = () => {
-            const val = document.getElementById("search-input").value.toLowerCase();
-            render(localData.filter(x => x.UF.includes(val) || x.Propietario.toLowerCase().includes(val)));
+        document.getElementById("btn-search-exec").onclick = () => {
+            const v = document.getElementById("search-input").value.toLowerCase();
+            render(localData.filter(x => x.UF.includes(v) || x.Propietario.toLowerCase().includes(v)));
         };
-        document.getElementById("btn-search-exec").onclick = execSearch;
+        document.getElementById("search-input").onkeypress = (e) => { if(e.key === "Enter") document.getElementById("btn-search-exec").click(); };
         document.getElementById("btn-search-clear").onclick = () => { document.getElementById("search-input").value = ""; render(localData); };
-        document.getElementById("btn-filter-avail").onclick = () => render(localData.filter(x => !x.TelefonoPropietario));
 
-        window.closeModals = () => { 
-            document.getElementById("modal-sec").classList.add("hidden"); 
-            document.getElementById("modal-logout").classList.add("hidden"); 
-            document.getElementById("sec-input").value = "";
-        };
+        window.closeModals = () => document.querySelectorAll(".modal").forEach(m => { if(m.id !== "login-screen") m.classList.add("hidden"); });
     </script>
 </body>
 </html>
