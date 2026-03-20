@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - V7.0 Blindado</title>
+    <title>GestiónUF Gold V8 - Unificado</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0b141a; --card: #111b21; --primary: #2563eb; --danger: #e11d48; --text: #e9edef; --border: #222d34; --warning: #f59e0b; --success: #22c55e; }
@@ -13,7 +13,7 @@
         body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
         .wrap { width: 95%; max-width: 450px; position: relative; padding-bottom: 100px; }
 
-        /* CABECERA BLINDADA - No se corta */
+        /* HEADER BLINDADO */
         .main-header { 
             position: sticky; top: 0; width: 100%; 
             background: var(--card); z-index: 1000; padding: 15px; 
@@ -22,7 +22,7 @@
             margin-bottom: 20px;
         }
         
-        /* BOTÓN RECUPERAR (COHETE) - Forzado */
+        /* COHETE (RECUPERAR) */
         #btn-rocket { 
             position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px; 
             border-radius: 50%; z-index: 99999; background: var(--primary);
@@ -32,37 +32,33 @@
         }
 
         .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
-        .btn { height: 45px; border-radius: 10px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; gap: 5px; transition: 0.2s; }
+        .btn { height: 45px; border-radius: 10px; border: none; font-weight: bold; font-size: 10px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; gap: 5px; transition: 0.2s; }
         .btn:active { transform: scale(0.96); }
-        .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #374151; } .warning { background: var(--warning); color: #000; }
+        .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #374151; } .warning { background: var(--warning); color: #000; } .success { background: var(--success); }
 
-        input { width: 100%; height: 48px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--border); padding: 0 15px; background: #1c272f; color: white; font-size: 16px; outline: none; }
+        input, select { width: 100%; height: 48px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--border); padding: 0 15px; background: #1c272f; color: white; font-size: 16px; outline: none; }
         
-        /* REGISTROS */
         .item { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 10px; border: 1px solid var(--border); border-left: 6px solid var(--primary); position: relative; }
         .item.empty { border-left-color: var(--warning); }
         .item b { color: var(--primary); font-size: 17px; }
 
-        /* LOG */
         #log-panel { background: rgba(0,0,0,0.4); color: #00ff41; padding: 10px; font-family: monospace; font-size: 11px; height: 110px; overflow-y: auto; border-radius: 10px; margin-bottom: 15px; border: 1px solid #333; }
 
-        /* MODALES */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: #111b21; padding: 25px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #333; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: #111b21; padding: 25px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #333; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
         .hidden { display: none !important; }
     </style>
 </head>
 <body class="dark-mode">
 
-    <!-- BOTÓN RECUPERAR SIEMPRE PRESENTE -->
     <div id="btn-rocket" onclick="window.scrollTo({top:0, behavior:'smooth'}); writeLog('Retorno al inicio');">
         <i class="fas fa-rocket"></i>
     </div>
 
-    <!-- LOGIN CON BLINDAJE DE AUTOPREDICCIÓN -->
+    <!-- PANTALLA LOGIN -->
     <div id="login-screen" class="modal">
         <form class="modal-content" onsubmit="return false;" autocomplete="off">
-            <h2 style="color:var(--primary); margin-bottom:20px;">GestiónUF Pro</h2>
+            <h2 style="color:var(--primary); margin-bottom:20px;">Acceso GestiónUF</h2>
             <input id="login-user" type="text" placeholder="Usuario" autocomplete="new-password">
             <input id="login-pass" type="password" placeholder="Contraseña" autocomplete="new-password">
             <button id="btn-login-exec" class="btn primary" style="width:100%">ENTRAR</button>
@@ -72,10 +68,10 @@
     <!-- APP PRINCIPAL -->
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div style="text-align:center; font-size:11px; color:var(--success); margin-bottom:10px; font-weight:bold;">● SISTEMA ACTIVO - NUBE SINCRONIZADA</div>
+            <div id="status-bar" style="text-align:center; font-size:10px; color:var(--success); margin-bottom:10px; font-weight:bold;">● SISTEMA ACTIVO - ROL: <span id="role-display">...</span></div>
             <div class="grid-btns">
                 <button id="btn-log-toggle" class="btn ghost">HISTORIAL</button>
-                <button id="btn-theme" class="btn ghost">TEMA</button>
+                <button id="btn-users-manage" class="btn ghost hidden" style="background:#4b5563">USUARIOS</button>
                 <button id="btn-logout-init" class="btn danger">CERRAR</button>
             </div>
             <div class="grid-btns">
@@ -96,7 +92,24 @@
         <div id="list"></div>
     </div>
 
-    <!-- MODAL FORMULARIO (NUEVA UF / EDITAR) -->
+    <!-- MODAL USUARIOS (SOLO ADMIN) -->
+    <div id="modal-users" class="modal hidden">
+        <div class="modal-content">
+            <h3 style="margin-bottom:15px">Gestión de Usuarios</h3>
+            <input id="u-new-user" placeholder="Nuevo Usuario" autocomplete="off">
+            <input id="u-new-pass" type="password" placeholder="Contraseña" autocomplete="off">
+            <select id="u-new-role">
+                <option value="operador">Operador (Restringido)</option>
+                <option value="admin">Admin (Total)</option>
+            </select>
+            <div class="grid-btns" style="grid-template-columns: 1fr 1fr">
+                <button id="btn-save-user" class="btn success">CREAR</button>
+                <button id="btn-close-users" class="btn danger">VOLVER</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL UF (NUEVA/EDITAR) -->
     <div id="modal-form" class="modal hidden">
         <form class="modal-content" id="uf-form" onsubmit="return false;" autocomplete="off">
             <h3 id="form-title" style="margin-bottom:15px">Datos de Unidad</h3>
@@ -105,14 +118,14 @@
             <input id="f-telp" placeholder="Teléfono Prop." autocomplete="off">
             <input id="f-inq" placeholder="Inquilino" autocomplete="off">
             <input id="f-teli" placeholder="Teléfono Inq." autocomplete="off">
-            <div class="grid-btns" style="grid-template-columns: 1fr 1fr; margin-top:10px">
+            <div class="grid-btns" style="grid-template-columns: 1fr 1fr">
                 <button id="btn-save" class="btn primary">GUARDAR</button>
-                <button id="btn-close-form" class="btn danger">CANCELAR</button>
+                <button id="btn-close-form" class="btn ghost">CANCELAR</button>
             </div>
         </form>
     </div>
 
-    <!-- MODAL CONFIRMACIÓN ESTILO CAPTURA -->
+    <!-- MODAL CONFIRMACIÓN (ESTILO CERRAR) -->
     <div id="modal-confirm" class="modal hidden">
         <div class="modal-content">
             <div id="conf-icon" style="font-size:35px; margin-bottom:15px"></div>
@@ -132,15 +145,14 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, doc, deleteDoc, updateDoc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
         
         let dbData = [], editId = null, pendingAction = null;
-        const MASTER = "admin";
+        let currentUserRole = "operador";
 
-        // LOG CENTRALIZADO
         window.writeLog = (msg) => {
             const p = document.getElementById("log-panel");
             const t = new Date().toLocaleTimeString();
@@ -148,23 +160,39 @@
             p.scrollTop = p.scrollHeight;
         };
 
-        // LOGIN
-        document.getElementById("btn-login-exec").onclick = () => {
+        // LOGIN POR FIREBASE
+        document.getElementById("btn-login-exec").onclick = async () => {
             const u = document.getElementById("login-user").value;
             const p = document.getElementById("login-pass").value;
-            if(u === "admin" && p === "admin") {
-                localStorage.setItem("uf_auth_v7", "true");
+            const q = query(collection(db, "usuarios"), where("user", "==", u), where("pass", "==", p));
+            const snap = await getDocs(q);
+
+            if(!snap.empty) {
+                const data = snap.docs[0].data();
+                localStorage.setItem("uf_auth_v8", "true");
+                localStorage.setItem("uf_role", data.role);
                 location.reload();
-            } else alert("Credenciales incorrectas");
+            } else alert("Acceso Denegado");
         };
 
-        if(localStorage.getItem("uf_auth_v7") === "true") {
+        if(localStorage.getItem("uf_auth_v8") === "true") {
+            currentUserRole = localStorage.getItem("uf_role");
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
+            document.getElementById("role-display").innerText = currentUserRole.toUpperCase();
+            
+            if(currentUserRole === "admin") document.getElementById("btn-users-manage").classList.remove("hidden");
+            else {
+                document.getElementById("btn-wipe-init").remove();
+                document.getElementById("btn-import").remove();
+                document.getElementById("btn-export").remove();
+                const s = document.createElement("style"); s.innerHTML = ".fa-trash {display:none !important}"; document.head.appendChild(s);
+            }
+
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 dbData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 render(dbData);
-                writeLog("Base de datos sincronizada");
+                writeLog("Sincronizado");
             });
         }
 
@@ -178,52 +206,26 @@
                     <div style="display:flex; justify-content:space-between; align-items:center">
                         <div><b>UF: ${d.UF}</b><div style="font-size:14px; opacity:0.8">${d.Propietario || '---'}</div></div>
                         <div style="display:flex; gap:15px; font-size:20px">
-                            <i class="fas fa-eye" onclick="document.getElementById('det-${d.id}').classList.toggle('hidden'); writeLog('Vista rápida UF ${d.UF}')"></i>
+                            <i class="fas fa-eye" onclick="document.getElementById('det-${d.id}').classList.toggle('hidden')"></i>
                             <i class="fas fa-edit" style="color:var(--primary)" onclick="window.preEdit('${d.id}')"></i>
-                            <i class="fas fa-trash" style="color:var(--danger)" onclick="window.ask('delete','${d.id}','¿Borrar registro UF ${d.UF}?')"></i>
+                            <i class="fas fa-trash" style="color:var(--danger)" onclick="window.ask('delete','${d.id}','¿Borrar UF ${d.UF}?')"></i>
                         </div>
                     </div>
-                    <div id="det-${d.id}" class="details hidden" style="margin-top:10px; padding-top:10px; border-top:1px dashed #444">
-                        <p><strong>Prop:</strong> ${d.Propietario} | <strong>Tel:</strong> ${d.TelefonoPropietario}</p>
-                        <p><strong>Inq:</strong> ${d.Inquilino} | <strong>Tel:</strong> ${d.TelefonoInquilino}</p>
-                        <div class="grid-btns" style="margin-top:10px">
-                            <a href="tel:${d.TelefonoPropietario}" class="btn primary"><i class="fas fa-phone"></i> LLAMAR</a>
-                            <a href="https://wa.me/${d.TelefonoPropietario}" class="btn warning" style="background:#22c55e; color:white"><i class="fab fa-whatsapp"></i> CHAT</a>
-                        </div>
+                    <div id="det-${d.id}" class="details hidden" style="margin-top:10px; border-top:1px dashed #444; padding-top:10px">
+                        <p>Prop: ${d.Propietario} | Tel: ${d.TelefonoPropietario}</p>
+                        <p>Inq: ${d.Inquilino} | Tel: ${d.TelefonoInquilino}</p>
                     </div>`;
                 list.appendChild(div);
             });
         }
 
-        // EVENTO ENTER
-        document.getElementById("search-input").onkeydown = (e) => { 
-            if(e.key === "Enter") { 
-                document.getElementById("btn-search").click(); 
-                writeLog("Búsqueda por tecla Enter");
-            } 
-        };
-
-        // ACCIONES
-        document.getElementById("btn-search").onclick = () => {
-            const v = document.getElementById("search-input").value.toLowerCase();
-            const res = dbData.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v));
-            render(res);
-            writeLog(`Búsqueda: ${v} (${res.length} resultados)`);
-        };
-
-        document.getElementById("btn-avail").onclick = () => {
-            const res = dbData.filter(d => !d.TelefonoPropietario && !d.TelefonoInquilino);
-            render(res);
-            writeLog(`Filtrado: UF Disponibles (${res.length})`);
-        };
-
-        // NUEVA UF - LIMPIEZA TOTAL AL ABRIR
+        // ACCIONES PRINCIPALES
         document.getElementById("btn-add-new").onclick = () => {
             editId = null;
-            document.getElementById("uf-form").reset(); // BLINDAJE: Limpia el formulario
+            document.getElementById("uf-form").reset();
             document.getElementById("form-title").innerText = "Nueva Unidad";
             document.getElementById("modal-form").classList.remove("hidden");
-            writeLog("Abriendo Formulario Nueva UF (Vacío)");
+            writeLog("Formulario Nueva UF Limpio");
         };
 
         window.preEdit = (id) => {
@@ -233,9 +235,7 @@
             document.getElementById("f-telp").value = d.TelefonoPropietario;
             document.getElementById("f-inq").value = d.Inquilino;
             document.getElementById("f-teli").value = d.TelefonoInquilino;
-            document.getElementById("form-title").innerText = "Editar Unidad";
             document.getElementById("modal-form").classList.remove("hidden");
-            writeLog(`Editando UF: ${d.UF}`);
         };
 
         document.getElementById("btn-save").onclick = async () => {
@@ -243,61 +243,54 @@
             if(editId) await updateDoc(doc(db, "departamentos", editId), data);
             else await addDoc(collection(db, "departamentos"), data);
             document.getElementById("modal-form").classList.add("hidden");
-            writeLog(`Guardado exitoso: UF ${data.UF}`);
+            writeLog(`Guardado: UF ${data.UF}`);
         };
 
-        // SEGURIDAD Y MODAL CERRAR
+        // GESTIÓN DE USUARIOS
+        document.getElementById("btn-save-user").onclick = async () => {
+            const u = document.getElementById("u-new-user").value;
+            const p = document.getElementById("u-new-pass").value;
+            const r = document.getElementById("u-new-role").value;
+            if(u && p) {
+                await addDoc(collection(db, "usuarios"), { user: u, pass: p, role: r });
+                alert("Usuario Creado");
+                document.getElementById("u-new-user").value = ""; document.getElementById("u-new-pass").value = "";
+            }
+        };
+
+        // CONFIRMACIONES
         window.ask = (type, id, msg) => {
             pendingAction = { type, id };
-            document.getElementById("conf-title").innerText = type === 'logout' ? "Finalizar Sesión" : "Seguridad Requerida";
+            document.getElementById("conf-title").innerText = type === 'logout' ? "Finalizar Sesión" : "Seguridad";
             document.getElementById("conf-msg").innerText = msg;
-            document.getElementById("conf-icon").innerHTML = type === 'logout' ? '<i class="fas fa-sign-out-alt" style="color:var(--danger)"></i>' : '<i class="fas fa-shield-alt" style="color:var(--primary)"></i>';
-            document.getElementById("pass-area").className = (type === 'logout' || type === 'export') ? "hidden" : "";
-            document.getElementById("conf-pass").value = "";
+            document.getElementById("pass-area").className = (type === 'delete' || type === 'wipe') ? "" : "hidden";
             document.getElementById("modal-confirm").classList.remove("hidden");
         };
 
         document.getElementById("btn-confirm-yes").onclick = async () => {
-            if(!document.getElementById("pass-area").classList.contains("hidden") && document.getElementById("conf-pass").value !== MASTER) return alert("Clave Incorrecta");
+            if(!document.getElementById("pass-area").classList.contains("hidden") && document.getElementById("conf-pass").value !== "admin") return alert("Error");
             
-            if(pendingAction.type === 'logout') { localStorage.removeItem("uf_auth_v7"); location.reload(); }
+            if(pendingAction.type === 'logout') { localStorage.clear(); location.reload(); }
             if(pendingAction.type === 'delete') await deleteDoc(doc(db, "departamentos", pendingAction.id));
             if(pendingAction.type === 'wipe') {
                 const b = writeBatch(db); (await getDocs(collection(db, "departamentos"))).forEach(d => b.delete(d.ref)); await b.commit();
-                writeLog("BORRADO TOTAL DE NUBE EJECUTADO");
-            }
-            if(pendingAction.type === 'export') {
-                const csv = "UF,Prop,TelP,Inq,TelI\n" + dbData.map(d => `${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}`).join("\n");
-                const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); link.download = "Respaldo_UF.csv"; link.click();
             }
             document.getElementById("modal-confirm").classList.add("hidden");
         };
 
-        // BOTONES INTERFAZ
-        document.getElementById("btn-logout-init").onclick = () => window.ask('logout', null, '¿Desea cerrar el sistema de gestión de forma segura?');
-        document.getElementById("btn-wipe-init").onclick = () => window.ask('wipe', null, '¡ADVERTENCIA! Esta acción borrará todos los datos.');
-        document.getElementById("btn-import").onclick = () => document.getElementById("csv-file").click();
-        document.getElementById("btn-export").onclick = () => window.ask('export', null, '¿Descargar respaldo en CSV?');
-        document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("light-mode");
-        document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-panel").classList.toggle("hidden");
-        document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; render(dbData); };
+        // EVENTOS BOTONES
+        document.getElementById("btn-logout-init").onclick = () => window.ask('logout', null, '¿Cerrar sistema de forma segura?');
+        document.getElementById("btn-users-manage").onclick = () => document.getElementById("modal-users").classList.remove("hidden");
+        document.getElementById("btn-close-users").onclick = () => document.getElementById("modal-users").classList.add("hidden");
         document.getElementById("btn-close-form").onclick = () => document.getElementById("modal-form").classList.add("hidden");
         document.getElementById("btn-confirm-no").onclick = () => document.getElementById("modal-confirm").classList.add("hidden");
-
-        // IMPORTAR CSV
-        document.getElementById("csv-file").onchange = (e) => {
-            const reader = new FileReader();
-            reader.onload = async (ev) => {
-                const rows = ev.target.result.split("\n").slice(1);
-                const batch = writeBatch(db);
-                rows.forEach(r => {
-                    const [uf, p, tp, inq, ti] = r.split(",");
-                    if(uf) batch.set(doc(collection(db, "departamentos")), { UF:uf.trim(), Propietario:p, TelefonoPropietario:tp, Inquilino:inq, TelefonoInquilino:ti });
-                });
-                await batch.commit(); writeLog(`Importados ${rows.length} registros`);
-            };
-            reader.readAsText(e.target.files[0]);
+        document.getElementById("btn-search").onclick = () => {
+            const v = document.getElementById("search-input").value.toLowerCase();
+            render(dbData.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v)));
         };
+        document.getElementById("btn-avail").onclick = () => render(dbData.filter(d => !d.TelefonoPropietario && !d.TelefonoInquilino));
+        document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; render(dbData); };
+        document.getElementById("search-input").onkeydown = (e) => e.key === "Enter" && document.getElementById("btn-search").click();
     </script>
 </body>
 </html>
