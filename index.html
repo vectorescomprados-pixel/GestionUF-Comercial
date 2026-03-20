@@ -3,167 +3,143 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Gold V8.1 - Recuperación</title>
+    <title>GestiónUF V9.1 - Seguridad por Teléfono</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #0b141a; --card: #111b21; --primary: #2563eb; --danger: #e11d48; --text: #e9edef; --border: #222d34; --warning: #f59e0b; --success: #22c55e; }
+        :root { --bg: #0d141b; --card: #151f2b; --header-bg: #111b21; --primary: #2563eb; --danger: #e11d48; --text: #e9edef; --border: #222d34; --warning: #f59e0b; --success: #22c55e; }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
-        .wrap { width: 95%; max-width: 450px; position: relative; padding-bottom: 100px; }
+        .wrap { width: 95%; max-width: 450px; position: relative; padding-top: 10px; }
 
-        /* HEADER */
-        .main-header { position: sticky; top: 0; width: 100%; background: var(--card); z-index: 1000; padding: 15px; border: 2px solid var(--primary); border-top: none; border-radius: 0 0 20px 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); margin-bottom: 20px; }
+        .main-header { background: var(--header-bg); padding: 15px; border-radius: 20px; border: 1px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
+        .btn { height: 48px; border-radius: 12px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
+        .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #4b5563; } .warning { background: var(--warning); color: #000; }
         
-        /* BOTÓN COHETE SIEMPRE VISIBLE */
-        #btn-rocket { position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px; border-radius: 50%; z-index: 99999; background: var(--primary); color: white; border: 2px solid #fff; display: flex !important; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-
-        .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
-        .btn { height: 45px; border-radius: 10px; border: none; font-weight: bold; font-size: 10px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; gap: 5px; transition: 0.2s; }
-        .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #374151; } .warning { background: var(--warning); color: #000; } .success { background: var(--success); }
-
-        input, select { width: 100%; height: 48px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--border); padding: 0 15px; background: #1c272f; color: white; font-size: 16px; outline: none; }
-        .item { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 10px; border: 1px solid var(--border); border-left: 6px solid var(--primary); }
-        #log-panel { background: rgba(0,0,0,0.4); color: #00ff41; padding: 10px; font-family: monospace; font-size: 11px; height: 110px; overflow-y: auto; border-radius: 10px; margin-bottom: 15px; border: 1px solid #333; }
-
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: #111b21; padding: 25px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #333; }
+        input { width: 100%; height: 50px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #1c272f; padding: 0 15px; background: #0d141b; color: white; font-size: 15px; outline: none; }
+        .item { background: var(--card); border-radius: 15px; padding: 18px; margin-bottom: 12px; border: 1px solid #1c272f; }
+        .item.empty { border-left: 5px solid var(--warning); }
+        
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: #151f2b; padding: 30px; border-radius: 25px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #222d34; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="btn-rocket" onclick="window.scrollTo({top:0, behavior:'smooth'}); writeLog('Retorno al inicio');">
-        <i class="fas fa-rocket"></i>
-    </div>
+<div id="login-screen" class="modal">
+    <form class="modal-content" onsubmit="return false;">
+        <h2 style="margin-bottom:25px; color:var(--primary)">GestiónUF Acceso</h2>
+        <input id="login-user" type="text" placeholder="Usuario">
+        <input id="login-pass" type="password" placeholder="Contraseña">
+        <button id="btn-login-exec" class="btn primary" style="width:100%; margin-bottom:10px;">ENTRAR</button>
+        <button id="btn-rescue-trigger" class="btn ghost" style="width:100%; background:transparent; border:1px solid #333;">
+            RECUPERACIÓN POR TELÉFONO
+        </button>
+    </form>
+</div>
 
-    <!-- PANTALLA LOGIN CON RECUPERACIÓN -->
-    <div id="login-screen" class="modal">
-        <form class="modal-content" onsubmit="return false;">
-            <h2 style="color:var(--primary); margin-bottom:20px;">Acceso GestiónUF</h2>
-            <input id="login-user" type="text" placeholder="Usuario">
-            <input id="login-pass" type="password" placeholder="Contraseña">
-            <button id="btn-login-exec" class="btn primary" style="width:100%">ENTRAR</button>
-            
-            <!-- BOTÓN DE RECUPERACIÓN / EMERGENCIA -->
-            <p id="btn-recover-trigger" style="margin-top:20px; font-size:12px; color:var(--warning); cursor:pointer; text-decoration:underline;">
-                Olvidé mi contraseña / Acceso de Emergencia
-            </p>
-        </form>
-    </div>
-
-    <!-- APP PRINCIPAL -->
-    <div id="main-screen" class="wrap hidden">
-        <div class="main-header">
-            <div style="text-align:center; font-size:10px; color:var(--success); margin-bottom:10px; font-weight:bold;">● SISTEMA ACTIVO - ROL: <span id="role-display">...</span></div>
-            <div class="grid-btns">
-                <button id="btn-log-toggle" class="btn ghost">HISTORIAL</button>
-                <button id="btn-users-manage" class="btn ghost hidden" style="background:#4b5563">USUARIOS</button>
-                <button id="btn-logout-init" class="btn danger">CERRAR</button>
-            </div>
-            <div class="grid-btns">
-                <button id="btn-add-new" class="btn primary">NUEVA UF</button>
-                <button id="btn-import" class="btn ghost">IMPORTAR</button>
-                <button id="btn-export" class="btn ghost">RESPALDO</button>
-            </div>
-            <input id="search-input" placeholder="Buscar UF o Apellido...">
-            <div class="grid-btns">
-                <button id="btn-search" class="btn primary">BUSCAR</button>
-                <button id="btn-clear" class="btn ghost">LIMPIAR</button>
-                <button id="btn-avail" class="btn warning">UF DISPONIBLES</button>
-            </div>
+<div id="main-screen" class="wrap hidden">
+    <div class="main-header">
+        <div style="text-align:center; font-size:11px; color:var(--success); margin-bottom:12px;">● EN LÍNEA - ROL: <span id="role-tag">...</span></div>
+        <div class="grid-btns">
+            <button class="btn ghost">HISTORIAL</button>
+            <button id="btn-users-manage" class="btn ghost hidden">USUARIOS</button>
+            <button id="btn-logout" class="btn danger">CERRAR</button>
         </div>
-        <div id="log-panel" class="hidden"></div>
-        <div id="list"></div>
-    </div>
-
-    <!-- MODAL USUARIOS -->
-    <div id="modal-users" class="modal hidden">
-        <div class="modal-content">
-            <h3>Gestión de Usuarios</h3>
-            <p style="font-size:11px; margin-bottom:10px; color:var(--warning)">Aquí puedes cambiar tu clave o crear nuevos usuarios.</p>
-            <input id="u-new-user" placeholder="Nombre de Usuario">
-            <input id="u-new-pass" type="text" placeholder="Nueva Contraseña">
-            <select id="u-new-role">
-                <option value="admin">Administrador</option>
-                <option value="operador">Operador</option>
-            </select>
-            <button id="btn-save-user" class="btn success" style="width:100%; margin-bottom:10px">GUARDAR USUARIO</button>
-            <button id="btn-close-users" class="btn danger" style="width:100%">CERRAR</button>
+        <div class="grid-btns">
+            <button id="btn-add-new" class="btn primary">NUEVA UF</button>
+            <button class="btn ghost">IMPORTAR</button>
+            <button class="btn ghost">RESPALDO</button>
+        </div>
+        <input id="search-input" placeholder="Buscar Unidad o Apellido...">
+        <div class="grid-btns">
+            <button id="btn-search" class="btn primary">BUSCAR</button>
+            <button id="btn-clear" class="btn ghost">LIMPIAR</button>
+            <button id="btn-avail" class="btn warning">SIN DATOS</button>
         </div>
     </div>
+    <div id="list"></div>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<div id="modal-users" class="modal hidden">
+    <div class="modal-content">
+        <h3>Administrar Usuarios</h3>
+        <input id="u-user" placeholder="Usuario">
+        <input id="u-pass" placeholder="Contraseña">
+        <select id="u-role" style="width:100%; height:48px; margin-bottom:10px; border-radius:12px; background:#0d141b; color:white;">
+            <option value="admin">Administrador</option>
+            <option value="operador">Operador</option>
+        </select>
+        <button id="btn-save-user" class="btn primary" style="width:100%; margin-bottom:10px;">CREAR USUARIO</button>
+        <button onclick="document.getElementById('modal-users').classList.add('hidden')" class="btn danger" style="width:100%;">VOLVER</button>
+    </div>
+</div>
 
-        const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
-        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // LOG
-        window.writeLog = (msg) => {
-            const p = document.getElementById("log-panel");
-            p.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>`;
-            p.scrollTop = p.scrollHeight;
-        };
+    const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
+    const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // LOGIN NORMAL
-        document.getElementById("btn-login-exec").onclick = async () => {
-            const u = document.getElementById("login-user").value;
-            const p = document.getElementById("login-pass").value;
-            const q = query(collection(db, "usuarios"), where("user", "==", u), where("pass", "==", p));
-            const snap = await getDocs(q);
-            if(!snap.empty) { loginSuccess(snap.docs[0].data().role); } 
-            else { alert("Credenciales incorrectas"); }
-        };
+    const MASTER_RESCUE = "1131552679"; // <--- TU NÚMERO COMO CLAVE MAESTRA
 
-        // FUNCIÓN DE RECUPERACIÓN (EL BYPASS)
-        document.getElementById("btn-recover-trigger").onclick = () => {
-            const master = prompt("Ingrese la Palabra Maestra de Recuperación:");
-            if(master === "RESCATE2024") { // <--- ESTA ES TU CLAVE DE EMERGENCIA
-                loginSuccess("admin");
-                writeLog("ACCESO POR RECUPERACIÓN ACTIVO");
-            } else { alert("Clave Maestra Incorrecta"); }
-        };
+    document.getElementById("btn-login-exec").onclick = async () => {
+        const u = document.getElementById("login-user").value;
+        const p = document.getElementById("login-pass").value;
+        const q = query(collection(db, "usuarios"), where("user", "==", u), where("pass", "==", p));
+        const snap = await getDocs(q);
+        if(!snap.empty) { login(snap.docs.data().role); } else { alert("Error"); }
+    };
 
-        function loginSuccess(role) {
-            localStorage.setItem("uf_auth_v8", "true");
-            localStorage.setItem("uf_role", role);
-            document.getElementById("login-screen").classList.add("hidden");
-            document.getElementById("main-screen").classList.remove("hidden");
-            document.getElementById("role-display").innerText = role.toUpperCase();
-            if(role === "admin") document.getElementById("btn-users-manage").classList.remove("hidden");
-            startApp();
-        }
-
-        function startApp() {
-            onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
-                const list = document.getElementById("list"); list.innerHTML = "";
-                snap.forEach(doc => {
-                    const d = doc.data();
-                    const item = document.createElement("div");
-                    item.className = "item";
-                    item.innerHTML = `<b>UF: ${d.UF}</b><br><small>${d.Propietario || 'S/D'}</small>`;
-                    list.appendChild(item);
-                });
-            });
-        }
-
-        // GESTIÓN DE USUARIOS (PARA CAMBIAR LA CLAVE)
-        document.getElementById("btn-save-user").onclick = async () => {
-            const u = document.getElementById("u-new-user").value;
-            const p = document.getElementById("u-new-pass").value;
-            const r = document.getElementById("u-new-role").value;
-            if(u && p) {
-                await addDoc(collection(db, "usuarios"), { user: u, pass: p, role: r });
-                alert("Usuario actualizado/creado. Ya puedes usarlo para entrar.");
+    document.getElementById("btn-rescue-trigger").onclick = () => {
+        const rescue = prompt("Ingrese su número de teléfono para acceso de emergencia:");
+        if(rescue === MASTER_RESCUE) {
+            login("admin");
+            alert("Acceso concedido. Diríjase a USUARIOS para reestablecer su clave.");
+        } else {
+            if(confirm("Número incorrecto. ¿Desea solicitar ayuda por WhatsApp?")) {
+                window.location.href = "https://wa.me/5491131552679?text=Necesito%20ayuda%20con%20mi%20clave";
             }
-        };
+        }
+    };
 
-        document.getElementById("btn-users-manage").onclick = () => document.getElementById("modal-users").classList.remove("hidden");
-        document.getElementById("btn-close-users").onclick = () => document.getElementById("modal-users").classList.add("hidden");
-        document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-panel").classList.toggle("hidden");
-        document.getElementById("btn-logout-init").onclick = () => { localStorage.clear(); location.reload(); };
+    function login(role) {
+        localStorage.setItem("uf_auth", "true");
+        localStorage.setItem("uf_role", role);
+        location.reload();
+    }
 
-    </script>
+    if(localStorage.getItem("uf_auth") === "true") {
+        const role = localStorage.getItem("uf_role");
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("main-screen").classList.remove("hidden");
+        document.getElementById("role-tag").innerText = role.toUpperCase();
+        if(role === "admin") document.getElementById("btn-users-manage").classList.remove("hidden");
+        
+        onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
+            const list = document.getElementById("list"); list.innerHTML = "";
+            snap.forEach(doc => {
+                const d = doc.data();
+                const div = document.createElement("div");
+                div.className = `item ${(!d.TelefonoPropietario) ? 'empty' : ''}`;
+                div.innerHTML = `<b>UF: ${d.UF}</b><br><span>${d.Propietario || '---'}</span>`;
+                list.appendChild(div);
+            });
+        });
+    }
+
+    document.getElementById("btn-users-manage").onclick = () => document.getElementById("modal-users").classList.remove("hidden");
+    document.getElementById("btn-save-user").onclick = async () => {
+        await addDoc(collection(db, "usuarios"), {
+            user: document.getElementById("u-user").value,
+            pass: document.getElementById("u-pass").value,
+            role: document.getElementById("u-role").value
+        });
+        alert("Usuario guardado");
+    };
+    document.getElementById("btn-logout").onclick = () => { localStorage.clear(); location.reload(); };
+</script>
 </body>
 </html>
