@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF V9.1 - Seguridad por Teléfono</title>
+    <title>GestiónUF V9.2 - Final</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0d141b; --card: #151f2b; --header-bg: #111b21; --primary: #2563eb; --danger: #e11d48; --text: #e9edef; --border: #222d34; --warning: #f59e0b; --success: #22c55e; }
@@ -27,21 +27,21 @@
 </head>
 <body>
 
+<!-- PANTALLA LOGIN -->
 <div id="login-screen" class="modal">
-    <form class="modal-content" onsubmit="return false;">
+    <div class="modal-content">
         <h2 style="margin-bottom:25px; color:var(--primary)">GestiónUF Acceso</h2>
-        <input id="login-user" type="text" placeholder="Usuario">
-        <input id="login-pass" type="password" placeholder="Contraseña">
+        <input id="login-user" type="text" placeholder="Usuario" autocomplete="off">
+        <input id="login-pass" type="password" placeholder="Contraseña" autocomplete="off">
         <button id="btn-login-exec" class="btn primary" style="width:100%; margin-bottom:10px;">ENTRAR</button>
-        <button id="btn-rescue-trigger" class="btn ghost" style="width:100%; background:transparent; border:1px solid #333;">
-            RECUPERACIÓN POR TELÉFONO
-        </button>
-    </form>
+        <button id="btn-rescue-trigger" class="btn danger" style="width:100%;">RECUPERAR CONTRASEÑA</button>
+    </div>
 </div>
 
+<!-- APP PRINCIPAL -->
 <div id="main-screen" class="wrap hidden">
     <div class="main-header">
-        <div style="text-align:center; font-size:11px; color:var(--success); margin-bottom:12px;">● EN LÍNEA - ROL: <span id="role-tag">...</span></div>
+        <div style="text-align:center; font-size:11px; color:var(--success); margin-bottom:12px; font-weight:bold;">● EN LÍNEA - SEGURIDAD ACTIVA</div>
         <div class="grid-btns">
             <button class="btn ghost">HISTORIAL</button>
             <button id="btn-users-manage" class="btn ghost hidden">USUARIOS</button>
@@ -56,75 +56,96 @@
         <div class="grid-btns">
             <button id="btn-search" class="btn primary">BUSCAR</button>
             <button id="btn-clear" class="btn ghost">LIMPIAR</button>
-            <button id="btn-avail" class="btn warning">SIN DATOS</button>
+            <button class="btn warning">SIN DATOS</button>
         </div>
+        <button class="btn danger" style="width:100%; margin-top:5px;">BORRAR TODA LA NUBE</button>
     </div>
     <div id="list"></div>
 </div>
 
+<!-- MODAL USUARIOS -->
 <div id="modal-users" class="modal hidden">
     <div class="modal-content">
-        <h3>Administrar Usuarios</h3>
-        <input id="u-user" placeholder="Usuario">
+        <h3>Gestionar Cuentas</h3>
+        <input id="u-user" placeholder="Nuevo Usuario">
         <input id="u-pass" placeholder="Contraseña">
         <select id="u-role" style="width:100%; height:48px; margin-bottom:10px; border-radius:12px; background:#0d141b; color:white;">
             <option value="admin">Administrador</option>
             <option value="operador">Operador</option>
         </select>
-        <button id="btn-save-user" class="btn primary" style="width:100%; margin-bottom:10px;">CREAR USUARIO</button>
+        <button id="btn-save-user" class="btn primary" style="width:100%; margin-bottom:10px;">GUARDAR</button>
         <button onclick="document.getElementById('modal-users').classList.add('hidden')" class="btn danger" style="width:100%;">VOLVER</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
     const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-    const MASTER_RESCUE = "1131552679"; // <--- TU NÚMERO COMO CLAVE MAESTRA
+    const MASTER_PHONE = "1131552679";
 
-    document.getElementById("btn-login-exec").onclick = async () => {
+    const ejecutarLogin = async () => {
         const u = document.getElementById("login-user").value;
         const p = document.getElementById("login-pass").value;
+        if(!u || !p) return;
+        
         const q = query(collection(db, "usuarios"), where("user", "==", u), where("pass", "==", p));
         const snap = await getDocs(q);
-        if(!snap.empty) { login(snap.docs.data().role); } else { alert("Error"); }
-    };
-
-    document.getElementById("btn-rescue-trigger").onclick = () => {
-        const rescue = prompt("Ingrese su número de teléfono para acceso de emergencia:");
-        if(rescue === MASTER_RESCUE) {
-            login("admin");
-            alert("Acceso concedido. Diríjase a USUARIOS para reestablecer su clave.");
+        
+        if(!snap.empty) {
+            localStorage.setItem("uf_auth", "true");
+            localStorage.setItem("uf_role", snap.docs[0].data().role);
+            location.reload();
         } else {
-            if(confirm("Número incorrecto. ¿Desea solicitar ayuda por WhatsApp?")) {
-                window.location.href = "https://wa.me/5491131552679?text=Necesito%20ayuda%20con%20mi%20clave";
-            }
+            alert("Usuario o Contraseña incorrectos");
         }
     };
 
-    function login(role) {
-        localStorage.setItem("uf_auth", "true");
-        localStorage.setItem("uf_role", role);
-        location.reload();
-    }
+    // Eventos de Login
+    document.getElementById("btn-login-exec").onclick = ejecutarLogin;
+    document.getElementById("login-pass").onkeydown = (e) => { if(e.key === "Enter") ejecutarLogin(); };
+    document.getElementById("login-user").onkeydown = (e) => { if(e.key === "Enter") ejecutarLogin(); };
 
+    // Recuperación con estética de borrado
+    document.getElementById("btn-rescue-trigger").onclick = async () => {
+        const codigo = prompt("Ingrese Codigo Maestro");
+        if(codigo === MASTER_PHONE) {
+            const nuevaClave = prompt("Código Correcto. Ingrese nueva contraseña para el Admin:");
+            if(nuevaClave) {
+                const q = query(collection(db, "usuarios"), where("user", "==", "admin"));
+                const snap = await getDocs(q);
+                if(!snap.empty) {
+                    await updateDoc(doc(db, "usuarios", snap.docs[0].id), { pass: nuevaClave });
+                    alert("Contraseña actualizada. Ya puede ingresar.");
+                }
+            }
+        } else if(codigo !== null) {
+            alert("Codigo Incorrecto");
+        }
+    };
+
+    // Carga de App
     if(localStorage.getItem("uf_auth") === "true") {
         const role = localStorage.getItem("uf_role");
         document.getElementById("login-screen").classList.add("hidden");
         document.getElementById("main-screen").classList.remove("hidden");
-        document.getElementById("role-tag").innerText = role.toUpperCase();
         if(role === "admin") document.getElementById("btn-users-manage").classList.remove("hidden");
         
         onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
             const list = document.getElementById("list"); list.innerHTML = "";
-            snap.forEach(doc => {
-                const d = doc.data();
+            snap.forEach(dDoc => {
+                const d = dDoc.data();
                 const div = document.createElement("div");
                 div.className = `item ${(!d.TelefonoPropietario) ? 'empty' : ''}`;
-                div.innerHTML = `<b>UF: ${d.UF}</b><br><span>${d.Propietario || '---'}</span>`;
+                div.innerHTML = `<div style="display:flex; justify-content:space-between">
+                    <div><b>UF: ${d.UF}</b><br><small>${d.Propietario || '---'}</small></div>
+                    <div style="font-size:18px; display:flex; gap:15px; color:#a0a0a0">
+                        <i class="far fa-eye"></i><i class="far fa-edit"></i><i class="fas fa-trash-alt" style="color:var(--danger)"></i>
+                    </div>
+                </div>`;
                 list.appendChild(div);
             });
         });
@@ -132,12 +153,14 @@
 
     document.getElementById("btn-users-manage").onclick = () => document.getElementById("modal-users").classList.remove("hidden");
     document.getElementById("btn-save-user").onclick = async () => {
-        await addDoc(collection(db, "usuarios"), {
-            user: document.getElementById("u-user").value,
-            pass: document.getElementById("u-pass").value,
-            role: document.getElementById("u-role").value
-        });
-        alert("Usuario guardado");
+        const u = document.getElementById("u-user").value;
+        const p = document.getElementById("u-pass").value;
+        const r = document.getElementById("u-role").value;
+        if(u && p) {
+            await addDoc(collection(db, "usuarios"), { user: u, pass: p, role: r });
+            alert("Usuario creado");
+            document.getElementById("modal-users").classList.add("hidden");
+        }
     };
     document.getElementById("btn-logout").onclick = () => { localStorage.clear(); location.reload(); };
 </script>
