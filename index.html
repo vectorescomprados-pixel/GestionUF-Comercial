@@ -3,119 +3,116 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF V11 - Windows Style</title>
+    <title>GestiónUF V11.6 - Inquilinos Focus</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { 
             --bg: #f0f2f5; --card: #ffffff; --header-bg: #ffffff; --primary: #0078d4; 
-            --danger: #d83b01; --text: #323130; --border: #edebe9; --warning: #ffb900; 
-            --console-bg: #1b1b1b; --console-text: #00ff00;
+            --danger: #d83b01; --text: #323130; --border: #d2d0ce; --warning: #ffb900; 
+            --console-bg: #000000; --console-text: #00ff00;
         }
         .theme-dark { 
-            --bg: #0d141b; --card: #151f2b; --header-bg: #111b21; 
-            --text: #e9edef; --border: #222d34; 
+            --bg: #0d141b; --card: #1c2c3e; --header-bg: #111b21; 
+            --text: #ffffff; --border: #333333; 
         }
         
-        * { box-sizing: border-box; font-family: 'Segoe UI', -apple-system, sans-serif; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; transition: 0.3s; }
-        .wrap { width: 95%; max-width: 450px; padding: 10px 0; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
+        .wrap { width: 100%; max-width: 450px; padding: 15px; padding-bottom: 80px; }
 
-        /* HEADER & BUTTONS */
-        .main-header { background: var(--header-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
-        .btn { height: 40px; border-radius: 4px; border: 1px solid #8a8886; font-weight: 600; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-transform: uppercase; background: #fff; color: #323130; }
-        .btn:active { transform: translateY(1px); }
-        .primary { background: var(--primary); color: white; border: none; }
-        .danger { background: var(--danger); color: white; border: none; }
-        .warning { background: var(--warning); color: #000; border: none; }
+        /* HEADER Y BOTONES */
+        .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+        .btn { height: 38px; border: 1px solid var(--border); border-radius: 2px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; background: #fff; transition: 0.2s; }
+        .btn:active { background: #ebebeb; }
+        .primary { background: var(--primary) !important; color: white !important; border: none; }
+        .danger { background: var(--danger) !important; color: white !important; border: none; }
+        .warning { background: var(--warning) !important; color: #000 !important; border: none; }
 
-        /* CONSOLA INTEGRADA */
+        /* CONSOLA CENTRALIZADA */
         #console-log { 
-            width: 100%; height: 80px; background: var(--console-bg); color: var(--console-text); 
-            font-family: 'Consolas', monospace; font-size: 10px; padding: 8px; 
-            overflow-y: auto; border-radius: 4px; margin-bottom: 10px; border: 1px solid #333;
+            width: 100%; height: 85px; background: var(--console-bg); color: var(--console-text); 
+            font-family: 'Consolas', monospace; font-size: 11px; padding: 10px; overflow-y: auto; 
+            border: 2px solid #333; margin: 10px 0; border-radius: 4px;
         }
-
-        /* BUSQUEDA */
-        .search-box { width: 100%; height: 45px; padding: 10px; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 10px; }
 
         /* REGISTROS */
-        .item { background: var(--card); border-radius: 6px; padding: 12px; margin-bottom: 8px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .no-data { border-left: 5px solid var(--warning); }
-        .item-info b { font-size: 15px; display: block; }
-        .item-info span { font-size: 12px; color: #605e5c; }
-        .actions { display: flex; gap: 15px; color: #0078d4; cursor: pointer; font-size: 16px; }
+        .item { background: var(--card); padding: 12px; margin-bottom: 8px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; border-radius: 4px; position: relative; }
+        .alert-inquilino { border-left: 8px solid var(--warning); border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+        .item-data b { font-size: 15px; color: var(--primary); display: block; }
+        .item-data span { font-size: 12px; color: #666; display: block; }
+        .item-actions { display: flex; gap: 18px; font-size: 18px; color: #0078d4; }
 
-        /* BOTON COHETE (SCROLL TOP) */
-        #btn-rocket { 
-            position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; 
-            background: var(--primary); color: white; border-radius: 50%; border: none; 
-            display: none; align-items: center; justify-content: center; font-size: 24px; 
-            cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 9999;
-        }
+        /* COHETE 🚀 */
+        #rocket { position: fixed; bottom: 20px; right: 20px; width: 45px; height: 45px; background: var(--primary); color: white; border-radius: 50%; border: none; display: none; font-size: 20px; cursor: pointer; z-index: 999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+
+        /* BUSCADOR */
+        .search-area { background: var(--card); padding: 10px; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 10px; }
+        .search-input { width: 100%; height: 40px; padding: 8px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 2px; }
 
         /* MODALES */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000; }
-        .modal-content { background: #fff; padding: 20px; border-radius: 8px; width: 90%; max-width: 350px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .modal-content input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .modal-content { background: var(--card); width: 100%; max-width: 380px; padding: 20px; border-radius: 4px; border: 1px solid #999; }
+        .modal-content input { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #ccc; border-radius: 2px; }
         
         .hidden { display: none !important; }
     </style>
 </head>
-<body id="main-body">
+<body id="app-body">
 
     <!-- LOGIN -->
     <div id="login-screen" class="modal">
-        <div class="modal-content" style="text-align: center;">
-            <h2 style="color:var(--primary); margin-bottom:20px;">Acceso GestiónUF</h2>
+        <div class="modal-content" style="text-align:center">
+            <h2 style="color:var(--primary)">GESTIÓN UF V11.6</h2>
+            <p style="font-size: 12px; margin-bottom: 15px;">Inicie sesión para continuar</p>
             <input id="l-user" type="text" placeholder="Usuario">
             <input id="l-pass" type="password" placeholder="Contraseña">
-            <button id="btn-login" class="btn primary" style="width:100%;">ENTRAR</button>
+            <button id="btn-login" class="btn primary" style="width:100%; height:45px; margin-top:10px;">ACCEDER</button>
         </div>
     </div>
 
-    <!-- APP -->
-    <div id="main-screen" class="wrap hidden">
-        <div class="main-header">
-            <div class="grid-btns">
-                <button id="btn-tema" class="btn">TEMA</button>
-                <button id="btn-export" class="btn">EXPORTAR</button>
-                <button id="btn-logout" class="btn danger">SALIR</button>
-            </div>
-            <div class="grid-btns">
-                <button id="btn-open-add" class="btn primary">NUEVA UF</button>
-                <button id="btn-import" class="btn admin-only">IMPORTAR</button>
-                <button id="btn-users" class="btn admin-only">USUARIOS</button>
-            </div>
+    <!-- APP PRINCIPAL -->
+    <div id="main-app" class="wrap hidden">
+        <div class="grid-btns">
+            <button id="btn-tema" class="btn">TEMA</button>
+            <button id="btn-export" class="btn">EXPORTAR CSV</button>
+            <button id="btn-logout" class="btn danger">SALIR</button>
+        </div>
+        <div class="grid-btns">
+            <button id="btn-open-add" class="btn primary">NUEVA UF</button>
+            <button id="btn-import" class="btn admin-only">IMPORTAR</button>
+            <button id="btn-users" class="btn admin-only">USUARIOS</button>
         </div>
 
-        <div id="console-log"><div>> Sistema iniciado. Esperando comandos...</div></div>
+        <!-- CONSOLA EN EL MEDIO -->
+        <div id="console-log"><div>> Cargando registros del edificio...</div></div>
 
-        <div class="main-header">
-            <input id="search-input" class="search-box" placeholder="Buscar UF o Apellido...">
-            <div class="grid-btns" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="search-area">
+            <input id="search-input" class="search-input" placeholder="Buscar por UF o Nombre...">
+            <div class="grid-btns" style="grid-template-columns: 1fr 1fr 1.5fr;">
                 <button id="btn-search-exec" class="btn primary">BUSCAR</button>
                 <button id="btn-search-clear" class="btn">LIMPIAR</button>
-                <button id="btn-filter-avail" class="btn warning">UF DISPONIBLES</button>
+                <button id="btn-filter-avail" class="btn warning">SIN TEL. INQ.</button>
             </div>
         </div>
 
         <div id="list"></div>
     </div>
 
-    <!-- BOTÓN COHETE -->
-    <button id="btn-rocket" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">🚀</button>
+    <!-- BOTON COHETE -->
+    <button id="rocket" onclick="window.scrollTo({top:0, behavior:'smooth'})">🚀</button>
 
-    <!-- MODAL UF (SIMPLE) -->
+    <!-- MODAL UF -->
     <div id="modal-form-uf" class="modal hidden">
         <div class="modal-content">
-            <h3 id="form-title">Nueva Unidad</h3>
-            <input id="f-uf" placeholder="UF (Ej: 001)">
-            <input id="f-prop" placeholder="Nombre">
-            <input id="f-telp" placeholder="Teléfono">
-            <div class="grid-btns" style="grid-template-columns: 1fr 1fr">
+            <h3 id="form-title" style="margin-bottom:10px; font-size: 16px;">Detalles de la Unidad</h3>
+            <input id="f-uf" placeholder="Número UF (Ej: 01A)">
+            <input id="f-prop" placeholder="Nombre del Propietario">
+            <input id="f-telp" placeholder="Teléfono del Propietario">
+            <input id="f-inq" placeholder="Nombre del Inquilino">
+            <input id="f-teli" placeholder="Teléfono del Inquilino">
+            <div class="grid-btns" style="grid-template-columns: 1fr 1fr; margin-top:10px;">
                 <button id="btn-save-uf" class="btn primary">GUARDAR</button>
-                <button onclick="closeModals()" class="btn">CERRAR</button>
+                <button onclick="closeModals()" class="btn">CANCELAR</button>
             </div>
         </div>
     </div>
@@ -129,31 +126,27 @@
         
         let localData = [], currentEditId = null;
 
-        window.logAction = (msg) => {
-            const box = document.getElementById("console-log");
-            box.innerHTML += `<div>> [${new Date().toLocaleTimeString()}] ${msg}</div>`;
-            box.scrollTop = box.scrollHeight;
+        const log = (msg) => {
+            const c = document.getElementById("console-log");
+            c.innerHTML += `<div>> [${new Date().toLocaleTimeString()}] ${msg}</div>`;
+            c.scrollTop = c.scrollHeight;
         };
 
-        // LOGIN
-        const handleLogin = async () => {
+        const login = async () => {
             const u = document.getElementById("l-user").value;
             const p = document.getElementById("l-pass").value;
             const q = query(collection(db, "usuarios"), where("user", "==", u), where("pass", "==", p));
-            const snap = await getDocs(q);
-            if(!snap.empty) {
-                localStorage.setItem("uf_login", snap.docs[0].data().role);
-                location.reload();
-            } else alert("Error de acceso");
+            const s = await getDocs(q);
+            if(!s.empty) { localStorage.setItem("uf_login", s.docs[0].data().role); location.reload(); }
+            else alert("Credenciales incorrectas");
         };
-        document.getElementById("btn-login").onclick = handleLogin;
-        document.getElementById("l-pass").onkeypress = (e) => e.key === "Enter" && handleLogin();
+        document.getElementById("btn-login").onclick = login;
+        document.getElementById("l-pass").onkeypress = (e) => e.key === "Enter" && login();
 
-        // INICIO APP
         const role = localStorage.getItem("uf_login");
         if(role) {
             document.getElementById("login-screen").classList.add("hidden");
-            document.getElementById("main-screen").classList.remove("hidden");
+            document.getElementById("main-app").classList.remove("hidden");
             if(role === "operador") document.querySelectorAll(".admin-only").forEach(b => b.remove());
 
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
@@ -165,35 +158,41 @@
         function render(data) {
             const list = document.getElementById("list"); list.innerHTML = "";
             data.forEach(d => {
+                // LOGICA AMARILLA: Faltante de teléfono de INQUILINO únicamente
+                const sinInquilinoTel = (!d.TelefonoInquilino || d.TelefonoInquilino.trim() === "");
+                
                 const div = document.createElement("div");
-                div.className = `item ${!d.TelefonoPropietario ? 'no-data' : ''}`;
+                div.className = `item ${sinInquilinoTel ? 'alert-inquilino' : ''}`;
                 div.innerHTML = `
-                    <div class="item-info">
+                    <div class="item-data">
                         <b>UF ${d.UF}</b>
-                        <span>${d.Propietario || '---'} | ${d.TelefonoPropietario || 'S/D'}</span>
+                        <span>P: ${d.Propietario || 'S/D'} ${d.TelefonoPropietario ? '📞' : ''}</span>
+                        <span>I: ${d.Inquilino || 'S/D'} ${d.TelefonoInquilino ? '📞' : ''}</span>
                     </div>
-                    <div class="actions">
-                        <i class="far fa-edit" onclick="window.preEdit('${d.id}')"></i>
-                        <i class="fas fa-trash-alt" style="color:var(--danger)" onclick="window.delUF('${d.id}', '${d.UF}')"></i>
+                    <div class="item-actions">
+                        <i class="far fa-edit" onclick="window.preEdit('${d.id}')" title="Editar"></i>
+                        <i class="fas fa-trash-alt" style="color:var(--danger)" onclick="window.delUF('${d.id}', '${d.UF}')" title="Borrar"></i>
                     </div>`;
                 list.appendChild(div);
             });
         }
 
-        // FUNCIONES
         window.preEdit = (id) => {
             currentEditId = id;
             const d = localData.find(x => x.id === id);
+            document.getElementById("form-title").innerText = "Editando UF " + d.UF;
             document.getElementById("f-uf").value = d.UF;
-            document.getElementById("f-prop").value = d.Propietario;
+            document.getElementById("f-prop").value = d.Propietario || "";
             document.getElementById("f-telp").value = d.TelefonoPropietario || "";
+            document.getElementById("f-inq").value = d.Inquilino || "";
+            document.getElementById("f-teli").value = d.TelefonoInquilino || "";
             document.getElementById("modal-form-uf").classList.remove("hidden");
         };
 
         window.delUF = async (id, num) => {
-            if(confirm(`¿Borrar UF ${num}?`)) {
+            if(confirm(`¿Desea borrar la UF ${num}?`)) {
                 await deleteDoc(doc(db, "departamentos", id));
-                window.logAction(`UF ${num} eliminada.`);
+                log(`UF ${num} eliminada de la base.`);
             }
         };
 
@@ -201,42 +200,47 @@
             const payload = { 
                 UF: document.getElementById("f-uf").value, 
                 Propietario: document.getElementById("f-prop").value, 
-                TelefonoPropietario: document.getElementById("f-telp").value 
+                TelefonoPropietario: document.getElementById("f-telp").value,
+                Inquilino: document.getElementById("f-inq").value,
+                TelefonoInquilino: document.getElementById("f-teli").value
             };
             if(currentEditId) await updateDoc(doc(db, "departamentos", currentEditId), payload);
             else await addDoc(collection(db, "departamentos"), payload);
             closeModals();
-            window.logAction("Cambios guardados.");
+            log(`Registro UF ${payload.UF} actualizado.`);
         };
 
+        // FILTRAR AMARILLOS (Sin teléfono de inquilino)
         document.getElementById("btn-filter-avail").onclick = () => {
-            render(localData.filter(x => !x.TelefonoPropietario || x.TelefonoPropietario === ""));
-            window.logAction("Filtrando UF disponibles...");
+            const f = localData.filter(d => !d.TelefonoInquilino || d.TelefonoInquilino.trim() === "");
+            render(f);
+            log("Filtro aplicado: Unidades sin teléfono de inquilino.");
         };
 
-        document.getElementById("btn-export").onclick = () => {
-            const csv = localData.map(d => `${d.UF},${d.Propietario},${d.TelefonoPropietario}`).join("\n");
-            const blob = new Blob([csv], {type: 'text/csv'});
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url; a.download = "base_uf.csv"; a.click();
-            window.logAction("Base exportada a CSV.");
-        };
-
-        // SCROLL ROCKET
-        window.onscroll = () => {
-            const btn = document.getElementById("btn-rocket");
-            btn.style.display = window.scrollY > 300 ? "flex" : "none";
-        };
-
-        document.getElementById("btn-search-exec").onclick = () => {
+        const search = () => {
             const v = document.getElementById("search-input").value.toLowerCase();
-            render(localData.filter(x => x.UF.includes(v) || x.Propietario.toLowerCase().includes(v)));
+            render(localData.filter(x => 
+                x.UF.toLowerCase().includes(v) || 
+                (x.Propietario && x.Propietario.toLowerCase().includes(v)) || 
+                (x.Inquilino && x.Inquilino.toLowerCase().includes(v))
+            ));
+            log(`Búsqueda ejecutada: "${v}"`);
+        };
+        document.getElementById("btn-search-exec").onclick = search;
+        document.getElementById("search-input").onkeypress = (e) => e.key === "Enter" && search();
+
+        window.onscroll = () => {
+            document.getElementById("rocket").style.display = window.scrollY > 250 ? "block" : "none";
         };
 
+        document.getElementById("btn-search-clear").onclick = () => { document.getElementById("search-input").value=""; render(localData); };
         document.getElementById("btn-tema").onclick = () => document.body.classList.toggle("theme-dark");
-        document.getElementById("btn-open-add").onclick = () => { currentEditId = null; document.getElementById("modal-form-uf").classList.remove("hidden"); };
         document.getElementById("btn-logout").onclick = () => { localStorage.clear(); location.reload(); };
+        document.getElementById("btn-open-add").onclick = () => { 
+            currentEditId = null; 
+            document.querySelectorAll("#modal-form-uf input").forEach(i => i.value = "");
+            document.getElementById("modal-form-uf").classList.remove("hidden"); 
+        };
         window.closeModals = () => document.querySelectorAll(".modal").forEach(m => { if(m.id !== "login-screen") m.classList.add("hidden"); });
     </script>
 </body>
