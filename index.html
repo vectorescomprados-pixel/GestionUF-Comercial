@@ -3,9 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - Enterprise V12</title>
+    <title>GestiónUF Pro - Final Gold V2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* RESTAURACIÓN DE TUS ESTILOS ORIGINALES */
         :root { --bg: #f0f2f5; --card: #ffffff; --primary: #2563eb; --danger: #e11d48; --text: #1f293b; --border: #e5e7eb; --warning: #f59e0b; --success: #22c55e; }
         body.dark-mode { --bg: #0b141a; --card: #111b21; --text: #e9edef; --border: #222d34; }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; transition: background 0.2s; }
@@ -13,27 +14,28 @@
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .content-body { margin-top: 420px; width: 100%; padding-bottom: 100px; }
+        .content-body { margin-top: 380px; width: 100%; padding-bottom: 100px; }
         .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
         .grid-btns-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
         .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #64748b; } .warning { background: var(--warning); color: #000; }
         
         .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; }
+        .item.no-phone { border-left: 8px solid var(--warning) !important; }
         .item b { font-size: 16px; color: var(--primary); display: block; margin-bottom: 5px; }
+        .details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 14px; line-height: 1.6; }
         input, select { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
         
-        #log-panel { background: #000; padding: 12px; font-size: 10px; height: 100px; overflow-y: auto; border-radius: 8px; font-family: monospace; border: 1px solid #333; margin-bottom: 10px; }
+        #log-panel { background: #000; padding: 12px; font-size: 10px; height: 120px; overflow-y: auto; border-radius: 8px; font-family: monospace; border: 1px solid #333; line-height: 1.4; margin-bottom: 10px; }
         .log-success { color: #00ff41; } .log-err { color: #ff3131; } .log-info { color: #00d4ff; }
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; max-height: 90vh; overflow-y: auto; }
-        .tab-btn { padding: 10px; border: none; background: none; color: var(--text); font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent; }
-        .tab-btn.active { border-bottom: 2px solid var(--primary); color: var(--primary); }
+        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; }
     </style>
 </head>
 <body class="dark-mode">
 
+    <!-- LOGIN ORIGINAL -->
     <div id="login-screen" class="modal">
         <div class="modal-content">
             <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
@@ -44,24 +46,21 @@
         </div>
     </div>
 
+    <!-- MAIN SCREEN FIEL A FOTO 1 -->
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● SESIÓN ACTIVA</div>
-            
+            <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● EN LÍNEA - SEGURIDAD ACTIVA</div>
             <div class="grid-btns">
-                <button id="btn-log-toggle" class="btn ghost">LOGS</button>
+                <button id="btn-log-toggle" class="btn ghost">HISTORIAL</button>
                 <button id="btn-users-manage" class="btn warning admin-only">USUARIOS</button>
                 <button id="btn-logout-trigger" class="btn danger">CERRAR</button>
             </div>
-            
             <div class="grid-btns">
                 <button id="btn-add" class="btn primary">NUEVA UF</button>
                 <button id="btn-import" class="btn ghost admin-only">IMPORTAR</button>
                 <button id="btn-export" class="btn ghost admin-only">RESPALDO</button>
             </div>
-
             <input id="search-input" placeholder="Buscar por Unidad o Apellido...">
-            
             <div class="grid-btns">
                 <button id="btn-search" class="btn primary">BUSCAR</button>
                 <button id="btn-clear" class="btn ghost">LIMPIAR</button>
@@ -76,36 +75,24 @@
         </div>
     </div>
 
+    <!-- MODAL GESTIÓN USUARIOS (MISMO ESTILO QUE TUS REGISTROS) -->
     <div id="modal-users" class="modal hidden">
         <div class="modal-content">
-            <h3 style="margin-bottom:15px">Gestión de Usuarios</h3>
-            <div id="user-form">
-                <input id="u-name" placeholder="Nombre de Usuario">
-                <input id="u-pass" placeholder="Contraseña">
-                <select id="u-role">
-                    <option value="operador">Operador</option>
-                    <option value="admin">Administrador</option>
-                </select>
-                <button id="btn-save-user" class="btn primary" style="width:100%">CREAR / ACTUALIZAR</button>
-            </div>
+            <h3 style="margin-bottom:15px; color:var(--primary)">Gestión de Usuarios</h3>
+            <input id="u-name" placeholder="Usuario">
+            <input id="u-pass" placeholder="Contraseña">
+            <select id="u-role">
+                <option value="operador">Operador</option>
+                <option value="admin">Administrador</option>
+            </select>
+            <button id="btn-save-user" class="btn primary" style="width:100%">CREAR / ACTUALIZAR</button>
             <hr style="margin:15px 0; border:0; border-top:1px solid var(--border)">
-            <div id="users-list"></div>
-            <button onclick="document.getElementById('modal-users').classList.add('hidden')" class="btn ghost" style="width:100%; margin-top:10px">CERRAR</button>
+            <div id="users-list" style="max-height: 200px; overflow-y: auto;"></div>
+            <button onclick="document.getElementById('modal-users').classList.add('hidden')" class="btn ghost" style="width:100%; margin-top:10px">VOLVER</button>
         </div>
     </div>
 
-    <div id="modal-confirm" class="modal hidden">
-        <div class="modal-content" style="text-align:center">
-            <h3>Seguridad Requerida</h3>
-            <p id="confirm-msg" style="margin:10px 0; font-size:13px"></p>
-            <input id="confirm-pass" type="password" placeholder="Clave Administrativa">
-            <div class="grid-btns-2">
-                <button id="btn-confirm-yes" class="btn primary">AUTORIZAR</button>
-                <button id="btn-confirm-no" class="btn danger">VOLVER</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- MODAL FORMULARIO UF ORIGINAL[cite: 1] -->
     <div id="modal-form" class="modal hidden">
         <div class="modal-content">
             <h3 id="form-title" style="text-align:center; margin-bottom:15px">Datos de Unidad</h3>
@@ -121,7 +108,18 @@
         </div>
     </div>
 
-    <input type="file" id="csv-file" accept=".csv" class="hidden">
+    <!-- MODAL CONFIRMACIÓN ORIGINAL[cite: 1] -->
+    <div id="modal-confirm" class="modal hidden">
+        <div class="modal-content" style="text-align:center">
+            <h3>Seguridad Requerida</h3>
+            <p id="confirm-msg" style="margin:10px 0; font-size:13px"></p>
+            <input id="confirm-pass" type="password" placeholder="Clave Administrativa">
+            <div class="grid-btns-2">
+                <button id="btn-confirm-yes" class="btn primary">AUTORIZAR</button>
+                <button id="btn-confirm-no" class="btn danger">VOLVER</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -140,53 +138,35 @@
             lp.scrollTop = lp.scrollHeight;
         };
 
-        // --- SISTEMA DE LOGIN ---
+        // --- LOGIN CON ROLES ---
         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("login-user").value;
             const p = document.getElementById("login-pass").value;
 
-            // Bypass Maestro
             if(p === MASTER_CODE) {
                 sessionStorage.setItem("userRole", "admin");
-                sessionStorage.setItem("userName", "SUPERVISOR");
-                entrarApp();
-                return;
+                entrar(); return;
             }
 
-            const q = query(collection(db, "usuarios"), where("user", "==", u), where("pass", "==", p));
-            const snap = await getDocs(q);
-            
+            const snap = await getDocs(query(collection(db, "usuarios"), where("user", "==", u), where("pass", "==", p)));
             if(!snap.empty) {
-                const userData = snap.docs.data();
-                sessionStorage.setItem("userRole", userData.role);
-                sessionStorage.setItem("userName", userData.user);
-                entrarApp();
-            } else {
-                alert("Usuario o Clave incorrectos");
-            }
+                sessionStorage.setItem("userRole", snap.docs[0].data().role);
+                entrar();
+            } else alert("Acceso Denegado");
         };
 
-        function entrarApp() {
+        function entrar() {
             const role = sessionStorage.getItem("userRole");
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
+            if(role === "operador") document.querySelectorAll(".admin-only").forEach(el => el.classList.add("hidden"));
             
-            // Ocultar botones según rol
-            if(role === "operador") {
-                document.querySelectorAll(".admin-only").forEach(el => el.classList.add("hidden"));
-            }
-            
-            writeLog(`Bienvenido ${sessionStorage.getItem("userName")} (${role})`, "info");
-            iniciarSincronizacion();
-        }
-
-        function iniciarSincronizacion() {
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 renderUFs(departamentos);
             });
-            // Sincronizar Usuarios para Admin
-            if(sessionStorage.getItem("userRole") === "admin") {
+
+            if(role === "admin") {
                 onSnapshot(collection(db, "usuarios"), (snap) => {
                     usuarios = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                     renderUsers();
@@ -194,14 +174,13 @@
             }
         }
 
-        // --- RENDERIZADO DE UFs ---
         function renderUFs(data) {
             const list = document.getElementById("list");
             list.innerHTML = "";
             data.forEach(d => {
-                const telActivo = d.TelefonoInquilino || d.TelefonoPropietario || "";
+                const sinT = (!d.TelefonoPropietario && !d.TelefonoInquilino);
                 const div = document.createElement("div");
-                div.className = "item";
+                div.className = `item ${sinT ? 'no-phone' : ''}`;
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center">
                         <div><b>UF: ${d.UF}</b><small>${d.Propietario || 'S/D'}</small></div>
@@ -211,34 +190,22 @@
                             <i class="fas fa-trash admin-only ${sessionStorage.getItem('userRole')==='operador'?'hidden':''}" style="color:var(--danger)" onclick="askConfirm('¿Borrar UF ${d.UF}?', 'delete', '${d.id}')"></i>
                         </div>
                     </div>
-                    <div id="det-${d.id}" class="hidden" style="margin-top:10px; font-size:13px; border-top:1px dashed #ccc; padding-top:10px">
+                    <div id="det-${d.id}" class="details hidden">
                         <p>Prop: ${d.Propietario} | Tel: ${d.TelefonoPropietario}</p>
                         <p>Inq: ${d.Inquilino} | Tel: ${d.TelefonoInquilino}</p>
-                        <div class="grid-btns-2">
-                            <a href="tel:${telActivo}" class="btn primary"><i class="fas fa-phone"></i></a>
-                            <a href="https://wa.me/${telActivo.replace(/\D/g,'')}" class="btn" style="background:#22c55e"><i class="fab fa-whatsapp"></i></a>
-                        </div>
                     </div>`;
                 list.appendChild(div);
             });
         }
 
-        // --- GESTIÓN DE USUARIOS ---
+        // --- GESTIÓN USUARIOS (MISMO ESTILO DE BOTONES QUE FOTO 1) ---
         document.getElementById("btn-users-manage").onclick = () => document.getElementById("modal-users").classList.remove("hidden");
-
+        
         document.getElementById("btn-save-user").onclick = async () => {
-            const u = { 
-                user: document.getElementById("u-name").value, 
-                pass: document.getElementById("u-pass").value, 
-                role: document.getElementById("u-role").value 
-            };
+            const u = { user: document.getElementById("u-name").value, pass: document.getElementById("u-pass").value, role: document.getElementById("u-role").value };
             if(userEditId) await updateDoc(doc(db, "usuarios", userEditId), u);
             else await addDoc(collection(db, "usuarios"), u);
-            
-            document.getElementById("u-name").value = "";
-            document.getElementById("u-pass").value = "";
-            userEditId = null;
-            writeLog("Usuario guardado", "success");
+            userEditId = null; document.getElementById("u-name").value = ""; document.getElementById("u-pass").value = "";
         };
 
         function renderUsers() {
@@ -251,28 +218,16 @@
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center">
                         <span><b>${u.user}</b> (${u.role})</span>
-                        <div style="display:flex; gap:10px">
-                            <i class="fas fa-edit" style="color:var(--primary)" onclick="prepEditUser('${u.id}')"></i>
-                            <i class="fas fa-trash" style="color:var(--danger)" onclick="deleteUser('${u.id}')"></i>
+                        <div style="display:flex; gap:12px">
+                            <i class="fas fa-edit" style="color:var(--primary)" onclick="userEditId='${u.id}'; document.getElementById('u-name').value='${u.user}';"></i>
+                            <i class="fas fa-trash" style="color:var(--danger)" onclick="deleteDoc(doc(db, 'usuarios', '${u.id}'))"></i>
                         </div>
                     </div>`;
                 container.appendChild(div);
             });
         }
 
-        window.prepEditUser = (id) => {
-            const u = usuarios.find(x => x.id === id);
-            document.getElementById("u-name").value = u.user;
-            document.getElementById("u-pass").value = u.pass;
-            document.getElementById("u-role").value = u.role;
-            userEditId = id;
-        };
-
-        window.deleteUser = async (id) => {
-            if(confirm("¿Eliminar este acceso?")) await deleteDoc(doc(db, "usuarios", id));
-        };
-
-        // --- LÓGICA DE UFs (Tus funciones originales) ---
+        // --- LÓGICA DE UFs ORIGINAL[cite: 1] ---
         window.editUF = (id) => {
             editId = id; const d = departamentos.find(x => x.id === id);
             document.getElementById("f-uf").value = d.UF; document.getElementById("f-prop").value = d.Propietario;
@@ -282,17 +237,12 @@
         };
 
         document.getElementById("btn-save").onclick = async () => {
-            const d = { 
-                UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, 
-                TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, 
-                TelefonoInquilino: document.getElementById("f-teli").value 
-            };
+            const d = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
             if(editId) await updateDoc(doc(db, "departamentos", editId), d);
             else await addDoc(collection(db, "departamentos"), d);
             document.getElementById("modal-form").classList.add("hidden");
         };
 
-        // --- SEGURIDAD ---
         window.askConfirm = (msg, type, id = null) => {
             pendingAction = { type, id };
             document.getElementById("confirm-msg").innerText = msg;
@@ -300,30 +250,16 @@
         };
 
         document.getElementById("btn-confirm-yes").onclick = async () => {
-            const pass = document.getElementById("confirm-pass").value;
-            // Solo autoriza si es el MASTER_CODE o el pass del admin actual
-            if(pass !== MASTER_CODE) return alert("Clave Incorrecta");
-
+            if(document.getElementById("confirm-pass").value !== MASTER_CODE) return alert("Error");
             if(pendingAction.type === 'delete') await deleteDoc(doc(db, "departamentos", pendingAction.id));
-            if(pendingAction.type === 'deleteAll') {
-                const s = await getDocs(collection(db, "departamentos"));
-                const b = writeBatch(db); s.forEach(d => b.delete(d.ref)); await b.commit();
-            }
             document.getElementById("modal-confirm").classList.add("hidden");
-            document.getElementById("confirm-pass").value = "";
         };
 
-        // --- OTROS ---
-        document.getElementById("btn-logout-trigger").onclick = () => location.reload();
         document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-panel").classList.toggle("hidden");
+        document.getElementById("btn-logout-trigger").onclick = () => location.reload();
         document.getElementById("btn-add").onclick = () => { editId = null; document.getElementById("modal-form").classList.remove("hidden"); };
         document.getElementById("btn-cancel").onclick = () => document.getElementById("modal-form").classList.add("hidden");
-        document.getElementById("btn-confirm-no").onclick = () => document.getElementById("modal-confirm").classList.add("hidden");
-        document.getElementById("btn-recover-open").onclick = () => {
-            const c = prompt("Ingrese código maestro:");
-            if(c === MASTER_CODE) alert("Soporte: Contactar al 1131552679");
-        };
-
+        document.querySelectorAll(".btn-danger, .ghost").forEach(b => b.onclick = () => document.querySelectorAll(".modal").forEach(m => m.id!=="login-screen" && m.classList.add("hidden")));
     </script>
 </body>
 </html>
