@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>GestiónUF - Final Gold V2.1</title>
+    <title>GestiónUF - Final Gold V2.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* CSS IDENTICO A TU FOTO 1 */
         :root { --bg-color: #0b141a; --card-bg: #111b21; --primary-color: #2563eb; --danger-color: #e11d48; --text-color: #e9edef; --border-color: #222d34; --warning-color: #f59e0b; --success-color: #22c55e; }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
         body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; min-height: 100vh; }
@@ -15,57 +16,52 @@
         .main-content { margin-top: 380px; width: 100%; padding-bottom: 100px; }
         .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
         .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; }
-        .btn-primary { background-color: var(--primary-color); } 
-        .btn-danger { background-color: var(--danger-color); } 
-        .btn-ghost { background-color: #334155; } 
-        .btn-warning { background-color: var(--warning-color); color: #000; }
-        input, select { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border-color); padding: 0 15px; background-color: #1d2a33; color: white; font-size: 14px; }
+        .btn-primary { background-color: var(--primary-color); } .btn-danger { background-color: var(--danger-color); } .btn-ghost { background-color: #334155; } .btn-warning { background-color: var(--warning-color); color: #000; }
+        input, select { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border-color); padding: 0 15px; background-color: #1d2a33; color: white; }
         .uf-card { background-color: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border-color); }
         .uf-card.no-phones { border-left: 8px solid var(--warning-color); }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; }
-        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; border: 1px solid var(--border-color); box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; border: 1px solid var(--border-color); }
     </style>
 </head>
 <body>
 
-    <!-- LOGIN Y REGISTRO -->
+    <!-- PANTALLA LOGIN (ESTRUCTURA ORIGINAL) -->
     <div id="login-screen" class="modal-overlay">
         <div class="modal-content">
-            <h2 style="text-align: center; margin-bottom: 20px; color: var(--primary-color);">GESTIÓN UF PRO</h2>
-            
-            <div id="login-form-area">
+            <div id="login-box">
+                <h2 style="text-align: center; margin-bottom: 20px; color: var(--primary-color);">INICIAR SESIÓN</h2>
                 <input type="text" id="login-user" placeholder="Usuario">
                 <input type="password" id="login-pass" placeholder="Contraseña">
-                <button id="btn-login" class="btn btn-primary" style="width: 100%; height: 50px;">ENTRAR</button>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-                    <button id="btn-go-register" class="btn btn-warning">CREAR USUARIO</button>
-                    <button id="btn-recover" class="btn btn-ghost">RECUPERAR</button>
+                <button id="btn-login" class="btn btn-primary" style="width: 100%; height: 50px; margin-bottom: 10px;">ENTRAR</button>
+                <div style="display: flex; gap: 10px;">
+                    <button id="btn-pre-register" class="btn btn-warning" style="flex: 1;">CREAR USUARIO</button>
+                    <button id="btn-recover" class="btn btn-ghost" style="flex: 1;">RECUPERAR</button>
                 </div>
             </div>
 
-            <!-- AREA DE REGISTRO OCULTA -->
-            <div id="register-area" class="hidden">
-                <h3 style="text-align: center; margin-bottom: 15px; color: var(--warning-color);">NUEVO USUARIO</h3>
-                <input type="password" id="reg-master" placeholder="CLAVE MAESTRA REQUERIDA">
-                <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 15px;">
-                <input type="text" id="reg-user" placeholder="Nombre de Usuario">
-                <input type="password" id="reg-pass" placeholder="Definir Contraseña">
+            <!-- FORMULARIO DE REGISTRO (OCULTO POR DEFECTO) -->
+            <div id="register-box" class="hidden">
+                <h3 style="text-align: center; margin-bottom: 15px; color: var(--warning-color);">NUEVO ACCESO</h3>
+                <input type="text" id="reg-user" placeholder="Nuevo Usuario">
+                <input type="password" id="reg-pass" placeholder="Nueva Contraseña">
                 <select id="reg-role">
-                    <option value="operador">ROL: OPERADOR (LECTURA)</option>
-                    <option value="admin">ROL: ADMIN (CONTROL TOTAL)</option>
+                    <option value="operador">OPERADOR (SOLO LECTURA)</option>
+                    <option value="admin">ADMINISTRADOR (FULL)</option>
                 </select>
-                <button id="btn-save-user" class="btn btn-warning" style="width: 100%; height: 45px;">VALIDAR Y CREAR</button>
-                <button id="btn-back-login" class="btn btn-ghost" style="width: 100%; margin-top: 10px;">VOLVER AL LOGIN</button>
+                <button id="btn-save-user" class="btn btn-warning" style="width: 100%;">VALIDAR Y CREAR</button>
+                <button id="btn-cancel-reg" class="btn btn-danger" style="width: 100%; margin-top: 10px;">CANCELAR</button>
             </div>
         </div>
     </div>
 
+    <!-- CONTENEDOR APP (FOTO 1) -->
     <div id="app-container" class="wrapper hidden">
         <div class="header-fixed">
-            <div id="status-indicator" style="font-size: 10px; text-align: center; margin-bottom: 8px; color: var(--success-color);">● EN LÍNEA - SEGURIDAD ACTIVA</div>
+            <div id="status-indicator" style="font-size: 10px; text-align: center; margin-bottom: 8px; color: var(--success-color); font-weight: bold;">● EN LÍNEA - SEGURIDAD ACTIVA</div>
             <div class="btn-grid">
                 <button id="btn-show-logs" class="btn btn-ghost">HISTORIAL</button>
-                <button class="btn btn-warning">SOPORTE</button>
+                <button id="btn-soporte" class="btn btn-warning">SOPORTE</button>
                 <button id="btn-exit" class="btn btn-danger">CERRAR</button>
             </div>
             <div class="btn-grid">
@@ -86,38 +82,26 @@
             <div id="log-panel" class="hidden">
                 <div id="log-content" style="background:#000; padding:10px; height:120px; overflow-y:auto; font-family:monospace; font-size:10px; color:#0f0; border-radius:8px;"></div>
                 <div style="display:flex; gap:10px; margin-top:5px;">
-                    <button id="btn-download-logs" class="btn btn-primary" style="flex:1; height:30px;">DESCARGAR LOGS</button>
-                    <button id="btn-rocket" class="btn btn-warning" style="width:50px; height:30px;"><i class="fas fa-rocket"></i></button>
+                    <button id="btn-download-logs" class="btn btn-primary" style="flex:1;">DESCARGAR LOGS</button>
+                    <button id="btn-rocket" class="btn btn-warning" style="width:50px;"><i class="fas fa-rocket"></i></button>
                 </div>
             </div>
             <div id="uf-list"></div>
         </div>
     </div>
 
-    <!-- MODAL FORMULARIO UF -->
+    <!-- MODAL FORMULARIO EDICIÓN -->
     <div id="modal-form" class="modal-overlay hidden">
         <div class="modal-content">
-            <h3 id="form-title" style="margin-bottom:15px; text-align:center;">DATOS DE UNIDAD</h3>
+            <h3 style="margin-bottom:15px; text-align:center;">DATOS DE UNIDAD</h3>
             <input id="f-uf" placeholder="Unidad">
             <input id="f-prop" placeholder="Propietario">
             <input id="f-telp" placeholder="Tel. Propietario">
             <input id="f-inq" placeholder="Inquilino">
             <input id="f-teli" placeholder="Tel. Inquilino">
-            <div class="btn-grid" style="grid-template-columns: 1fr 1fr; margin-top:10px;">
-                <button id="btn-save-uf" class="btn btn-primary">GUARDAR</button>
-                <button id="btn-cancel-form" class="btn btn-danger">CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL CONFIRMACIÓN BORRAR -->
-    <div id="modal-confirm" class="modal-overlay hidden">
-        <div class="modal-content" style="text-align:center;">
-            <h3 id="confirm-txt">¿Eliminar registro?</h3>
-            <input type="password" id="admin-pass-confirm" placeholder="Clave Maestra" style="margin-top:15px;">
-            <div style="display:flex; gap:10px; margin-top:15px;">
-                <button id="btn-confirm-yes" class="btn btn-primary" style="flex:1;">BORRAR</button>
-                <button id="btn-confirm-no" class="btn btn-danger" style="flex:1;">CERRAR</button>
+            <div style="display: flex; gap: 10px;">
+                <button id="btn-save-uf" class="btn btn-primary" style="flex:1;">GUARDAR</button>
+                <button id="btn-cancel-form" class="btn btn-danger" style="flex:1;">CANCELAR</button>
             </div>
         </div>
     </div>
@@ -130,38 +114,38 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let ufs = [], editId = null, deleteId = null, MASTER = "1131552679";
+        let ufs = [], editId = null, MASTER = "1131552679";
 
-        // --- LÓGICA DE LOGIN Y REGISTRO ---
-        document.getElementById("btn-go-register").onclick = () => {
-            document.getElementById("login-form-area").classList.add("hidden");
-            document.getElementById("register-area").classList.remove("hidden");
+        // --- LÓGICA DE USUARIOS SIMPLIFICADA ---
+        document.getElementById("btn-pre-register").onclick = () => {
+            const pass = prompt("INGRESE CLAVE MAESTRA PARA CREAR USUARIO:");
+            if(pass === MASTER) {
+                document.getElementById("login-box").classList.add("hidden");
+                document.getElementById("register-box").classList.remove("hidden");
+            } else if(pass !== null) {
+                alert("CLAVE INCORRECTA");
+            }
         };
 
-        document.getElementById("btn-back-login").onclick = () => {
-            document.getElementById("register-area").classList.add("hidden");
-            document.getElementById("login-form-area").classList.remove("hidden");
+        document.getElementById("btn-cancel-reg").onclick = () => {
+            document.getElementById("register-box").classList.add("hidden");
+            document.getElementById("login-box").classList.remove("hidden");
         };
 
         document.getElementById("btn-save-user").onclick = async () => {
-            const masterInput = document.getElementById("reg-master").value;
-            const newUser = document.getElementById("reg-user").value;
-            const newPass = document.getElementById("reg-pass").value;
-            const newRole = document.getElementById("reg-role").value;
-
-            if(masterInput !== MASTER) return alert("CLAVE MAESTRA INCORRECTA. No tienes permiso.");
-            if(!newUser || !newPass) return alert("Completa todos los campos");
-
-            try {
-                await addDoc(collection(db, "usuarios"), { user: newUser, pass: newPass, role: newRole });
-                alert("Usuario creado con éxito");
-                document.getElementById("btn-back-login").click();
-            } catch(e) { alert("Error al crear usuario"); }
+            const user = document.getElementById("reg-user").value;
+            const pass = document.getElementById("reg-pass").value;
+            const role = document.getElementById("reg-role").value;
+            if(!user || !pass) return alert("Complete los datos");
+            
+            await addDoc(collection(db, "usuarios"), { user, pass, role });
+            alert("Usuario creado correctamente");
+            document.getElementById("btn-cancel-reg").click(); // Vuelve al login solo
         };
 
-        // --- RESTO DE FUNCIONES RECUPERADAS ---
-        document.getElementById("login-pass").onkeypress = (e) => { if(e.key === 'Enter') login(); };
+        // --- FUNCIONES DE APP ---
         document.getElementById("btn-login").onclick = login;
+        document.getElementById("login-pass").onkeypress = (e) => { if(e.key === 'Enter') login(); };
 
         async function login() {
             const u = document.getElementById("login-user").value;
@@ -170,17 +154,17 @@
             const q = query(collection(db, "usuarios"), where("user", "==", u), where("pass", "==", p));
             const snap = await getDocs(q);
             if(!snap.empty) start(snap.docs[0].data().role);
-            else alert("Acceso denegado");
+            else alert("Datos incorrectos");
         }
 
         function start(role) {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("app-container").classList.remove("hidden");
             if(role === "operador") document.querySelectorAll(".admin-only").forEach(e => e.remove());
-            loadData();
+            load();
         }
 
-        function loadData() {
+        function load() {
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 ufs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 render(ufs);
@@ -191,34 +175,27 @@
             const list = document.getElementById("uf-list");
             list.innerHTML = "";
             data.forEach(d => {
-                const sinT = !d.TelefonoPropietario && !d.TelefonoInquilino;
+                const sin = !d.TelefonoPropietario && !d.TelefonoInquilino;
                 const card = document.createElement("div");
-                card.className = `uf-card ${sinT ? 'no-phones' : ''}`;
+                card.className = `uf-card ${sin ? 'no-phones' : ''}`;
                 card.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div><b style="color:var(--primary-color)">UF: ${d.UF}</b><br><small>${d.Propietario || 'S/D'}</small></div>
                         <div style="display:flex; gap:15px; font-size:18px;">
                             <i class="fas fa-eye" onclick="toggleDet('${d.id}')"></i>
                             <i class="fas fa-edit" style="color:var(--primary-color)" onclick="openEdit('${d.id}')"></i>
-                            <i class="fas fa-trash" style="color:var(--danger-color)" onclick="openDel('${d.id}', '${d.UF}')"></i>
+                            <i class="fas fa-trash admin-only" style="color:var(--danger-color)" onclick="borrar('${d.id}', '${d.UF}')"></i>
                         </div>
                     </div>
                     <div id="det-${d.id}" class="hidden" style="margin-top:10px; border-top:1px dashed #444; padding-top:10px;">
-                        <p>P: ${d.Propietario} 
-                           ${d.TelefonoPropietario ? `<a href="tel:${d.TelefonoPropietario}"><i class="fas fa-phone" style="color:var(--success-color); margin-left:10px;"></i></a> 
-                           <a href="https://wa.me/${d.TelefonoPropietario}"><i class="fab fa-whatsapp" style="color:var(--success-color); margin-left:10px;"></i></a>` : ''}
-                        </p>
-                        <p>I: ${d.Inquilino} 
-                           ${d.TelefonoInquilino ? `<a href="tel:${d.TelefonoInquilino}"><i class="fas fa-phone" style="color:var(--success-color); margin-left:10px;"></i></a> 
-                           <a href="https://wa.me/${d.TelefonoInquilino}"><i class="fab fa-whatsapp" style="color:var(--success-color); margin-left:10px;"></i></a>` : ''}
-                        </p>
+                        <p>P: ${d.Propietario} ${d.TelefonoPropietario ? `<a href="tel:${d.TelefonoPropietario}"><i class="fas fa-phone" style="color:var(--success-color); margin-left:10px;"></i></a> <a href="https://wa.me/${d.TelefonoPropietario}"><i class="fab fa-whatsapp" style="color:var(--success-color); margin-left:10px;"></i></a>` : ''}</p>
+                        <p>I: ${d.Inquilino} ${d.TelefonoInquilino ? `<a href="tel:${d.TelefonoInquilino}"><i class="fas fa-phone" style="color:var(--success-color); margin-left:10px;"></i></a> <a href="https://wa.me/${d.TelefonoInquilino}"><i class="fab fa-whatsapp" style="color:var(--success-color); margin-left:10px;"></i></a>` : ''}</p>
                     </div>`;
                 list.appendChild(card);
             });
         }
 
         window.toggleDet = (id) => document.getElementById(`det-${id}`).classList.toggle("hidden");
-        
         window.openEdit = (id) => {
             editId = id; const d = ufs.find(x => x.id === id);
             document.getElementById("f-uf").value = d.UF; document.getElementById("f-prop").value = d.Propietario;
@@ -227,7 +204,7 @@
             document.getElementById("modal-form").classList.remove("hidden");
         };
 
-        document.getElementById("btn-new-uf").onclick = () => { editId = null; document.getElementById("modal-form").reset; document.getElementById("modal-form").classList.remove("hidden"); };
+        document.getElementById("btn-new-uf").onclick = () => { editId = null; document.getElementById("f-uf").value=""; document.getElementById("modal-form").classList.remove("hidden"); };
         document.getElementById("btn-save-uf").onclick = async () => {
             const data = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
             if(editId) await updateDoc(doc(db, "departamentos", editId), data);
@@ -235,29 +212,23 @@
             document.getElementById("modal-form").classList.add("hidden");
         };
 
-        window.openDel = (id, uf) => { deleteId = id; document.getElementById("confirm-txt").innerText = `¿Eliminar UF ${uf}?`; document.getElementById("modal-confirm").classList.remove("hidden"); };
-        document.getElementById("btn-confirm-yes").onclick = async () => {
-            if(document.getElementById("admin-pass-confirm").value === MASTER) {
-                await deleteDoc(doc(db, "departamentos", deleteId));
-                document.getElementById("modal-confirm").classList.add("hidden");
-                document.getElementById("admin-pass-confirm").value = "";
-            } else alert("Clave incorrecta");
+        window.borrar = async (id, uf) => {
+            if(confirm(`¿Eliminar UF ${uf}?`)) {
+                const p = prompt("INGRESE CLAVE MAESTRA:");
+                if(p === MASTER) await deleteDoc(doc(db, "departamentos", id));
+                else alert("Incorrecta");
+            }
         };
 
-        document.getElementById("btn-confirm-no").onclick = () => document.getElementById("modal-confirm").classList.add("hidden");
         document.getElementById("btn-cancel-form").onclick = () => document.getElementById("modal-form").classList.add("hidden");
         document.getElementById("btn-show-logs").onclick = () => document.getElementById("log-panel").classList.toggle("hidden");
         document.getElementById("btn-exit").onclick = () => location.reload();
-        
-        const buscar = () => {
+        document.getElementById("btn-search-trigger").onclick = () => {
             const t = document.getElementById("search-input").value.toLowerCase();
             render(ufs.filter(u => u.UF.toLowerCase().includes(t) || u.Propietario.toLowerCase().includes(t)));
         };
-        document.getElementById("btn-search-trigger").onclick = buscar;
-        document.getElementById("search-input").onkeyup = (e) => { if(e.key === 'Enter') buscar(); };
         document.getElementById("btn-clear-search").onclick = () => { document.getElementById("search-input").value = ""; render(ufs); };
         document.getElementById("btn-filter-empty").onclick = () => render(ufs.filter(u => !u.TelefonoPropietario && !u.TelefonoInquilino));
-        document.getElementById("btn-rocket").onclick = () => alert("Optimizando base de datos... 🚀");
     </script>
 </body>
 </html>
