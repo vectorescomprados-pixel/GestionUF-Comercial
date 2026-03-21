@@ -3,44 +3,43 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - Enterprise V3.9.2</title>
+    <title>GestiónUF Pro - Enterprise V3.9.5</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0b141a; --card: #111b21; --primary: #2563eb; --danger: #e11d48; --text: #e9edef; --border: #222d34; --warning: #f59e0b; --success: #22c55e; --ghost: #4a5568; }
         body.light-mode { --bg: #f0f2f5; --card: #ffffff; --text: #1f293b; --border: #e5e7eb; }
-        
-        /* Bloqueo de pull-to-refresh en Android */
-        html, body { overscroll-behavior-y: contain; margin: 0; padding: 0; }
-        
+        html, body { overscroll-behavior-y: contain; margin: 0; padding: 0; background: var(--bg); color: var(--text); }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; transition: 0.3s; }
-        .wrap { width: 95%; max-width: 450px; position: relative; }
+        
+        .wrap { width: 95%; max-width: 450px; margin: 0 auto; position: relative; }
         .hidden { display: none !important; }
         
+        /* Header Fijo */
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .content-body { margin-top: 395px; width: 100%; padding-bottom: 100px; }
+        .content-body { margin-top: 410px; padding-bottom: 100px; }
         
+        /* Botones */
         .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
         .grid-btns-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; }
         .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: var(--ghost); } .warning { background: var(--warning); color: #000; }
         
-        #btn-rocket { position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px; border-radius: 50%; z-index: 5000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 20px; border: 2px solid white; display: none; align-items: center; justify-content: center; }
+        #btn-rocket { position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px; border-radius: 50%; z-index: 5000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 20px; border: 2px solid white; display: none; align-items: center; justify-content: center; background: var(--primary); color: white; }
         
-        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; }
+        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); }
         .item.no-phone { border-left: 8px solid var(--warning) !important; }
         
-        input { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--card); color: var(--text); font-size: 16px; }
+        input, select { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--card); color: var(--text); font-size: 16px; }
         
-        #log-panel { background: #000; padding: 12px; font-size: 10px; height: 110px; overflow-y: auto; border-radius: 8px; font-family: monospace; border: 1px solid #333; color: #00ff41; margin-bottom: 10px; }
+        #log-panel { background: #000; padding: 12px; font-size: 10px; height: 150px; overflow-y: auto; border-radius: 8px; font-family: monospace; border: 1px solid #333; color: #00ff41; margin-bottom: 10px; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; }
+        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; }
     </style>
 </head>
 <body>
 
-    <button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
+    <button id="btn-rocket"><i class="fas fa-rocket"></i></button>
     <input type="file" id="csv-file" class="hidden" accept=".csv">
 
     <!-- LOGIN -->
@@ -50,19 +49,34 @@
             <input id="login-user" placeholder="Usuario">
             <input id="login-pass" type="password" placeholder="Contraseña">
             <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
-            <!-- Botón restaurado -->
-            <button id="btn-create-user-trigger" class="btn ghost" style="width:100%; margin-top:10px">GESTIÓN ACCESOS</button>
+            <button id="btn-master-users" class="btn ghost" style="width:100%; margin-top:10px">GESTIÓN ACCESOS</button>
+        </div>
+    </div>
+
+    <!-- GESTIÓN USUARIOS (SOLO CON CLAVE MAESTRA) -->
+    <div id="modal-users" class="modal hidden">
+        <div class="modal-content">
+            <h3 style="text-align:center; margin-bottom:15px">Usuarios del Sistema</h3>
+            <div id="users-list" style="margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px"></div>
+            <input id="new-u-name" placeholder="Nombre Usuario">
+            <input id="new-u-pass" placeholder="Password">
+            <select id="new-u-role">
+                <option value="operador">Operador</option>
+                <option value="admin">Administrador</option>
+            </select>
+            <button id="btn-save-user" class="btn primary" style="width:100%">CREAR USUARIO</button>
+            <button onclick="document.getElementById('modal-users').classList.add('hidden')" class="btn danger" style="width:100%; margin-top:10px">VOLVER</button>
         </div>
     </div>
 
     <!-- MAIN APP -->
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div id="conn-status" style="font-size:11px; text-align:center; margin-bottom:10px; color:var(--success); font-weight:bold;">● EN LÍNEA - SISTEMA PROTEGIDO</div>
+            <div id="conn-status" style="font-size:11px; text-align:center; margin-bottom:10px; color:var(--success); font-weight:bold;">● EN LÍNEA - SEGURIDAD ACTIVA</div>
             <div class="grid-btns">
                 <button id="btn-log-toggle" class="btn ghost">HISTORIAL</button>
                 <button id="btn-theme" class="btn ghost">TEMA</button>
-                <button id="btn-logout-trigger" class="btn danger">CERRAR</button>
+                <button id="btn-logout" class="btn danger">CERRAR</button>
             </div>
             <div class="grid-btns">
                 <button id="btn-add" class="btn primary">NUEVA UF</button>
@@ -79,35 +93,39 @@
         </div>
 
         <div class="content-body">
-            <div id="log-container" class="hidden"><div id="log-panel"></div></div>
+            <div id="log-container" class="hidden">
+                <div id="log-panel"></div>
+                <button id="btn-download-logs" class="btn ghost admin-only" style="width:100%; height:30px; font-size:9px">DESCARGAR TXT</button>
+            </div>
             <div id="list"></div>
         </div>
     </div>
 
-    <!-- MODAL FORMULARIO UF -->
+    <!-- MODAL CLAVE MAESTRA (EL FAMOSO CARTEL) -->
+    <div id="modal-master" class="modal hidden">
+        <div class="modal-content" style="text-align:center">
+            <h3 id="master-msg">Autorización Requerida</h3>
+            <i class="fas fa-lock" style="font-size:40px; color:var(--warning); margin:15px 0"></i>
+            <input id="master-pass-input" type="password" placeholder="Clave Maestra" style="text-align:center">
+            <div class="grid-btns-2">
+                <button id="btn-master-confirm" class="btn primary">CONFIRMAR</button>
+                <button id="btn-master-cancel" class="btn danger">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FORMULARIO UF -->
     <div id="modal-form" class="modal hidden">
         <div class="modal-content">
-            <h3 id="form-title" style="text-align:center; margin-bottom:15px">Datos de Unidad</h3>
-            <input id="f-uf" placeholder="Unidad">
+            <h3 id="form-title">Nueva Unidad</h3>
+            <input id="f-uf" placeholder="Unidad (Ej: 1A)">
             <input id="f-prop" placeholder="Propietario">
             <input id="f-telp" placeholder="Tel. Propietario">
             <input id="f-inq" placeholder="Inquilino">
             <input id="f-teli" placeholder="Tel. Inquilino">
             <div class="grid-btns-2">
-                <button id="btn-save" class="btn primary">GUARDAR</button>
-                <button id="btn-cancel" class="btn danger">DESCARTAR</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL CONFIRMACIÓN CLAVE -->
-    <div id="modal-confirm" class="modal hidden">
-        <div class="modal-content" style="text-align:center">
-            <h3 id="confirm-msg">Autorización</h3>
-            <input id="confirm-pass" type="password" placeholder="Clave Maestra" style="margin-top:15px">
-            <div class="grid-btns-2">
-                <button id="btn-confirm-yes" class="btn primary">AUTORIZAR</button>
-                <button id="btn-confirm-no" class="btn danger">CANCELAR</button>
+                <button id="btn-save-uf" class="btn primary">GUARDAR</button>
+                <button onclick="document.getElementById('modal-form').classList.add('hidden')" class="btn danger">SALIR</button>
             </div>
         </div>
     </div>
@@ -123,19 +141,12 @@
         const MASTER_CODE = "1131552679";
         const userRole = localStorage.getItem("uf_user_role") || "operador";
 
-        // --- ANTI ACTUALIZACIÓN POR ERROR ---
-        window.addEventListener('beforeunload', (e) => {
-            if (localStorage.getItem("uf_auth") === "true") {
-                e.preventDefault();
-                e.returnValue = '¿Estás seguro de que quieres salir? Los datos no guardados se perderán.';
-            }
-        });
-
-        const writeLog = (m, type='info') => {
+        const writeLog = (m) => {
             const lp = document.getElementById("log-panel");
-            if(lp) { lp.innerHTML += `<div style="color:${type==='err'?'#f44':'#0f4'}">[${new Date().toLocaleTimeString()}] ${m}</div>`; lp.scrollTop = lp.scrollHeight; }
+            if(lp) { lp.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${m}</div>`; lp.scrollTop = lp.scrollHeight; }
         };
 
+        // --- RENDERIZADO ---
         function render(data) {
             const list = document.getElementById("list"); list.innerHTML = "";
             data.forEach(d => {
@@ -148,80 +159,124 @@
                         <div style="display:flex; gap:18px; font-size:18px">
                             <i class="fas fa-eye" style="cursor:pointer" onclick="document.getElementById('det-${d.id}').classList.toggle('hidden')"></i>
                             <i class="fas fa-edit" style="color:var(--primary); cursor:pointer" onclick="window.editUF('${d.id}')"></i>
-                            <i class="fas fa-trash ${userRole==='admin'?'':'hidden'}" style="color:var(--danger); cursor:pointer" onclick="window.askConfirm('¿Borrar UF ${d.UF}?','deleteUf','${d.id}')"></i>
+                            <i class="fas fa-trash ${userRole==='admin'?'':'hidden'}" style="color:var(--danger); cursor:pointer" onclick="window.askConfirm('¿Eliminar UF ${d.UF}?','deleteUf','${d.id}')"></i>
                         </div>
                     </div>
                     <div id="det-${d.id}" class="hidden" style="margin-top:10px; border-top:1px dashed #444; padding-top:10px">
-                        <p>P: ${d.Propietario||'--'} | T: ${d.TelefonoPropietario||'--'}</p>
-                        <p>I: ${d.Inquilino||'--'} | T: ${d.TelefonoInquilino||'--'}</p>
+                        <p>Prop: ${d.TelefonoPropietario||'--'}</p><p>Inq: ${d.TelefonoInquilino||'--'}</p>
                         <div class="grid-btns-2">
-                            <a href="tel:${tel}" class="btn primary" style="text-decoration:none">LLAMAR</a>
-                            <a href="https://wa.me/${tel.replace(/\D/g,'')}" target="_blank" class="btn" style="background:#22c55e; text-decoration:none">WHATSAPP</a>
+                            <a href="tel:${tel}" class="btn primary">Llamar</a>
+                            <a href="https://wa.me/${tel.replace(/\D/g,'')}" class="btn warning">WhatsApp</a>
                         </div>
                     </div>`;
                 list.appendChild(div);
             });
         }
 
-        // --- AUTH ---
-        const login = async () => {
-            const u = document.getElementById("login-user").value, p = document.getElementById("login-pass").value;
-            const snap = await getDocs(query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p)));
-            if (!snap.empty) {
-                localStorage.setItem("uf_auth", "true");
-                localStorage.setItem("uf_user_role", snap.docs[0].data().role);
-                location.reload();
-            } else alert("Datos incorrectos");
-        };
-        document.getElementById("btn-login").onclick = login;
-        document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
-        
-        // El botón ahora dispara una confirmación o acción
-        document.getElementById("btn-create-user-trigger").onclick = () => {
-            const code = prompt("Ingrese Clave Maestra para gestionar accesos:");
-            if(code === MASTER_CODE) alert("Módulo de usuarios habilitado (Aquí podrías abrir otro formulario)");
+        // --- SISTEMA DE CLAVE MAESTRA ---
+        window.askConfirm = (msg, action, id = null) => {
+            pendingAction = { type: action, id: id };
+            document.getElementById("master-msg").innerText = msg;
+            document.getElementById("modal-master").classList.remove("hidden");
+            document.getElementById("master-pass-input").value = "";
+            document.getElementById("master-pass-input").focus();
         };
 
-        // --- BUSCADOR ENTER ---
-        document.getElementById("search-input").onkeyup = (e) => {
-            if(e.key === "Enter") {
-                const v = e.target.value.toLowerCase();
-                render(departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v)));
+        document.getElementById("btn-master-confirm").onclick = async () => {
+            if(document.getElementById("master-pass-input").value !== MASTER_CODE) return alert("Clave Incorrecta");
+            const a = pendingAction;
+            document.getElementById("modal-master").classList.add("hidden");
+
+            if(a.type === 'deleteUf') { await deleteDoc(doc(db, "departamentos", a.id)); writeLog("UF Eliminada"); }
+            if(a.type === 'deleteAll') {
+                const b = writeBatch(db); departamentos.forEach(d => b.delete(doc(db, "departamentos", d.id)));
+                await b.commit(); writeLog("BASE TOTAL ELIMINADA");
             }
+            if(a.type === 'manageUsers') { loadUsers(); document.getElementById("modal-users").classList.remove("hidden"); }
+            if(a.type === 'import') { document.getElementById("csv-file").click(); }
         };
 
-        // --- UI ACTIONS ---
-        document.getElementById("btn-add").onclick = () => {
-            editUfId = null;
-            document.querySelectorAll("#modal-form input").forEach(i => i.value = "");
-            document.getElementById("form-title").innerText = "Nueva Unidad";
-            document.getElementById("modal-form").classList.remove("hidden");
+        document.getElementById("btn-master-cancel").onclick = () => document.getElementById("modal-master").classList.add("hidden");
+
+        // --- GESTIÓN DE USUARIOS ---
+        async function loadUsers() {
+            const snap = await getDocs(collection(db, "usuarios"));
+            const container = document.getElementById("users-list");
+            container.innerHTML = "";
+            snap.forEach(u => {
+                const data = u.data();
+                container.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px">
+                    <span>${data.usuario} (${data.role})</span>
+                    <i class="fas fa-user-minus" style="color:red" onclick="window.deleteUser('${u.id}')"></i>
+                </div>`;
+            });
+        }
+        window.deleteUser = async (id) => { if(confirm("¿Eliminar usuario?")) { await deleteDoc(doc(db, "usuarios", id)); loadUsers(); } };
+        document.getElementById("btn-save-user").onclick = async () => {
+            const u = document.getElementById("new-u-name").value, p = document.getElementById("new-u-pass").value, r = document.getElementById("new-u-role").value;
+            if(u && p) { await addDoc(collection(db, "usuarios"), {usuario:u, password:p, role:r}); loadUsers(); }
         };
 
-        window.editUF = (id) => {
-            editUfId = id; const d = departamentos.find(x => x.id === id);
-            document.getElementById("f-uf").value = d.UF; 
-            document.getElementById("f-prop").value = d.Propietario || "";
-            document.getElementById("f-telp").value = d.TelefonoPropietario || "";
-            document.getElementById("f-inq").value = d.Inquilino || "";
-            document.getElementById("f-teli").value = d.TelefonoInquilino || "";
-            document.getElementById("form-title").innerText = "Editando UF " + d.UF;
-            document.getElementById("modal-form").classList.remove("hidden");
+        // --- BOTONES APP ---
+        document.getElementById("btn-login").onclick = async () => {
+            const u = document.getElementById("login-user").value, p = document.getElementById("login-pass").value;
+            const q = query(collection(db, "usuarios"), where("usuario","==",u), where("password","==",p));
+            const s = await getDocs(q);
+            if(!s.empty) { localStorage.setItem("uf_auth","true"); localStorage.setItem("uf_user_role", s.docs[0].data().role); location.reload(); }
+            else alert("Error de acceso");
         };
 
-        document.getElementById("btn-save").onclick = async () => {
-            const d = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
-            editUfId ? await updateDoc(doc(db, "departamentos", editUfId), d) : await addDoc(collection(db, "departamentos"), d);
-            document.getElementById("modal-form").classList.add("hidden");
-        };
-
-        document.getElementById("btn-logout-trigger").onclick = () => {
-            if(confirm("¿Cerrar sesión?")) { localStorage.clear(); location.reload(); }
-        };
-
+        document.getElementById("btn-master-users").onclick = () => askConfirm("Acceso a Usuarios", "manageUsers");
+        document.getElementById("btn-logout").onclick = () => { if(confirm("¿Cerrar?")) { localStorage.clear(); location.reload(); }};
         document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("light-mode");
         document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
+        document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; render(departamentos); };
+        document.getElementById("btn-filter-empty").onclick = () => { render(departamentos.filter(d => !d.TelefonoPropietario && !d.TelefonoInquilino)); writeLog("Filtro: Disponibles"); };
+        document.getElementById("btn-search").onclick = () => {
+            const v = document.getElementById("search-input").value.toLowerCase();
+            render(departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v)));
+        };
 
+        // --- IMPORT/EXPORT ---
+        document.getElementById("btn-import-trigger").onclick = () => askConfirm("Importar CSV", "import");
+        document.getElementById("csv-file").onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                const lines = ev.target.result.split("\n").slice(1);
+                for(let l of lines) {
+                    const c = l.split(",");
+                    if(c[0]) await addDoc(collection(db, "departamentos"), {UF:c[0], Propietario:c[1], TelefonoPropietario:c[2], Inquilino:c[3], TelefonoInquilino:c[4]});
+                }
+                writeLog("CSV Importado");
+            };
+            reader.readAsText(e.target.files[0]);
+        };
+        document.getElementById("btn-export").onclick = () => {
+            const csv = "UF,Prop,TelP,Inq,TelI\n" + departamentos.map(d => `${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}`).join("\n");
+            const blob = new Blob([csv], {type:'text/csv'});
+            const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download="UF_BASE.csv"; a.click();
+        };
+        document.getElementById("btn-delete-all").onclick = () => askConfirm("¿BORRAR TODA LA BASE?", "deleteAll");
+
+        // --- CRUD UF ---
+        document.getElementById("btn-add").onclick = () => { 
+            editUfId = null; 
+            document.querySelectorAll("#modal-form input").forEach(i => i.value = "");
+            document.getElementById("modal-form").classList.remove("hidden");
+        };
+        window.editUF = (id) => {
+            editUfId = id; const d = departamentos.find(x => x.id === id);
+            document.getElementById("f-uf").value = d.UF; document.getElementById("f-prop").value = d.Propietario;
+            document.getElementById("modal-form").classList.remove("hidden");
+        };
+        document.getElementById("btn-save-uf").onclick = async () => {
+            const data = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
+            editUfId ? await updateDoc(doc(db, "departamentos", editUfId), data) : await addDoc(collection(db, "departamentos"), data);
+            document.getElementById("modal-form").classList.add("hidden");
+            writeLog("UF Guardada");
+        };
+
+        // --- INICIO ---
         if(localStorage.getItem("uf_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
@@ -232,8 +287,13 @@
             });
         }
 
-        // Helpers de cierre de modales
-        document.querySelectorAll("#btn-cancel, #btn-confirm-no").forEach(b => b.onclick = () => document.querySelectorAll(".modal").forEach(m => m.id!=="login-screen" && m.classList.add("hidden")));
+        // --- SCROLL ROCKET ---
+        window.onscroll = () => document.getElementById("btn-rocket").style.display = window.scrollY > 300 ? 'flex' : 'none';
+        document.getElementById("btn-rocket").onclick = () => window.scrollTo({top:0, behavior:'smooth'});
+        document.getElementById("btn-download-logs").onclick = () => {
+            const blob = new Blob([document.getElementById("log-panel").innerText], {type:'text/plain'});
+            const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download="logs.txt"; a.click();
+        };
     </script>
 </body>
 </html>
