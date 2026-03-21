@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Gestión UF - Final Gold</title>
+    <title>Gestión UF - Sistema Operativo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { 
@@ -16,7 +16,7 @@
         .wrapper { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
 
-        /* HEADER IDENTICO FOTO 1 */
+        /* HEADER */
         .header-fixed { position: fixed; top: 0; width: 95%; max-width: 450px; background-color: var(--card-bg); z-index: 100; padding: 15px; border-bottom: 2px solid var(--primary-color); border-radius: 0 0 15px 15px; }
         .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
         .btn { height: 45px; border-radius: 10px; border: none; font-weight: bold; color: white; cursor: pointer; text-transform: uppercase; font-size: 11px; display: flex; align-items: center; justify-content: center; }
@@ -25,19 +25,17 @@
         .btn-ghost { background-color: var(--ghost-color); }
         .btn-warning { background-color: var(--warning-color); color: #000; }
         
-        input, select { width: 100%; height: 48px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--border-color); padding: 0 15px; background-color: #1d2a33; color: white; outline: none; }
+        input { width: 100%; height: 48px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--border-color); padding: 0 15px; background-color: #1d2a33; color: white; outline: none; }
         .main-content { margin-top: 360px; padding-bottom: 50px; width: 100%; }
 
         /* TARJETAS */
         .uf-card { background-color: var(--card-bg); border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border-color); position: relative; }
         .uf-card::before { content: ''; position: absolute; left: 0; top: 20%; height: 60%; width: 4px; background: var(--warning-color); border-radius: 0 5px 5px 0; }
 
-        /* MODALES UNIFICADOS (FOTO SEGURIDAD REQUERIDA) */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .modal-content h3 { margin-bottom: 15px; font-size: 18px; }
+        /* MODALES */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center; border: 1px solid var(--border-color); }
 
-        /* BOTONES LLAMADA/CHAT */
         .action-btns { display: flex; gap: 10px; margin-top: 15px; }
         .btn-call { flex: 1; background: #1c2e4a; color: #5c85d6; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 12px; font-weight: bold; }
         .btn-chat { flex: 1; background: #0d2d1f; color: #2e7d32; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 12px; font-weight: bold; }
@@ -45,58 +43,164 @@
 </head>
 <body>
 
-    <!-- SISTEMA DE ACCESO (MODALES UNIFICADOS) -->
+    <!-- PANTALLA DE ACCESO -->
     <div id="login-screen" class="modal-overlay">
         
-        <!-- 1. LOGIN PRINCIPAL -->
+        <!-- 1. LOGIN -->
         <div id="login-box" class="modal-content">
             <h2 style="margin-bottom:20px; color: var(--primary-color);">GESTIÓN UF</h2>
             <input type="text" id="login-user" placeholder="Usuario">
             <input type="password" id="login-pass" placeholder="Contraseña">
             <button id="btn-login" class="btn btn-primary" style="width:100%">ENTRAR</button>
-            <button id="btn-pre-reg" class="btn btn-ghost" style="width:100%; margin-top:10px;">CREAR USUARIO</button>
+            <button id="btn-goto-master" class="btn btn-ghost" style="width:100%; margin-top:10px;">CREAR USUARIO</button>
         </div>
 
-        <!-- 2. SEGURIDAD REQUERIDA (CLAVE MAESTRA - FOTO 1) -->
+        <!-- 2. CLAVE MAESTRA (ESTILO FOTO 1) -->
         <div id="master-box" class="modal-content hidden">
             <h3>Seguridad Requerida</h3>
-            <p style="margin-bottom: 15px; font-size: 14px; opacity: 0.8;">Ingrese Clave Maestra para continuar</p>
-            <input type="password" id="master-key-input" placeholder="Clave Administrativa">
-            <div style="display:flex; gap:10px; margin-top:10px;">
+            <p style="margin-bottom: 15px; font-size: 14px; opacity: 0.8;">Ingrese Clave Administrativa</p>
+            <input type="password" id="master-key-input" placeholder="Clave Maestra">
+            <div style="display:flex; gap:10px;">
                 <button id="btn-auth-master" class="btn btn-primary" style="flex:1">AUTORIZAR</button>
                 <button id="btn-cancel-master" class="btn btn-danger" style="flex:1">VOLVER</button>
             </div>
         </div>
 
-        <!-- 3. CREAR USUARIO -->
+        <!-- 3. REGISTRO -->
         <div id="reg-box" class="modal-content hidden">
-            <h3 style="color:var(--warning-color)">NUEVO ACCESO</h3>
-            <p style="margin-bottom: 15px; font-size: 13px;">Defina credenciales para el nuevo usuario</p>
+            <h3 style="color:var(--warning-color)">NUEVO USUARIO</h3>
             <input type="text" id="reg-user" placeholder="Nombre de Usuario">
             <input type="password" id="reg-pass" placeholder="Contraseña">
             <button id="btn-save-user" class="btn btn-warning" style="width:100%">VALIDAR Y CREAR</button>
-            <button id="btn-back-to-login" class="btn btn-ghost" style="width:100%; margin-top:10px;">VOLVER AL LOGIN</button>
+            <button id="btn-back-login" class="btn btn-ghost" style="width:100%; margin-top:10px;">VOLVER AL LOGIN</button>
         </div>
     </div>
 
-    <!-- CONTENEDOR APP PRINCIPAL -->
+    <!-- APP -->
     <div id="app-container" class="wrapper hidden">
         <div class="header-fixed">
-            <div style="text-align: center; font-size: 10px; color: var(--success-color); margin-bottom: 10px; font-weight: bold;">● EN LÍNEA - SEGURIDAD ACTIVA</div>
+            <div style="text-align: center; font-size: 10px; color: var(--success-color); margin-bottom: 10px; font-weight: bold;">● SISTEMA ACTIVO</div>
             <div class="btn-grid">
                 <button class="btn btn-ghost">HISTORIAL</button>
                 <button class="btn btn-ghost">TEMA</button>
-                <button id="btn-pre-exit" class="btn btn-danger">CERRAR</button>
+                <button onclick="location.reload()" class="btn btn-danger">CERRAR</button>
             </div>
             <div class="btn-grid">
                 <button id="btn-new-uf" class="btn btn-primary">NUEVA UF</button>
                 <button class="btn btn-ghost">IMPORTAR</button>
                 <button class="btn btn-ghost">RESPALDO</button>
             </div>
-            <input type="text" id="search-input" placeholder="Buscar por Unidad o Apellido...">
+            <input type="text" id="search-input" placeholder="Buscar unidad...">
             <div class="btn-grid">
                 <button id="btn-search" class="btn btn-primary">BUSCAR</button>
                 <button id="btn-clear" class="btn btn-ghost">LIMPIAR</button>
                 <button class="btn btn-warning">SIN DATOS</button>
             </div>
-            <button id="btn-del-cloud" class="btn btn-danger" style="width:100%">BORRAR TODA LA NUBE</button>
+        </div>
+
+        <div class="main-content" id="uf-list"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // CONFIGURACIÓN (Verificá que sea la tuya)
+        const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const MASTER = "1131552679";
+        let ufs = [];
+
+        // NAVEGACIÓN
+        document.getElementById("btn-goto-master").onclick = () => {
+            document.getElementById("login-box").classList.add("hidden");
+            document.getElementById("master-box").classList.remove("hidden");
+        };
+
+        document.getElementById("btn-cancel-master").onclick = () => {
+            document.getElementById("master-box").classList.add("hidden");
+            document.getElementById("login-box").classList.remove("hidden");
+        };
+
+        document.getElementById("btn-auth-master").onclick = () => {
+            if(document.getElementById("master-key-input").value === MASTER) {
+                document.getElementById("master-box").classList.add("hidden");
+                document.getElementById("reg-box").classList.remove("hidden");
+            } else { alert("CLAVE INCORRECTA"); }
+        };
+
+        document.getElementById("btn-back-login").onclick = () => {
+            document.getElementById("reg-box").classList.add("hidden");
+            document.getElementById("login-box").classList.remove("hidden");
+        };
+
+        // LOGIN
+        document.getElementById("btn-login").onclick = async () => {
+            const u = document.getElementById("login-user").value;
+            const p = document.getElementById("login-pass").value;
+            
+            if(p === MASTER) return entrar();
+
+            const q = query(collection(db, "usuarios"), where("user", "==", u), where("pass", "==", p));
+            const snap = await getDocs(q);
+            if(!snap.empty) entrar(); else alert("Error de acceso");
+        };
+
+        // CREAR USUARIO
+        document.getElementById("btn-save-user").onclick = async () => {
+            const u = document.getElementById("reg-user").value;
+            const p = document.getElementById("reg-pass").value;
+            if(!u || !p) return alert("Faltan datos");
+            await addDoc(collection(db, "usuarios"), { user: u, pass: p });
+            alert("Usuario Creado");
+            document.getElementById("btn-back-login").click();
+        };
+
+        // ACCESO A LA APP
+        function entrar() {
+            // CRÍTICO: Usar display none para que la capa desaparezca y deje tocar los botones de abajo
+            document.getElementById("login-screen").style.display = "none"; 
+            document.getElementById("app-container").classList.remove("hidden");
+            load();
+        }
+
+        // CARGA DE DATOS
+        function load() {
+            onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
+                ufs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                render(ufs);
+            });
+        }
+
+        function render(data) {
+            const list = document.getElementById("uf-list");
+            list.innerHTML = "";
+            data.forEach(d => {
+                const div = document.createElement("div");
+                div.className = "uf-card";
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between;">
+                        <b>UF: ${d.UF}</b>
+                        <i class="fas fa-eye" onclick="document.getElementById('det-${d.id}').classList.toggle('hidden')"></i>
+                    </div>
+                    <p>${d.Propietario || 'S/D'}</p>
+                    <div id="det-${d.id}" class="hidden">
+                        <div class="action-btns">
+                            <a href="tel:${d.TelefonoPropietario}" class="btn-call">LLAMAR</a>
+                            <a href="https://wa.me/${d.TelefonoPropietario}" class="btn-chat">CHAT</a>
+                        </div>
+                    </div>`;
+                list.appendChild(div);
+            });
+        }
+
+        // ENTER EVENT
+        document.getElementById("login-pass").onkeypress = (e) => {
+            if(e.key === 'Enter') document.getElementById("btn-login").click();
+        };
+
+    </script>
+</body>
+</html>
