@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GestiónUF Pro - AUTH PRO</title>
+<style>
+body{font-family:Segoe UI;background:#0b141a;color:#e9edef;display:flex;justify-content:center;align-items:center;height:100vh}
+.card{background:#111b21;padding:25px;border-radius:15px;width:320px}
+input,button{width:100%;margin:8px 0;height:40px;border-radius:8px;border:none;padding:10px}
+button{background:#2563eb;color:white;font-weight:bold;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h3>GestiónUF PRO</h3>
+<input id="email" placeholder="Email">
+<input id="pass" type="password" placeholder="Contraseña">
+<button id="login">Ingresar</button>
+<button id="admin">Panel Admin</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo",
+authDomain: "gestionuf-remoto.firebaseapp.com",
+projectId: "gestionuf-remoto"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const MASTER = "1131552679";
+
+// LOGIN
+document.getElementById("login").onclick = async ()=>{
+ const email = emailInput.value;
+ const pass = passInput.value;
+ try{
+   const cred = await signInWithEmailAndPassword(auth,email,pass);
+   const ref = doc(db,"usuarios",cred.user.uid);
+   const snap = await getDoc(ref);
+   if(!snap.exists() || snap.data().activo===false){
+     alert("Usuario sin permisos");
+     return;
+   }
+   alert("Login OK");
+ }catch(e){alert("Error login")}
+};
+
+const emailInput = document.getElementById("email");
+const passInput = document.getElementById("pass");
+
+// ADMIN PANEL
+document.getElementById("admin").onclick = async ()=>{
+ const code = prompt("Clave maestra");
+ if(code!==MASTER) return alert("Denegado");
+
+ const email = prompt("Email nuevo usuario");
+ const pass = prompt("Password");
+
+ const cred = await createUserWithEmailAndPassword(auth,email,pass);
+
+ await setDoc(doc(db,"usuarios",cred.user.uid),{
+   email,
+   rol:"admin",
+   activo:true
+ });
+
+ alert("Usuario creado PRO");
+};
+</script>
+
+</body>
+</html>
