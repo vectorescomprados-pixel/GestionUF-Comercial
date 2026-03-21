@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - V4.7 Ultra Stable</title>
+    <title>GestiónUF Pro - V4.8 Ultra Blindado</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -15,34 +15,28 @@
         .wrap { width: 95%; max-width: 450px; margin: 0 auto; }
         .hidden { display: none !important; }
         
-        /* Header Fijo */
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 20px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .content-body { margin-top: 420px; padding-bottom: 100px; }
         
-        /* Botones Blindados */
         .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
         .grid-btns-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
         .btn { height: 45px; border-radius: 10px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; }
         .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: var(--ghost); } .warning { background: var(--warning); color: #000; }
         
-        /* Consola Logs Optimizada */
         #log-container { background: #000; border-radius: 12px; border: 1px solid #333; position: relative; padding: 15px; margin-bottom: 20px; }
         #log-panel { height: 110px; overflow-y: auto; font-family: monospace; font-size: 11px; color: #40c4ff; line-height: 1.5; padding-right: 35px; }
         #log-panel::-webkit-scrollbar { width: 4px; } 
         #log-panel::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
         #btn-download-logs { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px; border-radius: 6px; cursor: pointer; z-index: 10; }
 
-        /* Items Lista (Estética Imagen) */
         .item { background: var(--card); border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
         .item.no-phone { border-left: 6px solid var(--warning) !important; } 
         .item b { font-size: 16px; color: var(--primary); display: block; margin-bottom: 4px; }
         
-        /* Modales */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 380px; border: 1px solid var(--border); text-align: center; }
         input { width: 100%; height: 45px; margin-bottom: 12px; border-radius: 10px; border: 1px solid var(--border); padding: 0 12px; background: #1a242b; color: #fff; }
 
-        .logout-icon { font-size: 50px; color: var(--danger); margin-bottom: 15px; }
         #btn-rocket { position: fixed; bottom: 25px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: white; border: none; display: none; align-items: center; justify-content: center; font-size: 18px; z-index: 2000; }
         .user-row { display: flex; justify-content: space-between; padding: 10px; background: #161f27; margin-bottom: 5px; border-radius: 8px; align-items: center; text-align: left; }
     </style>
@@ -52,7 +46,6 @@
     <button id="btn-rocket"><i class="fas fa-rocket"></i></button>
     <input type="file" id="csv-file" class="hidden" accept=".csv">
 
-    <!-- LOGIN -->
     <div id="login-screen" class="modal">
         <div class="modal-content">
             <h2 style="color:var(--primary); margin-bottom:20px">GestiónUF Pro</h2>
@@ -63,12 +56,11 @@
         </div>
     </div>
 
-    <!-- MODAL CERRAR SESIÓN (PARA TODOS) -->
     <div id="modal-logout" class="modal hidden">
         <div class="modal-content">
-            <div class="logout-icon"><i class="fas fa-sign-out-alt"></i></div>
-            <h3 style="margin-bottom:10px">Finalizar Sesión</h3>
-            <p style="color:#8a96a3; font-size:14px; margin-bottom:20px">¿Desea cerrar el sistema de gestión de forma segura?</p>
+            <i class="fas fa-sign-out-alt" style="font-size:50px; color:var(--danger); margin-bottom:15px"></i>
+            <h3>Finalizar Sesión</h3>
+            <p style="color:#8a96a3; font-size:14px; margin-bottom:20px">¿Desea cerrar el sistema de forma segura?</p>
             <div class="grid-btns-2">
                 <button id="btn-logout-confirm" class="btn danger">SALIR</button>
                 <button onclick="document.getElementById('modal-logout').classList.add('hidden')" class="btn ghost">CANCELAR</button>
@@ -76,7 +68,6 @@
         </div>
     </div>
 
-    <!-- GESTIÓN USUARIOS -->
     <div id="modal-users" class="modal hidden">
         <div class="modal-content">
             <h3 id="user-form-title" style="text-align:left">Usuarios</h3>
@@ -88,7 +79,6 @@
         </div>
     </div>
 
-    <!-- MAIN APP -->
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
             <div style="font-size:10px; text-align:center; margin-bottom:10px; color:var(--success)">● EN LÍNEA - SEGURIDAD ACTIVA</div>
@@ -120,7 +110,6 @@
         </div>
     </div>
 
-    <!-- MODAL MASTER -->
     <div id="modal-master" class="modal hidden">
         <div class="modal-content">
             <i class="fas fa-shield-alt" style="font-size:35px; color:var(--warning); margin-bottom:10px"></i>
@@ -133,7 +122,6 @@
         </div>
     </div>
 
-    <!-- FORMULARIO UF -->
     <div id="modal-form" class="modal hidden">
         <div class="modal-content" style="text-align:left">
             <h3 id="form-title">Datos de Unidad</h3>
@@ -165,28 +153,19 @@
             if(lp) { lp.innerHTML += `<div>» [${new Date().toLocaleTimeString()}] ${m}</div>`; lp.scrollTop = lp.scrollHeight; }
         };
 
-        // --- LOGIN BLINDADO ---
         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("login-user").value.trim();
             const p = document.getElementById("login-pass").value.trim();
             if(!u || !p) return alert("Complete los campos");
-
             const qLogin = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
             const snap = await getDocs(qLogin);
-
             if(!snap.empty) {
-                const data = snap.docs[0].data();
                 localStorage.setItem("uf_auth", "true");
-                localStorage.setItem("uf_user_role", data.role || "operador");
-                writeLog(`Sesión iniciada por: ${u}`);
+                localStorage.setItem("uf_user_role", snap.docs[0].data().role || "operador");
                 location.reload();
-            } else {
-                alert("Credenciales incorrectas");
-                writeLog(`Intento fallido de login: ${u}`);
-            }
+            } else alert("Credenciales incorrectas");
         };
 
-        // --- RENDER REGISTROS ---
         function render(data) {
             const list = document.getElementById("list"); list.innerHTML = "";
             data.forEach(d => {
@@ -203,20 +182,17 @@
                         </div>
                     </div>
                     <div id="det-${d.id}" class="hidden" style="margin-top:10px; border-top:1px dashed #444; padding-top:10px; font-size:13px; text-align:left">
-                        <p style="color:var(--primary)">Prop: <span style="color:white">${d.Propietario}</span></p>
-                        <p style="color:var(--primary)">Tel: <span style="color:white">${d.TelefonoPropietario || 'N/C'}</span></p>
-                        <p style="color:var(--primary)">Inq: <span style="color:white">${d.Inquilino || 'N/C'}</span></p>
-                        <p style="color:var(--primary)">Tel: <span style="color:white">${d.TelefonoInquilino || 'N/C'}</span></p>
+                        <p style="color:var(--primary)">Prop: <span style="color:white">${d.Propietario}</span> | Tel: <span style="color:white">${d.TelefonoPropietario || 'N/C'}</span></p>
+                        <p style="color:var(--primary)">Inq: <span style="color:white">${d.Inquilino || 'N/C'}</span> | Tel: <span style="color:white">${d.TelefonoInquilino || 'N/C'}</span></p>
                         <div class="grid-btns-2">
-                            <a href="tel:${tel}" class="btn primary" style="text-decoration:none" onclick="writeLog('Llamando a UF ${d.UF}')">LLAMAR</a>
-                            <a href="https://wa.me/${tel.replace(/\D/g,'')}" target="_blank" class="btn" style="background:#22c55e; color:white; text-decoration:none" onclick="writeLog('WhatsApp a UF ${d.UF}')">CHAT</a>
+                            <a href="tel:${tel}" class="btn primary" style="text-decoration:none" onclick="writeLog('Llamada UF ${d.UF}')">LLAMAR</a>
+                            <a href="https://wa.me/${tel.replace(/\D/g,'')}" target="_blank" class="btn" style="background:#22c55e; color:white; text-decoration:none" onclick="writeLog('WhatsApp UF ${d.UF}')">CHAT</a>
                         </div>
                     </div>`;
                 list.appendChild(div);
             });
         }
 
-        // --- SISTEMA MAESTRO ---
         window.askConfirm = (msg, action, id = null) => {
             pendingAction = { type: action, id: id };
             document.getElementById("master-msg").innerText = msg;
@@ -227,16 +203,25 @@
         document.getElementById("btn-master-confirm").onclick = async () => {
             if(document.getElementById("master-pass-input").value !== MASTER_CODE) return alert("Clave Incorrecta");
             const a = pendingAction; document.getElementById("modal-master").classList.add("hidden");
-            if(a.type === 'deleteUf') { await deleteDoc(doc(db, "departamentos", a.id)); writeLog(`UF eliminada por Admin`); }
+            
+            if(a.type === 'deleteUf') { await deleteDoc(doc(db, "departamentos", a.id)); writeLog("UF Eliminada"); }
             if(a.type === 'manageUsers') { loadUsers(); document.getElementById("modal-users").classList.remove("hidden"); }
             if(a.type === 'import') document.getElementById("csv-file").click();
+            
+            // --- CORRECCIÓN BLINDADA: BORRAR BASE ---
             if(a.type === 'deleteAll') {
-                const b = writeBatch(db); departamentos.forEach(d => b.delete(doc(db, "departamentos", d.id)));
-                await b.commit(); writeLog("BASE BORRADA POR ADMIN");
+                writeLog("Iniciando borrado total de la nube...");
+                try {
+                    const snap = await getDocs(collection(db, "departamentos"));
+                    const batch = writeBatch(db);
+                    snap.forEach(d => batch.delete(d.ref));
+                    await batch.commit();
+                    writeLog("BASE DE DATOS VACIADA POR ADMIN");
+                    alert("Base de datos borrada con éxito");
+                } catch(e) { writeLog("Error al borrar base"); }
             }
         };
 
-        // --- USUARIOS ---
         async function loadUsers() {
             const snap = await getDocs(collection(db, "usuarios"));
             const cont = document.getElementById("users-list"); cont.innerHTML = "";
@@ -258,54 +243,42 @@
         };
         document.getElementById("btn-save-user").onclick = async () => {
             const u = document.getElementById("new-u-name").value, p = document.getElementById("new-u-pass").value;
-            if(editUserId) {
-                await updateDoc(doc(db, "usuarios", editUserId), {usuario:u, password:p});
-                writeLog(`Usuario ${u} actualizado`);
-            } else {
-                await addDoc(collection(db, "usuarios"), {usuario:u, password:p, role:"operador"});
-                writeLog(`Nuevo usuario ${u} creado`);
-            }
+            if(editUserId) await updateDoc(doc(db, "usuarios", editUserId), {usuario:u, password:p});
+            else await addDoc(collection(db, "usuarios"), {usuario:u, password:p, role:"operador"});
             editUserId = null; document.getElementById("btn-save-user").innerText = "CREAR";
             document.getElementById("new-u-name").value = ""; document.getElementById("new-u-pass").value = "";
-            loadUsers();
+            loadUsers(); writeLog(`Usuario ${u} procesado`);
         };
 
-        // --- CERRAR SESIÓN (MODAL ADVERTENCIA) ---
         document.getElementById("btn-trigger-logout").onclick = () => document.getElementById("modal-logout").classList.remove("hidden");
-        document.getElementById("btn-logout-confirm").onclick = () => {
-            writeLog("Cierre de sesión seguro");
-            localStorage.clear(); 
-            location.reload(); 
-        };
-
-        // --- ACCIONES GENERALES ---
-        document.getElementById("btn-theme").onclick = () => { document.body.classList.toggle("light-mode"); writeLog("Cambio de tema visual"); };
+        document.getElementById("btn-logout-confirm").onclick = () => { localStorage.clear(); location.reload(); };
+        document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("light-mode");
         document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
         document.getElementById("btn-master-users").onclick = () => askConfirm("Gestión de Accesos", "manageUsers");
         document.getElementById("btn-import-trigger").onclick = () => askConfirm("Importar CSV", "import");
-        
+        document.getElementById("btn-delete-all").onclick = () => askConfirm("¿BORRAR TODA LA NUBE?", "deleteAll");
+
         document.getElementById("csv-file").onchange = (e) => {
-            const reader = new FileReader();
-            reader.onload = async (ev) => {
+            const r = new FileReader();
+            r.onload = async (ev) => {
                 const lines = ev.target.result.split("\n").slice(1);
-                writeLog("Iniciando importación masiva...");
+                writeLog("Importando...");
                 for(let l of lines) {
                     const c = l.split(",");
                     if(c.length > 1) await addDoc(collection(db, "departamentos"), {UF:c[0], Propietario:c[1]||'', TelefonoPropietario:c[2]||'', Inquilino:c[3]||'', TelefonoInquilino:c[4]||''});
                 }
-                writeLog("Importación completada con éxito");
+                writeLog("Importación Exitosa");
             };
-            reader.readAsText(e.target.files[0]);
+            r.readAsText(e.target.files[0]);
         };
 
         document.getElementById("btn-export").onclick = () => {
-            writeLog("Exportando base de datos...");
             const csv = "UF,Prop,TelP,Inq,TelI\n" + departamentos.map(d => `${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}`).join("\n");
             const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download="Respaldo_UF.csv"; a.click();
+            writeLog("Exportación generada");
         };
 
-        // --- CRUD UF ---
-        document.getElementById("btn-add").onclick = () => { editUfId = null; document.querySelectorAll("#modal-form input").forEach(i => i.value=""); document.getElementById("modal-form").classList.remove("hidden"); writeLog("Abriendo panel Nueva UF"); };
+        document.getElementById("btn-add").onclick = () => { editUfId = null; document.querySelectorAll("#modal-form input").forEach(i => i.value=""); document.getElementById("modal-form").classList.remove("hidden"); };
         window.editUF = (id) => {
             editUfId = id; const d = departamentos.find(x => x.id === id);
             document.getElementById("f-uf").value = d.UF; document.getElementById("f-prop").value = d.Propietario;
@@ -313,40 +286,27 @@
             document.getElementById("f-inq").value = d.Inquilino || "";
             document.getElementById("f-teli").value = d.TelefonoInquilino || "";
             document.getElementById("modal-form").classList.remove("hidden");
-            writeLog(`Editando datos de UF ${d.UF}`);
         };
         document.getElementById("btn-save-uf").onclick = async () => {
             const d = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
-            if(editUfId) {
-                await updateDoc(doc(db, "departamentos", editUfId), d);
-                writeLog(`UF ${d.UF} actualizada`);
-            } else {
-                await addDoc(collection(db, "departamentos"), d);
-                writeLog(`Nueva UF ${d.UF} creada`);
-            }
-            document.getElementById("modal-form").classList.add("hidden");
+            editUfId ? await updateDoc(doc(db, "departamentos", editUfId), d) : await addDoc(collection(db, "departamentos"), d);
+            document.getElementById("modal-form").classList.add("hidden"); writeLog(`UF ${d.UF} guardada`);
         };
 
-        // --- FILTROS ---
         document.getElementById("btn-search").onclick = () => {
             const v = document.getElementById("search-input").value.toLowerCase();
             render(departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v)));
-            writeLog(`Búsqueda ejecutada: ${v}`);
         };
-        document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; render(departamentos); writeLog("Lista restaurada"); };
-        document.getElementById("btn-filter-empty").onclick = () => {
-            render(departamentos.filter(d => !d.TelefonoPropietario && !d.TelefonoInquilino));
-            writeLog("Filtrando UF sin contacto");
-        };
+        document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; render(departamentos); };
+        document.getElementById("btn-filter-empty").onclick = () => render(departamentos.filter(d => !d.TelefonoPropietario && !d.TelefonoInquilino));
 
-        // --- INIT ---
         if(localStorage.getItem("uf_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
             if(userRole !== 'admin') document.querySelectorAll(".admin-only").forEach(e => e.classList.add("hidden"));
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (s) => {
                 departamentos = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                render(departamentos); writeLog("Sincronización en tiempo real activa");
+                render(departamentos); writeLog("Sincronización Cloud OK");
             });
         }
         
