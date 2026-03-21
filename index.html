@@ -3,67 +3,55 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - V2.4 Titanium</title>
+    <title>GestiónUF Pro - V2.5 Plus</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #f0f2f5; --card: #111b21; --primary: #2563eb; --danger: #e11d48; --text: #e9edef; --border: #222d34; --warning: #f59e0b; --success: #22c55e; --blue-text: #3b82f6; }
+        :root { --bg: #0b141a; --card: #111b21; --primary: #2563eb; --danger: #e11d48; --text: #e9edef; --border: #222d34; --warning: #f59e0b; --success: #22c55e; --blue-text: #3b82f6; }
         body.light-mode { --bg: #f0f2f5; --card: #ffffff; --text: #1f293b; --border: #e5e7eb; --blue-text: #2563eb; }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; transition: 0.3s; }
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
         
-        /* HEADER FIJO */
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         .content-body { margin-top: 395px; width: 100%; padding-bottom: 100px; }
         
         .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
         .grid-btns-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; text-decoration: none; }
+        .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; }
         .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #334155; } .warning { background: var(--warning); color: #000; }
         
-        /* BARRA PROGRESO */
-        #import-progress { width: 100%; height: 6px; background: #333; margin-bottom: 10px; border-radius: 10px; overflow: hidden; display: none; }
-        #progress-fill { width: 0%; height: 100%; background: var(--success); transition: width 0.2s; }
-
-        /* TARJETA SEGÚN FOTO */
         .item { background: var(--card); border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; }
         .item.no-phone { border-left: 5px solid var(--warning) !important; }
-        .item b.uf-title { font-size: 18px; color: var(--blue-text); display: block; margin-bottom: 4px; }
-        .item .prop-name { font-size: 16px; font-weight: 500; display: block; }
+        .item b.uf-title { font-size: 18px; color: var(--blue-text); display: block; }
         
         .details-box { border-top: 1px dashed #444; margin-top: 12px; padding-top: 12px; }
         .label-blue { color: var(--blue-text); font-weight: bold; font-size: 14px; display: block; margin-top: 8px; }
-        .val-text { font-size: 15px; margin-bottom: 2px; display: block; }
 
-        #btn-rocket { position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px; border-radius: 50%; z-index: 5000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 20px; border: 2px solid white; display: none; }
-        input { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: rgba(0,0,0,0.2); color: var(--text); font-size: 16px; outline: none; }
-
+        input { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: rgba(0,0,0,0.1); color: var(--text); font-size: 16px; outline: none; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--border); }
     </style>
 </head>
-<body class="dark-mode">
+<body>
 
-    <button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
     <input type="file" id="csv-file" class="hidden" accept=".csv">
 
-    <!-- LOGIN -->
+    <!-- PANTALLA LOGIN -->
     <div id="login-screen" class="modal">
         <div class="modal-content">
             <h2 style="margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
             <input id="login-user" placeholder="Usuario">
             <input id="login-pass" type="password" placeholder="Contraseña">
             <button id="btn-login" class="btn primary" style="width:100%">ENTRAR</button>
-            <button id="btn-support" class="btn ghost" style="width:100%; margin-top:10px">SOPORTE TÉCNICO</button>
+            <button id="btn-support-init" class="btn ghost" style="width:100%; margin-top:10px">SOPORTE TÉCNICO</button>
         </div>
     </div>
 
-    <!-- MAIN APP -->
+    <!-- APP PRINCIPAL -->
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div id="import-progress"><div id="progress-fill"></div></div>
-            <div style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● UF DISPONIBLES - SEGURIDAD ACTIVA</div>
+            <div id="import-progress" style="width:100%; height:4px; background:#333; margin-bottom:8px; display:none"><div id="progress-fill" style="width:0%; height:100%; background:var(--success)"></div></div>
             
             <div class="grid-btns">
                 <button id="btn-log-toggle" class="btn ghost">LOGS</button>
@@ -95,15 +83,27 @@
         </div>
     </div>
 
-    <!-- MODAL CONFIRMACIÓN (BLINDADO) -->
-    <div id="modal-confirm" class="modal hidden">
+    <!-- MODAL ADVERTENCIA (PARA CERRAR / SOPORTE) -->
+    <div id="modal-alert" class="modal hidden">
         <div class="modal-content">
-            <h3 id="confirm-title" style="color:var(--danger)">¿ESTÁ SEGURO?</h3>
-            <p id="confirm-msg" style="margin:15px 0; font-size:14px"></p>
-            <input id="confirm-pass" type="password" placeholder="Clave Maestra">
+            <h3 id="alert-title">ADVERTENCIA</h3>
+            <p id="alert-msg" style="margin:15px 0; font-size:14px"></p>
             <div class="grid-btns-2">
-                <button id="btn-confirm-yes" class="btn danger">CONFIRMAR</button>
-                <button id="btn-confirm-no" class="btn ghost">CANCELAR</button>
+                <button id="btn-alert-yes" class="btn primary">CONTINUAR</button>
+                <button id="btn-alert-no" class="btn danger">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SEGURIDAD (PARA ACCIONES CRÍTICAS) -->
+    <div id="modal-secure" class="modal hidden">
+        <div class="modal-content">
+            <h3 style="color:var(--danger)">SEGURIDAD</h3>
+            <p id="secure-msg" style="margin:15px 0; font-size:13px"></p>
+            <input id="secure-pass" type="password" placeholder="Clave Administrativa">
+            <div class="grid-btns-2">
+                <button id="btn-secure-yes" class="btn danger">AUTORIZAR</button>
+                <button id="btn-secure-no" class="btn ghost">VOLVER</button>
             </div>
         </div>
     </div>
@@ -111,175 +111,178 @@
     <!-- MODAL FORMULARIO -->
     <div id="modal-form" class="modal hidden">
         <div class="modal-content">
-            <h3 id="form-title">Datos Unidad</h3>
-            <input id="f-uf" placeholder="UF (Ej: 0001)">
+            <h3 id="form-title">Unidad</h3>
+            <input id="f-uf" placeholder="UF">
             <input id="f-prop" placeholder="Propietario">
-            <input id="f-telp" placeholder="Teléfono Prop">
+            <input id="f-telp" placeholder="Tel Prop">
             <input id="f-inq" placeholder="Inquilino">
-            <input id="f-teli" placeholder="Teléfono Inq">
+            <input id="f-teli" placeholder="Tel Inq">
             <div class="grid-btns-2">
                 <button id="btn-save" class="btn primary">GUARDAR</button>
-                <button id="btn-cancel" class="btn danger">SALIR</button>
+                <button id="btn-cancel" class="btn ghost">SALIR</button>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, orderBy, getDocs, writeBatch, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, orderBy, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
         const MASTER = "1131552679";
-        let ufs = [], pendingAction = null;
+        let ufs = [], activeId = null, pendingSecure = null, pendingAlert = null;
 
-        // --- SISTEMA TEMA ---
-        document.getElementById("btn-theme").onclick = () => {
-            document.body.classList.toggle("light-mode");
-            writeLog("Cambio de tema aplicado");
-        };
-
-        // --- SISTEMA LOGS ---
         function writeLog(m) {
             const p = document.getElementById("log-panel");
-            p.innerHTML += `<div>> ${new Date().toLocaleTimeString()}: ${m}</div>`;
+            p.innerHTML += `<div>> [${new Date().toLocaleTimeString()}] ${m}</div>`;
             p.scrollTop = p.scrollHeight;
         }
 
-        // --- LOGIN ---
-        document.getElementById("btn-login").onclick = async () => {
-            const p = document.getElementById("login-pass").value;
-            if(p === MASTER) { startApp(); } else { alert("Error"); }
+        // --- MANEJO DE MODALES ---
+        const openAlert = (title, msg, action) => {
+            pendingAlert = action;
+            document.getElementById("alert-title").innerText = title;
+            document.getElementById("alert-msg").innerText = msg;
+            document.getElementById("modal-alert").classList.remove("hidden");
         };
-        document.getElementById("btn-support").onclick = () => { if(prompt("CÓDIGO:") === MASTER) startApp(); };
-        function startApp() {
-            document.getElementById("login-screen").classList.add("hidden");
-            document.getElementById("main-screen").classList.remove("hidden");
-            loadData();
-        }
 
-        // --- MOTOR DE DATOS ---
-        function loadData() {
+        const openSecure = (msg, action, id = null) => {
+            pendingSecure = { action, id };
+            document.getElementById("secure-msg").innerText = msg;
+            document.getElementById("modal-secure").classList.remove("hidden");
+        };
+
+        // --- LOGIN Y SOPORTE ---
+        document.getElementById("btn-login").onclick = () => {
+            if(document.getElementById("login-pass").value === MASTER) {
+                document.getElementById("login-screen").classList.add("hidden");
+                document.getElementById("main-screen").classList.remove("hidden");
+                load();
+                writeLog("Sesión iniciada correctamente");
+            } else { alert("Clave Incorrecta"); }
+        };
+
+        document.getElementById("btn-support-init").onclick = () => openAlert("SOPORTE TÉCNICO", "¿Desea contactar con soporte o entrar en modo recuperación?", () => {
+            const p = prompt("CLAVE SOPORTE:"); if(p === MASTER) document.getElementById("btn-login").click();
+        });
+
+        // --- RENDERIZADO Y FILTRO SIN DATOS ---
+        function load() {
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 ufs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderList(ufs);
+                render(ufs);
             });
         }
 
-        function renderList(data) {
-            const list = document.getElementById("list");
-            list.innerHTML = "";
+        function render(data) {
+            const list = document.getElementById("list"); list.innerHTML = "";
             data.forEach(d => {
                 const noTel = (!d.TelefonoPropietario || d.TelefonoPropietario === "") && (!d.TelefonoInquilino || d.TelefonoInquilino === "");
                 const div = document.createElement("div");
                 div.className = `item ${noTel ? 'no-phone' : ''}`;
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between">
-                        <div><b class="uf-title">UF: ${d.UF}</b><span class="prop-name">${d.Propietario || '---'}</span></div>
-                        <div style="display:flex; gap:12px; font-size:18px">
+                        <div><b class="uf-title">UF: ${d.UF}</b><span>${d.Propietario || '---'}</span></div>
+                        <div style="display:flex; gap:15px; font-size:18px">
                             <i class="fas fa-eye" style="color:#64748b" onclick="document.getElementById('det-${d.id}').classList.toggle('hidden')"></i>
                             <i class="fas fa-edit" style="color:var(--primary)" onclick="window.editUF('${d.id}')"></i>
-                            <i class="fas fa-trash" style="color:var(--danger)" onclick="window.askConfirm('¿Borrar UF ${d.UF}?', 'del', '${d.id}')"></i>
+                            <i class="fas fa-trash" style="color:var(--danger)" onclick="window.openSecure('¿Borrar UF ${d.UF}?', 'del', '${d.id}')"></i>
                         </div>
                     </div>
                     <div id="det-${d.id}" class="details-box hidden">
-                        <span class="label-blue">Prop:</span><span class="val-text">${d.Propietario || '---'} |</span>
-                        <span class="label-blue">Tel:</span><span class="val-text">${d.TelefonoPropietario || 'N/C'}</span>
-                        <span class="label-blue" style="margin-top:12px">Inq:</span><span class="val-text">${d.Inquilino || '---'} |</span>
-                        <span class="label-blue">Tel:</span><span class="val-text">${d.TelefonoInquilino || 'N/C'}</span>
+                        <span class="label-blue">Prop:</span><span>${d.Propietario} |</span>
+                        <span class="label-blue">Tel:</span><span>${d.TelefonoPropietario || 'N/C'}</span>
+                        <span class="label-blue" style="margin-top:10px">Inq:</span><span>${d.Inquilino} |</span>
+                        <span class="label-blue">Tel:</span><span>${d.TelefonoInquilino || 'N/C'}</span>
                         <div class="grid-btns-2">
-                            <a href="tel:${d.TelefonoPropietario || d.TelefonoInquilino}" class="btn primary"><i class="fas fa-phone"></i> LLAMAR</a>
-                            <a href="https://wa.me/${(d.TelefonoInquilino||d.TelefonoPropietario||'').replace(/\D/g,'')}" class="btn" style="background:#22c55e"><i class="fab fa-whatsapp"></i> CHAT</a>
+                            <a href="tel:${d.TelefonoInquilino || d.TelefonoPropietario}" class="btn primary">LLAMAR</a>
+                            <a href="https://wa.me/${(d.TelefonoInquilino||'').replace(/\D/g,'')}" class="btn" style="background:#22c55e">CHAT</a>
                         </div>
                     </div>`;
                 list.appendChild(div);
             });
         }
 
-        // --- SISTEMA DE CONFIRMACIÓN (RESPALDO, BORRAR, CERRAR) ---
-        window.askConfirm = (msg, type, id = null) => {
-            pendingAction = { type, id };
-            document.getElementById("confirm-msg").innerText = msg;
-            document.getElementById("modal-confirm").classList.remove("hidden");
+        document.getElementById("btn-filter-empty").onclick = () => {
+            const filtered = ufs.filter(u => (!u.TelefonoPropietario || u.TelefonoPropietario==="") && (!u.TelefonoInquilino || u.TelefonoInquilino===""));
+            render(filtered);
+            writeLog(`Filtro: Mostrando ${filtered.length} unidades sin teléfono`);
         };
 
-        document.getElementById("btn-confirm-yes").onclick = async () => {
-            if(document.getElementById("confirm-pass").value !== MASTER) return alert("Clave Incorrecta");
-            
-            const action = pendingAction.type;
-            if(action === 'del') await deleteDoc(doc(db, "departamentos", pendingAction.id));
+        // --- ACCIONES DE SEGURIDAD ---
+        document.getElementById("btn-secure-yes").onclick = async () => {
+            if(document.getElementById("secure-pass").value !== MASTER) return alert("Error de clave");
+            const { action, id } = pendingSecure;
+            if(action === 'del') await deleteDoc(doc(db, "departamentos", id));
             if(action === 'wipe') {
-                const b = writeBatch(db); ufs.forEach(u => b.delete(doc(db, "departamentos", u.id))); 
-                await b.commit(); writeLog("BASE BORRADA");
+                const b = writeBatch(db); ufs.forEach(u => b.delete(doc(db, "departamentos", u.id)));
+                await b.commit(); writeLog("BASE DE DATOS ELIMINADA");
             }
-            if(action === 'logout') location.reload();
             if(action === 'export') {
                 const csv = "UF;Propietario;TelP;Inquilino;TelI\n" + ufs.map(u => `${u.UF};${u.Propietario};${u.TelefonoPropietario};${u.Inquilino};${u.TelefonoInquilino}`).join("\n");
-                const blob = new Blob([csv], {type: 'text/csv'});
-                const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "Respaldo_UFs.csv"; a.click();
+                const blob = new Blob([csv], {type:'text/csv'});
+                const a = document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="Respaldo.csv"; a.click();
+                writeLog("Respaldo descargado");
             }
-
-            document.getElementById("modal-confirm").classList.add("hidden");
-            document.getElementById("confirm-pass").value = "";
+            document.getElementById("modal-secure").classList.add("hidden");
+            document.getElementById("secure-pass").value = "";
         };
 
-        // --- BOTONES HEADER ---
-        document.getElementById("btn-logout-init").onclick = () => window.askConfirm("¿Desea cerrar la sesión del sistema?", "logout");
-        document.getElementById("btn-export-init").onclick = () => window.askConfirm("¿Generar archivo de respaldo CSV?", "export");
-        document.getElementById("btn-wipe-init").onclick = () => window.askConfirm("¡PELIGRO! Se borrarán todos los datos de la nube.", "wipe");
-        document.getElementById("btn-confirm-no").onclick = () => document.getElementById("modal-confirm").classList.add("hidden");
+        // --- BOTÓN CERRAR (ADVERTENCIA) ---
+        document.getElementById("btn-logout-init").onclick = () => openAlert("CERRAR SESIÓN", "¿Seguro que desea salir del sistema?", () => location.reload());
+        
+        document.getElementById("btn-alert-yes").onclick = () => { if(pendingAlert) pendingAlert(); };
+        document.querySelectorAll("#btn-alert-no, #btn-secure-no, #btn-cancel").forEach(b => b.onclick = () => document.querySelectorAll(".modal").forEach(m => m.id!=="login-screen" && m.classList.add("hidden")));
 
-        // --- IMPORTACIÓN SIN DUPLICADOS ---
-        document.getElementById("btn-import-init").onclick = () => document.getElementById("csv-file").click();
+        // --- RESTO DE FUNCIONES ---
+        document.getElementById("btn-theme").onclick = () => { document.body.classList.toggle("light-mode"); writeLog("Tema visual cambiado"); };
+        document.getElementById("btn-clear").onclick = () => { render(ufs); writeLog("Lista restaurada"); };
+        document.getElementById("btn-search").onclick = () => {
+            const v = document.getElementById("search-input").value.toLowerCase();
+            render(ufs.filter(u => u.UF.includes(v) || (u.Propietario||'').toLowerCase().includes(v)));
+            writeLog(`Búsqueda ejecutada: ${v}`);
+        };
+        document.getElementById("btn-wipe-init").onclick = () => openSecure("Esta acción borrará TODO de la nube.", "wipe");
+        document.getElementById("btn-export-init").onclick = () => openSecure("Preparando descarga de datos...", "export");
+        document.getElementById("btn-import-init").onclick = () => openSecure("Iniciando motor de importación...", () => document.getElementById("csv-file").click());
+
+        // --- IMPORTACIÓN ---
         document.getElementById("csv-file").onchange = (e) => {
             const reader = new FileReader();
             reader.onload = async (ev) => {
-                const lines = ev.target.result.split(/\r?\n/).filter(l => l.trim() !== "");
+                const lines = ev.target.result.split(/\n/).filter(l => l.trim()!=="");
                 document.getElementById("import-progress").style.display = "block";
                 let batch = writeBatch(db);
-                
-                for(let i = 1; i < lines.length; i++){
-                    const cols = lines[i].split(';').map(v => v.replace(/"/g, "").trim());
-                    if(cols[0]){
-                        // Evitar duplicados comprobando si la UF ya existe en el array local 'ufs'
-                        if(!ufs.find(u => u.UF === cols[0])) {
-                            const ref = doc(collection(db, "departamentos"));
-                            batch.set(ref, { UF: cols[0], Propietario: cols[1], TelefonoPropietario: cols[2], Inquilino: cols[3], TelefonoInquilino: cols[4] });
-                        }
+                for(let i=1; i<lines.length; i++) {
+                    const c = lines[i].split(';').map(v => v.replace(/"/g,"").trim());
+                    if(c[0] && !ufs.find(u => u.UF === c[0])) {
+                        batch.set(doc(collection(db, "departamentos")), { UF:c[0], Propietario:c[1], TelefonoPropietario:c[2], Inquilino:c[3], TelefonoInquilino:c[4] });
                     }
                     document.getElementById("progress-fill").style.width = `${(i/lines.length)*100}%`;
                 }
-                await batch.commit();
-                writeLog("Importación Finalizada (Sin duplicados)");
-                setTimeout(() => document.getElementById("import-progress").style.display = "none", 2000);
+                await batch.commit(); writeLog(`Importación finalizada`);
+                document.getElementById("import-progress").style.display = "none";
             };
             reader.readAsText(e.target.files[0]);
         };
 
-        // --- BÚSQUEDA ---
-        document.getElementById("btn-search").onclick = () => {
-            const v = document.getElementById("search-input").value.toLowerCase();
-            renderList(ufs.filter(u => u.UF.includes(v) || (u.Propietario||'').toLowerCase().includes(v)));
-        };
-        document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; renderList(ufs); };
-
-        // --- CRUD FORM ---
         window.editUF = (id) => {
-            const d = ufs.find(x => x.id === id); pendingAction = {id};
+            activeId = id; const d = ufs.find(x => x.id === id);
             document.getElementById("f-uf").value = d.UF; document.getElementById("f-prop").value = d.Propietario;
-            document.getElementById("f-telp").value = d.TelefonoPropietario;
+            document.getElementById("f-telp").value = d.TelefonoPropietario; document.getElementById("f-inq").value = d.Inquilino;
+            document.getElementById("f-teli").value = d.TelefonoInquilino;
             document.getElementById("modal-form").classList.remove("hidden");
         };
+
         document.getElementById("btn-save").onclick = async () => {
-            const data = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value };
-            if(pendingAction.id) await updateDoc(doc(db, "departamentos", pendingAction.id), data);
+            const data = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
+            if(activeId) await updateDoc(doc(db, "departamentos", activeId), data);
+            else await addDoc(collection(db, "departamentos"), data);
+            writeLog(`Unidad ${data.UF} guardada`);
             document.getElementById("modal-form").classList.add("hidden");
         };
-        document.getElementById("btn-cancel").onclick = () => document.getElementById("modal-form").classList.add("hidden");
 
-        // --- ROCKET ---
-        window.onscroll = () => document.getElementById("btn-rocket").style.display = window.scrollY > 400 ? "flex" : "none";
-        document.getElementById("btn-rocket").onclick = () => window.scrollTo({top:0, behavior:'smooth'});
         document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
 
     </script>
