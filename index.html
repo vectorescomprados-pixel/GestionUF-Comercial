@@ -11,37 +11,38 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; transition: background 0.2s; }
         body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
         
-        /* 🏠 BOTÓN HOME: POSICIÓN ABSOLUTA PARA ANDROID */
-        .btn-home-fixed {
-            position: fixed !important;
-            bottom: 30px !important;
-            right: 25px !important;
-            z-index: 999999999 !important; /* Prioridad máxima */
-            background: #2563eb !important;
-            color: white !important;
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-            border: 3px solid #ffffff;
-            -webkit-tap-highlight-color: transparent;
-        }
-
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
+
+        /* 🏠 BOTÓN HOME - CORREGIDO PARA ANDROID */
+        .btn-home-fixed {
+            position: fixed !important; bottom: 30px !important; right: 25px !important;
+            z-index: 999999999 !important; background: #2563eb !important;
+            color: white !important; width: 65px; height: 65px; border-radius: 50%;
+            display: flex !important; align-items: center; justify-content: center;
+            text-decoration: none; box-shadow: 0 8px 25px rgba(0,0,0,0.5); border: 3px solid #ffffff;
+        }
+
+        /* HEADER */
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .content-body { margin-top: 250px; width: 100%; padding-bottom: 120px; }
+        .content-body { margin-top: 260px; width: 100%; padding-bottom: 120px; }
+        
         .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
-        .btn { height: 45px; border-radius: 10px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .btn { height: 45px; border-radius: 10px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #64748b; }
-        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; }
+
+        /* CARDS Y LÓGICA DE COLORES */
+        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; border-left: 8px solid var(--success); }
+        .item.vacio { border-left: 8px solid var(--warning); background: rgba(245, 158, 11, 0.05); }
+        
+        .item b { font-size: 17px; color: var(--primary); display: block; }
+        .details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 13px; line-height: 1.6; animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
         input { width: 100%; height: 48px; margin-bottom: 12px; border-radius: 12px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; outline: none; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 30px; border-radius: 25px; width: 90%; max-width: 400px; text-align: center; }
+        .modal-content { background: var(--card); padding: 30px; border-radius: 25px; width: 90%; max-width: 400px; }
     </style>
 </head>
 <body class="dark-mode">
@@ -51,22 +52,21 @@
     </a>
 
     <div id="login-screen" class="modal">
-        <div class="modal-content">
-            <h2 style="margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
+        <div class="modal-content" style="text-align: center;">
+            <h2 style="margin-bottom:20px; color:var(--primary)">GestiónUF Acceso</h2>
             <input id="login-user" placeholder="Usuario">
-            <input id="login-pass" type="password" placeholder="Contraseña" inputmode="numeric">
+            <input id="login-pass" type="password" placeholder="Contraseña">
             <button id="btn-login" class="btn primary" style="width:100%">ENTRAR</button>
-            <p style="font-size: 11px; opacity: 0.5; margin-top: 15px;">Torre Urquiza 4750</p>
         </div>
     </div>
 
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success);">● SISTEMA ACTIVO</div>
+            <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success);">● SISTEMA ENTERPRISE ONLINE</div>
             <div class="grid-btns">
-                <button id="btn-theme" class="btn ghost">TEMA</button>
-                <button id="btn-logout" class="btn danger">SALIR</button>
-                <button id="btn-export" class="btn ghost">DATA</button>
+                <button id="btn-theme" class="btn ghost"><i class="fas fa-moon"></i></button>
+                <button id="btn-logout" class="btn danger"><i class="fas fa-power-off"></i></button>
+                <button id="btn-export" class="btn ghost"><i class="fas fa-database"></i></button>
             </div>
             <button id="btn-add" class="btn primary" style="width: 100%; margin: 10px 0;">+ NUEVA UNIDAD FUNCIONAL</button>
             <input id="search-input" placeholder="Buscar por Unidad o Apellido...">
@@ -79,7 +79,7 @@
 
     <div id="modal-form" class="modal hidden">
         <div class="modal-content">
-            <h3 style="margin-bottom:15px">Datos de Unidad</h3>
+            <h3 id="form-title" style="margin-bottom:15px; text-align:center;">Datos de Unidad</h3>
             <input id="f-uf" placeholder="Unidad (Ej: 01-A)">
             <input id="f-prop" placeholder="Propietario">
             <input id="f-telp" placeholder="Tel. Propietario">
@@ -100,41 +100,64 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        let departamentos = [], editId = null;
+        let departamentos = [], editId = null, expandedId = null;
         const MASTER_CODE = "1131552679";
 
-        // LOGIN LOGIC
+        // LOGIN
         document.getElementById("btn-login").onclick = () => {
             if (document.getElementById("login-pass").value === MASTER_CODE) {
                 localStorage.setItem("uf_auth", "true");
                 location.reload();
-            } else { alert("Clave incorrecta"); }
+            } else { alert("Clave Incorrecta"); }
         };
 
         if (localStorage.getItem("uf_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
             
-            // FIREBASE RENDER
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                const list = document.getElementById("list");
-                list.innerHTML = "";
-                departamentos.forEach(d => {
-                    const div = document.createElement("div");
-                    div.className = "item";
-                    div.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:center">
-                            <div><b>UF: ${d.UF}</b><small>${d.Propietario || 'S/D'}</small></div>
-                            <div style="display:flex; gap:15px; font-size:18px">
-                                <i class="fas fa-edit" style="color:var(--primary)" onclick="window.editUF('${d.id}')"></i>
-                                <i class="fas fa-trash" style="color:var(--danger)" onclick="window.deleteUF('${d.id}', '${d.UF}')"></i>
-                            </div>
-                        </div>`;
-                    list.appendChild(div);
-                });
+                render();
             });
         }
+
+        function render() {
+            const list = document.getElementById("list");
+            list.innerHTML = "";
+            departamentos.forEach(d => {
+                // Lógica de color amarillo si está vacío o dice S/D
+                const esVacio = !d.Propietario || d.Propietario.trim() === "" || d.Propietario.toLowerCase() === "s/d";
+                const div = document.createElement("div");
+                div.className = `item ${esVacio ? 'vacio' : ''}`;
+                
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center">
+                        <div>
+                            <b>UF: ${d.UF}</b>
+                            <span style="font-size:12px; opacity:0.8;">${esVacio ? 'SIN DESIGNAR' : d.Propietario}</span>
+                        </div>
+                        <div style="display:flex; gap:15px; font-size:18px">
+                            <i class="fas fa-eye" style="color:#64748b" onclick="window.toggleExpand('${d.id}')"></i>
+                            <i class="fas fa-edit" style="color:var(--primary)" onclick="window.editUF('${d.id}')"></i>
+                            <i class="fas fa-trash" style="color:var(--danger)" onclick="window.deleteUF('${d.id}', '${d.UF}')"></i>
+                        </div>
+                    </div>
+                    ${expandedId === d.id ? `
+                        <div class="details">
+                            <p><strong><i class="fas fa-phone"></i> Tel Prop:</strong> ${d.TelefonoPropietario || '-'}</p>
+                            <p><strong><i class="fas fa-user-tag"></i> Inquilino:</strong> ${d.Inquilino || '-'}</p>
+                            <p><strong><i class="fas fa-phone-alt"></i> Tel Inq:</strong> ${d.TelefonoInquilino || '-'}</p>
+                        </div>
+                    ` : ''}
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        window.toggleExpand = (id) => {
+            expandedId = (expandedId === id) ? null : id;
+            render();
+        };
 
         window.editUF = (id) => {
             const d = departamentos.find(x => x.id === id);
@@ -148,7 +171,7 @@
         };
 
         window.deleteUF = async (id, uf) => {
-            if(confirm(`¿Borrar la UF ${uf}?`)) await deleteDoc(doc(db, "departamentos", id));
+            if(confirm(`¿Desea eliminar la unidad ${uf}?`)) await deleteDoc(doc(db, "departamentos", id));
         };
 
         document.getElementById("btn-save").onclick = async () => {
