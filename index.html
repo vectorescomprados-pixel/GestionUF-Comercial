@@ -12,35 +12,37 @@
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
 
-        /* 🏠 BOTÓN HOME - ENLACE ACTUALIZADO */
+        /* 🏠 BOTÓN HOME - ENLACE HUB CENTRAL */
         .btn-home-fixed {
             position: fixed !important; bottom: 30px !important; right: 25px !important;
-            z-index: 999999999 !important; background: #2563eb !important;
+            z-index: 9999; background: #2563eb !important;
             color: white !important; width: 65px; height: 65px; border-radius: 50%;
             display: flex !important; align-items: center; justify-content: center;
             text-decoration: none; box-shadow: 0 8px 25px rgba(0,0,0,0.5); border: 3px solid #ffffff;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* HEADER SEGÚN TU FOTO */
+        /* HEADER SEGÚN DISEÑO ORIGINAL */
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: #111b21; z-index: 1000; padding: 15px; border-bottom: 4px solid var(--primary); border-radius: 0 0 20px 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
         .content-body { margin-top: 360px; width: 100%; padding-bottom: 120px; }
         
         .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
-        .btn { height: 50px; border-radius: 12px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
+        .btn { height: 48px; border-radius: 12px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
         .primary { background: #2563eb; } .danger { background: #e11d48; } .orange { background: #f97316; } .warning { background: #f59e0b; color: #000; }
 
-        /* CARDS - LÓGICA DE BORDE IZQUIERDO */
+        /* CARDS - LÓGICA DE ESTADOS */
         .item { background: #2a3942; border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 1px solid #374151; position: relative; border-left: 10px solid var(--success); }
         .item.vacio { border-left: 10px solid var(--warning); }
-        
-        .item b { font-size: 18px; color: #3b82f6; display: block; margin-bottom: 4px; }
+        .item b { font-size: 19px; color: #3b82f6; display: block; margin-bottom: 4px; }
         .item small { font-size: 14px; color: #9ca3af; display: block; }
+        
         .details { margin-top: 12px; padding-top: 10px; border-top: 1px dashed #4b5563; font-size: 13px; color: #d1d5db; line-height: 1.6; }
         
         input { width: 100%; height: 50px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #374151; padding: 0 15px; background: #0b141a; color: white; font-size: 16px; outline: none; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        .modal-content { background: #111b21; padding: 30px; border-radius: 25px; width: 90%; max-width: 400px; border: 1px solid var(--primary); }
+        
+        /* MODALES */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 10000; display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: #111b21; padding: 30px; border-radius: 25px; width: 92%; max-width: 400px; border: 1px solid #374151; text-align: center; }
     </style>
 </head>
 <body>
@@ -50,22 +52,33 @@
     </a>
 
     <div id="login-screen" class="modal">
-        <div class="modal-content" style="text-align: center;">
+        <div class="modal-content">
             <h2 style="margin-bottom:20px; color:#2563eb">GestiónUF Acceso</h2>
-            <input id="login-user" placeholder="Usuario">
             <input id="login-pass" type="password" placeholder="Contraseña">
-            <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
+            <button id="btn-login" class="btn primary" style="width:100%">ENTRAR</button>
+        </div>
+    </div>
+
+    <div id="modal-security" class="modal hidden">
+        <div class="modal-content">
+            <h2 style="color:white; margin-bottom:10px">Seguridad</h2>
+            <p id="security-msg" style="color:#9ca3af; margin-bottom:20px"></p>
+            <input id="security-pass" type="password" placeholder="Clave Administrativa">
+            <div style="display:flex; gap:10px">
+                <button id="btn-auth-delete" class="btn primary" style="flex:1">AUTORIZAR</button>
+                <button id="btn-close-security" class="btn danger" style="flex:1">VOLVER</button>
+            </div>
         </div>
     </div>
 
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:12px; color:var(--success);">● EN LÍNEA - SEGURIDAD ACTIVA</div>
+            <div style="font-size:10px; text-align:center; margin-bottom:12px; color:var(--success);">● SISTEMA ONLINE - TORRE URQUIZA</div>
             
             <div class="grid-btns">
-                <button class="btn primary">LOGS</button>
+                <button class="btn primary">HISTORIAL</button>
                 <button id="btn-theme" class="btn primary">TEMA</button>
-                <button id="btn-logout" class="btn orange">CERRAR</button>
+                <button id="btn-logout" class="btn danger">CERRAR</button>
             </div>
             
             <div class="grid-btns">
@@ -77,12 +90,12 @@
             <input id="search-input" placeholder="Buscar por Unidad o Apellido...">
             
             <div class="grid-btns">
-                <button id="btn-search" class="btn primary">BUSCAR</button>
-                <button id="btn-clear" class="btn primary">LIMPIAR</button>
-                <button class="btn warning">SIN DATOS</button>
+                <button id="btn-search-trigger" class="btn primary">BUSCAR</button>
+                <button id="btn-clear-trigger" class="btn primary">LIMPIAR</button>
+                <button id="btn-filter-sd" class="btn warning">SIN DATOS</button>
             </div>
             
-            <button class="btn orange" style="width: 100%; height: 40px; font-size: 10px; margin-top:5px;">BORRAR TODA LA NUBE</button>
+            <button class="btn orange" style="width: 100%; height: 35px; font-size: 9px; margin-top:5px;">BORRAR TODA LA NUBE</button>
         </div>
 
         <div class="content-body">
@@ -92,8 +105,8 @@
 
     <div id="modal-form" class="modal hidden">
         <div class="modal-content">
-            <h3 id="form-title" style="margin-bottom:15px; text-align:center;">Datos de Unidad</h3>
-            <input id="f-uf" placeholder="Unidad (Ej: 0000)">
+            <h3 style="margin-bottom:15px; color:white">Datos de Unidad</h3>
+            <input id="f-uf" placeholder="Unidad (Ej: 0001)">
             <input id="f-prop" placeholder="Propietario">
             <input id="f-telp" placeholder="Tel. Propietario">
             <input id="f-inq" placeholder="Inquilino">
@@ -113,9 +126,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        let departamentos = [], editId = null, expandedId = null;
-        const MASTER_CODE = "1131552679";
+        let departamentos = [], editId = null, expandedId = null, deleteTarget = null;
+        const MASTER_CODE = "4750";
 
+        // LOGIN
         document.getElementById("btn-login").onclick = () => {
             if (document.getElementById("login-pass").value === MASTER_CODE) {
                 localStorage.setItem("uf_auth", "true");
@@ -129,31 +143,29 @@
             
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                render();
+                render(departamentos);
             });
         }
 
-        function render() {
+        function render(data) {
             const list = document.getElementById("list");
             list.innerHTML = "";
-            departamentos.forEach(d => {
-                // LÓGICA AMARILLA INFALIBLE:
+            data.forEach(d => {
                 const p = d.Propietario ? d.Propietario.toString().trim().toUpperCase() : "";
                 const esVacio = (p === "" || p === "S/D" || p === "SD" || !d.Propietario);
                 
                 const div = document.createElement("div");
                 div.className = `item ${esVacio ? 'vacio' : ''}`;
-                
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center">
                         <div>
                             <b>UF: ${d.UF}</b>
                             <small>${esVacio ? 'SIN DESIGNAR (S/D)' : d.Propietario}</small>
                         </div>
-                        <div style="display:flex; gap:15px; font-size:18px">
+                        <div style="display:flex; gap:18px; font-size:22px">
                             <i class="fas fa-eye" style="color:#d1d5db" onclick="window.toggleExpand('${d.id}')"></i>
                             <i class="fas fa-edit" style="color:#3b82f6" onclick="window.editUF('${d.id}')"></i>
-                            <i class="fas fa-trash" style="color:#ef4444" onclick="window.deleteUF('${d.id}', '${d.UF}')"></i>
+                            <i class="fas fa-trash" style="color:#ef4444" onclick="window.askDelete('${d.id}', '${d.UF}')"></i>
                         </div>
                     </div>
                     ${expandedId === d.id ? `
@@ -168,11 +180,46 @@
             });
         }
 
-        window.toggleExpand = (id) => {
-            expandedId = (expandedId === id) ? null : id;
-            render();
+        // FUNCIONALIDAD DE LOS BOTONES DEL HEADER
+        document.getElementById("btn-search-trigger").onclick = () => {
+            const val = document.getElementById("search-input").value.toLowerCase();
+            const filtered = departamentos.filter(d => d.UF.toLowerCase().includes(val) || (d.Propietario && d.Propietario.toLowerCase().includes(val)));
+            render(filtered);
         };
 
+        document.getElementById("btn-clear-trigger").onclick = () => {
+            document.getElementById("search-input").value = "";
+            render(departamentos);
+        };
+
+        document.getElementById("btn-filter-sd").onclick = () => {
+            const filtered = departamentos.filter(d => {
+                const p = d.Propietario ? d.Propietario.toString().trim().toUpperCase() : "";
+                return (p === "" || p === "S/D" || p === "SD" || !d.Propietario);
+            });
+            render(filtered);
+        };
+
+        // SEGURIDAD AL ELIMINAR
+        window.askDelete = (id, uf) => {
+            deleteTarget = id;
+            document.getElementById("security-msg").innerText = `Confirmar eliminación de la UF ${uf}`;
+            document.getElementById("security-pass").value = "";
+            document.getElementById("modal-security").classList.remove("hidden");
+        };
+
+        document.getElementById("btn-auth-delete").onclick = async () => {
+            if(document.getElementById("security-pass").value === MASTER_CODE) {
+                await deleteDoc(doc(db, "departamentos", deleteTarget));
+                document.getElementById("modal-security").classList.add("hidden");
+            } else { alert("Clave de seguridad incorrecta"); }
+        };
+
+        document.getElementById("btn-close-security").onclick = () => document.getElementById("modal-security").classList.add("hidden");
+
+        // GESTIÓN DE DATOS
+        window.toggleExpand = (id) => { expandedId = (expandedId === id) ? null : id; render(departamentos); };
+        
         window.editUF = (id) => {
             const d = departamentos.find(x => x.id === id);
             editId = id;
@@ -184,29 +231,14 @@
             document.getElementById("modal-form").classList.remove("hidden");
         };
 
-        window.deleteUF = async (id, uf) => {
-            if(confirm(`¿Desea eliminar la unidad ${uf}?`)) await deleteDoc(doc(db, "departamentos", id));
-        };
-
         document.getElementById("btn-save").onclick = async () => {
-            const d = { 
-                UF: document.getElementById("f-uf").value, 
-                Propietario: document.getElementById("f-prop").value, 
-                TelefonoPropietario: document.getElementById("f-telp").value, 
-                Inquilino: document.getElementById("f-inq").value, 
-                TelefonoInquilino: document.getElementById("f-teli").value 
-            };
+            const d = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
             if(editId) await updateDoc(doc(db, "departamentos", editId), d);
             else await addDoc(collection(db, "departamentos"), d);
             document.getElementById("modal-form").classList.add("hidden");
         };
 
-        document.getElementById("btn-add").onclick = () => {
-            editId = null;
-            document.querySelectorAll("#modal-form input").forEach(i => i.value = "");
-            document.getElementById("modal-form").classList.remove("hidden");
-        };
-
+        document.getElementById("btn-add").onclick = () => { editId = null; document.querySelectorAll("#modal-form input").forEach(i => i.value = ""); document.getElementById("modal-form").classList.remove("hidden"); };
         document.getElementById("btn-cancel").onclick = () => document.getElementById("modal-form").classList.add("hidden");
         document.getElementById("btn-logout").onclick = () => { localStorage.removeItem("uf_auth"); location.reload(); };
     </script>
