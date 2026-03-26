@@ -2,262 +2,275 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover">
-    <title>Gestión de Unidades</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0b141a">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icono-192.png">
-
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
+    <title>GestiónUF Pro - Enterprise Gold V3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #0b141a; --card: #111b21; --primary: #2563eb; --danger: #e11d48; --text: #e9edef; --border: #222d34; --warning: #f59e0b; --success: #22c55e; }
-        body.light-mode { --bg: #f0f2f5; --card: #ffffff; --text: #1f293b; --border: #e5e7eb; }
-        
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        :root { --bg: #f0f2f5; --card: #ffffff; --primary: #2563eb; --danger: #e11d48; --text: #1f293b; --border: #e5e7eb; --warning: #f59e0b; --success: #22c55e; }
+        body.dark-mode { --bg: #0b141a; --card: #111b21; --text: #e9edef; --border: #222d34; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; transition: background 0.2s; }
         body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
-
-        /* BOTÓN HOME */
-        .btn-home-fixed {
-            position: fixed !important; bottom: 30px !important; right: 25px !important;
-            z-index: 9999; background: #2563eb !important;
-            color: white !important; width: 65px; height: 65px; border-radius: 50%;
-            display: flex !important; align-items: center; justify-content: center;
-            text-decoration: none; box-shadow: 0 8px 25px rgba(0,0,0,0.5); border: 3px solid #ffffff;
-        }
-
-        /* HEADER */
-        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 4px solid var(--primary); border-radius: 0 0 20px 20px; }
-        .content-body { margin-top: 380px; width: 100%; padding-bottom: 120px; }
+        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .content-body { margin-top: 380px; width: 100%; padding-bottom: 100px; }
+        .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+        .grid-btns-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #64748b; } .warning { background: var(--warning); color: #000; }
         
-        .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
-        .btn { height: 48px; border-radius: 12px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; gap: 5px; }
-        .primary { background: #2563eb; } .danger { background: #e11d48; } .orange { background: #f97316; } .warning { background: #f59e0b; color: #000; } .ghost { background: #475569; }
-
-        #log-container { background: #000; padding: 10px; border-radius: 10px; margin-bottom: 15px; font-family: monospace; font-size: 10px; height: 100px; overflow-y: auto; border: 1px solid #333; }
-        .log-success { color: #00ff41; } .log-info { color: #00d4ff; } .log-err { color: #ff3131; }
-
-        .item { background: var(--card); border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; border-left: 10px solid var(--success); }
-        .item.no-phone { border-left: 10px solid var(--warning) !important; }
-        .item b { font-size: 18px; color: #3b82f6; display: block; }
-        .item small { font-size: 14px; color: var(--text); opacity: 0.7; }
-        .details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #4b5563; font-size: 13px; line-height: 1.6; }
+        #btn-rocket { position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px; border-radius: 50%; z-index: 5000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 20px; border: 2px solid white; display: none; }
+        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; }
+        .item.no-phone { border-left: 8px solid var(--warning) !important; }
+        .item b { font-size: 16px; color: var(--primary); display: block; margin-bottom: 5px; }
+        .details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 14px; line-height: 1.6; }
+        input, select { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
         
-        input { width: 100%; height: 50px; margin-bottom: 12px; border-radius: 12px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; outline: none; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 30px; border-radius: 25px; width: 92%; max-width: 400px; border: 1px solid var(--border); text-align: center; }
+        #log-container { position: relative; margin-bottom: 15px; }
+        #log-panel { background: #000; padding: 12px; font-size: 10px; height: 120px; overflow-y: auto; border-radius: 8px; font-family: 'Courier New', monospace; border: 1px solid #333; line-height: 1.4; }
+        #btn-download-log { position: absolute; top: 5px; right: 5px; width: 30px; height: 30px; font-size: 12px; opacity: 0.7; }
+        .log-success { color: #00ff41; } .log-warn { color: #fbff00; } .log-err { color: #ff3131; } .log-info { color: #00d4ff; }
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     </style>
 </head>
-<body>
+<body class="dark-mode">
 
-    <input type="file" id="csv-file" class="hidden" accept=".csv">
-
-    <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home-fixed">
-        <i class="fas fa-home" style="font-size: 28px;"></i>
-    </a>
+    <button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
+    <input type="file" id="csv-file" class="hidden">
 
     <div id="login-screen" class="modal">
         <div class="modal-content">
-            <h2 style="margin-bottom:20px; color:#2563eb">GestiónUF Acceso</h2>
+            <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Acceso</h2>
+            <input id="login-user" placeholder="Usuario">
             <input id="login-pass" type="password" placeholder="Contraseña">
-            <button id="btn-login" class="btn primary" style="width:100%">ENTRAR</button>
+            <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
+            <button id="btn-create-user-trigger" class="btn ghost" style="width:100%; margin-top:10px">NUEVO USUARIO (ADMIN)</button>
         </div>
     </div>
 
-    <div id="modal-confirm" class="modal hidden">
+    <div id="modal-create-user" class="modal hidden">
         <div class="modal-content">
-            <h3>Seguridad Requerida</h3>
-            <p id="confirm-msg" style="margin:10px 0; font-size:13px; opacity:0.8"></p>
-            <input id="confirm-pass" type="password" placeholder="Clave Administrativa">
-            <div style="display:flex; gap:10px">
-                <button id="btn-confirm-yes" class="btn primary" style="flex:1">AUTORIZAR</button>
-                <button id="btn-confirm-no" class="btn danger" style="flex:1">VOLVER</button>
+            <h3 style="text-align:center; margin-bottom:15px">Registrar Acceso Nube</h3>
+            <input id="new-username" placeholder="Nombre de Usuario">
+            <input id="new-password" type="password" placeholder="Contraseña">
+            <select id="new-role">
+                <option value="operador">Operador (Gestión)</option>
+                <option value="admin">Administrador (Total)</option>
+            </select>
+            <div class="grid-btns-2">
+                <button id="btn-save-user" class="btn primary">CREAR</button>
+                <button id="btn-cancel-user" class="btn danger">CANCELAR</button>
             </div>
         </div>
     </div>
 
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div style="font-size:10px; text-align:center; margin-bottom:12px; color:var(--success);">● EN LÍNEA - SEGURIDAD ACTIVA</div>
-            
+            <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● EN LÍNEA - FIREBASE REALTIME</div>
             <div class="grid-btns">
-                <button id="btn-log-toggle" class="btn primary">LOGS</button>
-                <button id="btn-theme" class="btn primary">TEMA</button>
-                <button id="btn-logout" class="btn danger">CERRAR</button>
+                <button id="btn-log-toggle" class="btn ghost">LOGS</button>
+                <button id="btn-theme" class="btn ghost">TEMA</button>
+                <button id="btn-logout-trigger" class="btn danger">CERRAR</button>
             </div>
-            
             <div class="grid-btns">
                 <button id="btn-add" class="btn primary">NUEVA UF</button>
-                <button id="btn-import-trigger" class="btn primary">IMPORTAR</button>
-                <button id="btn-export" class="btn primary">RESPALDO</button>
+                <button id="btn-import" class="btn ghost admin-only">IMPORTAR</button>
+                <button id="btn-export" class="btn ghost admin-only">RESPALDO</button>
             </div>
-
             <input id="search-input" placeholder="Buscar por Unidad o Apellido...">
-            
             <div class="grid-btns">
                 <button id="btn-search" class="btn primary">BUSCAR</button>
                 <button id="btn-clear" class="btn ghost">LIMPIAR</button>
-                <button id="btn-filter-sd" class="btn warning">SIN DATOS</button>
+                <button id="btn-filter-empty" class="btn warning">SIN DATOS</button>
             </div>
-            
-            <button id="btn-delete-all" class="btn danger" style="width: 100%; height: 35px; font-size: 9px; margin-top:5px;">BORRAR TODA LA NUBE</button>
+            <button id="btn-delete-all" class="btn danger admin-only" style="width:100%">BORRAR TODA LA NUBE</button>
         </div>
 
         <div class="content-body">
-            <div id="log-container" class="hidden"></div>
+            <div id="log-container" class="hidden">
+                <button id="btn-download-log" class="btn ghost admin-only" title="Descargar Log"><i class="fas fa-download"></i></button>
+                <div id="log-panel"></div>
+            </div>
             <div id="list"></div>
+        </div>
+    </div>
+
+    <div id="modal-logout" class="modal hidden">
+        <div class="modal-content" style="text-align:center">
+            <i class="fas fa-sign-out-alt" style="font-size:40px; color:var(--danger); margin-bottom:15px"></i>
+            <h3>Cerrar Sesión</h3>
+            <p style="margin:10px 0; font-size:14px; opacity:0.8">¿Desea salir del sistema?</p>
+            <div class="grid-btns-2">
+                <button id="btn-logout-confirm" class="btn danger">SALIR</button>
+                <button id="btn-logout-cancel" class="btn ghost">VOLVER</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-confirm" class="modal hidden">
+        <div class="modal-content" style="text-align:center">
+            <h3>Seguridad Requerida</h3>
+            <p id="confirm-msg" style="margin:10px 0; font-size:13px"></p>
+            <input id="confirm-pass" type="password" placeholder="Clave Maestra">
+            <div class="grid-btns-2">
+                <button id="btn-confirm-yes" class="btn primary">AUTORIZAR</button>
+                <button id="btn-confirm-no" class="btn danger">VOLVER</button>
+            </div>
         </div>
     </div>
 
     <div id="modal-form" class="modal hidden">
         <div class="modal-content">
-            <h3 style="margin-bottom:15px">Datos de Unidad</h3>
-            <input id="f-uf" placeholder="Unidad (Ej: 0001)">
+            <h3 id="form-title" style="text-align:center; margin-bottom:15px">Datos de Unidad</h3>
+            <input id="f-uf" placeholder="Unidad (Ej: 01-A)">
             <input id="f-prop" placeholder="Propietario">
             <input id="f-telp" placeholder="Tel. Propietario">
             <input id="f-inq" placeholder="Inquilino">
             <input id="f-teli" placeholder="Tel. Inquilino">
-            <div style="display: flex; gap: 10px;">
-                <button id="btn-save" class="btn primary" style="flex:1">GUARDAR</button>
-                <button id="btn-cancel" class="btn danger" style="flex:1">DESCARTAR</button>
+            <div class="grid-btns-2">
+                <button id="btn-save" class="btn primary">GUARDAR</button>
+                <button id="btn-cancel" class="btn danger">DESCARTAR</button>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, orderBy, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, orderBy, getDocs, writeBatch, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto" };
-        const app = initializeApp(firebaseConfig);
+        const firebaseConfig = { 
+            apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", 
+            authDomain: "gestionuf-remoto.firebaseapp.com", 
+            projectId: "gestionuf-remoto", 
+            storageBucket: "gestionuf-remoto.firebasestorage.app", 
+            messagingSenderId: "724452752860", 
+            appId: "1:724452752860:web:4d25585addcdcbd146e319" 
+        };
+
+        const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
         
-        let departamentos = [], editId = null, expandedId = null, pendingAction = null;
+        let departamentos = [], editId = null, pendingAction = null;
         const MASTER_CODE = "1131552679";
+        const userRole = localStorage.getItem("uf_user_role") || "operador";
 
+        // --- MOTOR DE LOGS ORIGINAL ---
         const writeLog = (msg, type = 'success') => {
-            const container = document.getElementById("log-container");
-            container.innerHTML += `<div class="log-${type}">[${new Date().toLocaleTimeString()}] ${msg}</div>`;
-            container.scrollTop = container.scrollHeight;
+            const lp = document.getElementById("log-panel");
+            if(lp) {
+                lp.innerHTML += `<div class="log-${type}">» [${new Date().toLocaleTimeString()}] ${msg}</div>`;
+                lp.scrollTop = lp.scrollHeight;
+            }
         };
 
-        // LOGIN
-        document.getElementById("btn-login").onclick = () => {
-            if (document.getElementById("login-pass").value === "4750" || document.getElementById("login-pass").value === MASTER_CODE) {
-                localStorage.setItem("uf_auth", "true");
-                location.reload();
-            } else { alert("Clave Incorrecta"); }
+        const applyPermissions = () => {
+            if(userRole !== 'admin') {
+                document.querySelectorAll(".admin-only").forEach(el => el.remove());
+            }
         };
 
-        if (localStorage.getItem("uf_auth") === "true") {
-            document.getElementById("login-screen").classList.add("hidden");
-            document.getElementById("main-screen").classList.remove("hidden");
-            
-            onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
-                departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                render(departamentos);
-                writeLog("Sincronización completa", "info");
-            });
-        }
+        // --- SISTEMA DE LOGIN CONECTADO A FIREBASE ---
+        const login = async () => {
+            const u = document.getElementById("login-user").value;
+            const p = document.getElementById("login-pass").value;
+            if(!u || !p) return;
 
+            try {
+                const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+                const snap = await getDocs(q);
+
+                if (!snap.empty) {
+                    const data = snap.docs.data();
+                    localStorage.setItem("uf_auth", "true");
+                    localStorage.setItem("uf_user_role", data.role);
+                    localStorage.setItem("uf_username", data.usuario);
+                    location.reload();
+                } else { 
+                    alert("Usuario o Contraseña incorrectos"); 
+                    writeLog("Fallo de login para: " + u, "err");
+                }
+            } catch (err) {
+                writeLog("Error de conexión: " + err.message, "err");
+            }
+        };
+
+        document.getElementById("btn-login").onclick = login;
+        document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
+
+        // --- EFECTO COHETE ---
+        window.onscroll = () => { document.getElementById("btn-rocket").style.display = (window.scrollY > 300) ? "flex" : "none"; };
+        document.getElementById("btn-rocket").onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
+
+        // --- RENDERIZADO ORIGINAL ---
         function render(data) {
             const list = document.getElementById("list");
             list.innerHTML = "";
             data.forEach(d => {
                 const tp = String(d.TelefonoPropietario || "").trim();
                 const ti = String(d.TelefonoInquilino || "").trim();
-                const sinContacto = (!tp && !ti);
+                const sinT = (!tp && !ti);
+                const telActivo = tp || ti || "";
 
                 const div = document.createElement("div");
-                div.className = `item ${sinContacto ? 'no-phone' : ''}`;
+                div.className = `item ${sinT ? 'no-phone' : ''}`;
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center">
-                        <div>
-                            <b>UF: ${d.UF}</b>
-                            <small>${d.Propietario || 'S/D'}</small>
-                        </div>
-                        <div style="display:flex; gap:18px; font-size:20px">
-                            <i class="fas fa-eye" style="color:#d1d5db" onclick="window.toggleExpand('${d.id}')"></i>
-                            <i class="fas fa-edit" style="color:#3b82f6" onclick="window.editUF('${d.id}')"></i>
-                            <i class="fas fa-trash" style="color:#ef4444" onclick="window.askConfirm('¿Borrar registro UF ${d.UF}?', 'delete', '${d.id}')"></i>
+                        <div><b>UF: ${d.UF}</b><small>${d.Propietario || 'S/D'}</small></div>
+                        <div style="display:flex; gap:15px; font-size:18px">
+                            <i class="fas fa-eye" onclick="document.getElementById('det-${d.id}').classList.toggle('hidden');"></i>
+                            <i class="fas fa-edit" style="color:var(--primary)" onclick="window.editUF('${d.id}')"></i>
+                            ${userRole === 'admin' ? `<i class="fas fa-trash" style="color:var(--danger)" onclick="window.askConfirm('¿Borrar registro UF ${d.UF}?', 'delete', '${d.id}')"></i>` : ''}
                         </div>
                     </div>
-                    ${expandedId === d.id ? `
-                        <div class="details">
-                            <p><strong>Tel Prop:</strong> ${tp || 'N/C'}</p>
-                            <p><strong>Inq:</strong> ${d.Inquilino || '-'}</p>
-                            <p><strong>Tel Inq:</strong> ${ti || 'N/C'}</p>
+                    <div id="det-${d.id}" class="details hidden">
+                        <p><b>Prop:</b> ${d.Propietario || '---'} | <b>Tel:</b> ${tp || 'N/C'}</p>
+                        <p><b>Inq:</b> ${d.Inquilino || '---'} | <b>Tel:</b> ${ti || 'N/C'}</p>
+                        <div class="grid-btns-2">
+                            <a href="tel:${telActivo}" class="btn primary" onclick="writeLog('Llamada a UF ${d.UF}', 'info')"><i class="fas fa-phone"></i> LLAMAR</a>
+                            <a href="https://wa.me/${telActivo.replace(/\D/g,'')}" target="_blank" class="btn" style="background:#22c55e" onclick="writeLog('WhatsApp a UF ${d.UF}', 'info')"><i class="fab fa-whatsapp"></i> CHAT</a>
                         </div>
-                    ` : ''}
-                `;
+                    </div>`;
                 list.appendChild(div);
             });
         }
 
-        // --- FUNCIONALIDADES DE BOTONES HEADER ---
-        document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
-        
-        document.getElementById("btn-theme").onclick = () => {
-            document.body.classList.toggle("light-mode");
-            writeLog("Cambio de tema visual", "info");
-        };
-
-        document.getElementById("btn-search").onclick = () => {
+        // --- BÚSQUEDA Y FILTROS ORIGINALES ---
+        const buscar = () => {
             const v = document.getElementById("search-input").value.toLowerCase();
             const res = departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v));
             render(res);
-            writeLog(`Búsqueda: "${v}"`, "info");
+            writeLog(`Búsqueda: "${v}" (${res.length} resultados)`, "info");
         };
-
+        document.getElementById("btn-search").onclick = buscar;
+        document.getElementById("search-input").onkeyup = (e) => e.key === "Enter" && buscar();
+        
         document.getElementById("btn-clear").onclick = () => {
             document.getElementById("search-input").value = "";
             render(departamentos);
-            writeLog("Filtros limpiados", "info");
+            writeLog("Vista restablecida", "info");
         };
 
-        document.getElementById("btn-filter-sd").onclick = () => {
+        document.getElementById("btn-filter-empty").onclick = () => {
             const vacios = departamentos.filter(d => !String(d.TelefonoPropietario||"").trim() && !String(d.TelefonoInquilino||"").trim());
             render(vacios);
-            writeLog(`Filtrado: ${vacios.length} sin datos`, "warn");
+            writeLog(`Filtro: ${vacios.length} sin contacto`, "warn");
         };
 
-        // --- IMPORTACIÓN / EXPORTACIÓN ---
-        document.getElementById("btn-import-trigger").onclick = () => document.getElementById("csv-file").click();
-        
-        document.getElementById("csv-file").onchange = (e) => {
-            const reader = new FileReader();
-            reader.onload = async (ev) => {
-                const batch = writeBatch(db);
-                const lines = ev.target.result.split("\n").slice(1);
-                lines.forEach(l => {
-                    if(!l.trim()) return;
-                    const p = l.split(',');
-                    batch.set(doc(collection(db, "departamentos")), {
-                        UF: p?.trim() || "0000", Propietario: p?.trim() || "", TelefonoPropietario: p?.trim() || "",
-                        Inquilino: p?.trim() || "", TelefonoInquilino: p?.trim() || ""
-                    });
-                });
-                await batch.commit();
-                writeLog("Importación masiva exitosa", "success");
-            };
-            reader.readAsText(e.target.files);
-        };
+        // --- PERSISTENCIA Y CARGA ---
+        if(localStorage.getItem("uf_auth") === "true") {
+            document.getElementById("login-screen").classList.add("hidden");
+            document.getElementById("main-screen").classList.remove("hidden");
+            applyPermissions();
+            onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
+                departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                render(departamentos);
+                writeLog("Sincronización con Nube OK", "info");
+            });
+        }
 
-        document.getElementById("btn-export").onclick = () => {
-            const csv = "UF,Propietario,TelProp,Inquilino,TelInq\n" + departamentos.map(d => `${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}`).join("\n");
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = "Respaldo_UF.csv"; a.click();
-            writeLog("Respaldo descargado", "success");
-        };
-
-        // --- SEGURIDAD ---
+        // --- ACCIONES PROTEGIDAS ---
         window.askConfirm = (msg, type, id = null) => {
             pendingAction = { type, id };
             document.getElementById("confirm-msg").innerText = msg;
@@ -266,7 +279,10 @@
         };
 
         document.getElementById("btn-confirm-yes").onclick = async () => {
-            if(document.getElementById("confirm-pass").value !== MASTER_CODE) return alert("Clave Incorrecta");
+            if(document.getElementById("confirm-pass").value !== MASTER_CODE) {
+                writeLog("Clave maestra errónea", "err");
+                return alert("Clave Incorrecta");
+            }
             document.getElementById("modal-confirm").classList.add("hidden");
 
             if(pendingAction.type === 'delete') {
@@ -275,18 +291,27 @@
             } else if(pendingAction.type === 'deleteAll') {
                 const s = await getDocs(collection(db, "departamentos"));
                 const b = writeBatch(db); s.forEach(d => b.delete(d.ref)); await b.commit();
-                writeLog("BASE DE DATOS VACIADA", "err");
+                writeLog("VACIADO DE DB COMPLETO", "err");
+            } else if(pendingAction.type === 'openUserForm') {
+                document.getElementById("modal-create-user").classList.remove("hidden");
+            } else if(pendingAction.type === 'export') {
+                const csv = "UF,Propietario,TelProp,Inquilino,TelInq\n" + departamentos.map(d => `${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}`).join("\n");
+                const link = document.createElement("a");
+                link.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+                link.download = `Respaldo_UF_${new Date().toISOString().slice(0,10)}.csv`; link.click();
             }
         };
 
-        document.getElementById("btn-confirm-no").onclick = () => document.getElementById("modal-confirm").classList.add("hidden");
+        // --- CRUD UF ---
+        document.getElementById("btn-add").onclick = () => { 
+            editId = null; 
+            document.querySelectorAll("#modal-form input").forEach(i => i.value = "");
+            document.getElementById("modal-form").classList.remove("hidden"); 
+        };
 
-        // GESTIÓN
-        window.toggleExpand = (id) => { expandedId = (expandedId === id) ? null : id; render(departamentos); };
         window.editUF = (id) => {
-            const d = departamentos.find(x => x.id === id);
-            editId = id;
-            document.getElementById("f-uf").value = d.UF;
+            editId = id; const d = departamentos.find(x => x.id === id);
+            document.getElementById("f-uf").value = d.UF || ""; 
             document.getElementById("f-prop").value = d.Propietario || "";
             document.getElementById("f-telp").value = d.TelefonoPropietario || "";
             document.getElementById("f-inq").value = d.Inquilino || "";
@@ -295,26 +320,93 @@
         };
 
         document.getElementById("btn-save").onclick = async () => {
-            const d = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
+            const d = { 
+                UF: document.getElementById("f-uf").value, 
+                Propietario: document.getElementById("f-prop").value, 
+                TelefonoPropietario: document.getElementById("f-telp").value, 
+                Inquilino: document.getElementById("f-inq").value, 
+                TelefonoInquilino: document.getElementById("f-teli").value 
+            };
+            if(!d.UF) return alert("UF es requerido");
+            
             if(editId) await updateDoc(doc(db, "departamentos", editId), d);
             else await addDoc(collection(db, "departamentos"), d);
+            
             document.getElementById("modal-form").classList.add("hidden");
-            writeLog(`UF ${d.UF} guardada`, "success");
+            writeLog(`Guardado UF: ${d.UF}`, "success");
         };
 
-        document.getElementById("btn-add").onclick = () => { editId = null; document.querySelectorAll("#modal-form input").forEach(i => i.value = ""); document.getElementById("modal-form").classList.remove("hidden"); };
-        document.getElementById("btn-cancel").onclick = () => document.getElementById("modal-form").classList.add("hidden");
-        document.getElementById("btn-logout").onclick = () => { localStorage.removeItem("uf_auth"); location.reload(); };
-        document.getElementById("btn-delete-all").onclick = () => askConfirm("¡PELIGRO! Esto borrará todos los datos.", "deleteAll");
+        // --- GESTIÓN USUARIOS ---
+        document.getElementById("btn-save-user").onclick = async () => {
+            const u = document.getElementById("new-username").value;
+            const p = document.getElementById("new-password").value;
+            const r = document.getElementById("new-role").value;
+            if(u && p) {
+                await addDoc(collection(db, "usuarios"), { usuario: u, password: p, role: r });
+                alert("Usuario creado en la Nube");
+                writeLog(`Nuevo usuario: ${u}`, "success");
+                document.getElementById("modal-create-user").classList.add("hidden");
+            }
+        };
 
-        // REGISTRO DE SERVICE WORKER PARA MODO PWA NATIVO
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW Activado para Gestión UF'))
-                    .catch(err => console.error('Error SW', err));
-            });
+        // --- IMPORTACIÓN CSV ORIGINAL ---
+        const btnImp = document.getElementById("btn-import");
+        if(btnImp) btnImp.onclick = () => document.getElementById("csv-file").click();
+        document.getElementById("csv-file").onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                const batch = writeBatch(db);
+                const lines = ev.target.result.split("\n").slice(1);
+                lines.forEach(l => {
+                    if(!l.trim()) return;
+                    const parts = l.split(l.includes(';') ? ';' : ',');
+                    batch.set(doc(collection(db, "departamentos")), {
+                        UF: parts?.trim() || "S/D",
+                        Propietario: parts?.trim() || "",
+                        TelefonoPropietario: parts?.trim() || "",
+                        Inquilino: parts?.trim() || "",
+                        TelefonoInquilino: parts?.trim() || ""
+                    });
+                });
+                await batch.commit();
+                writeLog(`Importados ${lines.length} registros`, "success");
+            };
+            reader.readAsText(e.target.files);
+        };
+
+        // --- BOTONES EXTRAS ---
+        const btnExp = document.getElementById("btn-export");
+        if(btnExp) btnExp.onclick = () => askConfirm("¿Descargar respaldo CSV?", "export");
+
+        if(document.getElementById("btn-download-log")) {
+            document.getElementById("btn-download-log").onclick = () => {
+                const blob = new Blob([document.getElementById("log-panel").innerText], { type: 'text/plain' });
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = `Log_UF.txt`;
+                a.click();
+            };
         }
+
+        document.getElementById("btn-logout-trigger").onclick = () => document.getElementById("modal-logout").classList.remove("hidden");
+        document.getElementById("btn-logout-confirm").onclick = () => {
+            localStorage.clear();
+            location.reload();
+        };
+
+        document.getElementById("btn-create-user-trigger").onclick = () => askConfirm("Clave Maestra para crear accesos", "openUserForm");
+        
+        const btnDelAll = document.getElementById("btn-delete-all");
+        if(btnDelAll) btnDelAll.onclick = () => askConfirm("¡BORRADO TOTAL DE DATOS!", "deleteAll");
+
+        // CIERRE DE MODALES
+        document.querySelectorAll("#btn-cancel, #btn-confirm-no, #btn-logout-cancel, #btn-cancel-user").forEach(b => b.onclick = () => {
+            document.querySelectorAll(".modal").forEach(m => m.id !== "login-screen" && m.classList.add("hidden"));
+        });
+
+        document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("dark-mode");
+        document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
+
     </script>
 </body>
 </html>
