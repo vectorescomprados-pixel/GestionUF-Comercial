@@ -64,8 +64,7 @@
                 <button id="btn-save-user" class="btn primary">GUARDAR</button>
                 <button id="btn-cancel-user" class="btn danger">CERRAR</button>
             </div>
-            <div id="user-db-list" style="margin-top:20px; border-top:1px solid var(--border); padding-top:10px">
-                </div>
+            <div id="user-db-list" style="margin-top:20px; border-top:1px solid var(--border); padding-top:10px"></div>
         </div>
     </div>
 
@@ -100,18 +99,6 @@
         </div>
     </div>
 
-    <div id="modal-logout" class="modal hidden">
-        <div class="modal-content" style="text-align:center">
-            <i class="fas fa-sign-out-alt" style="font-size:40px; color:var(--danger); margin-bottom:15px"></i>
-            <h3>Finalizar Sesión</h3>
-            <p style="margin:10px 0; font-size:14px; opacity:0.8">¿Desea cerrar el sistema de forma segura?</p>
-            <div class="grid-btns-2">
-                <button id="btn-logout-confirm" class="btn danger">SALIR</button>
-                <button id="btn-logout-cancel" class="btn ghost">CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
     <div id="modal-confirm" class="modal hidden">
         <div class="modal-content" style="text-align:center">
             <h3>Seguridad Requerida</h3>
@@ -135,6 +122,18 @@
             <div class="grid-btns-2">
                 <button id="btn-save" class="btn primary">GUARDAR</button>
                 <button id="btn-cancel" class="btn danger">DESCARTAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-logout" class="modal hidden">
+        <div class="modal-content" style="text-align:center">
+            <i class="fas fa-sign-out-alt" style="font-size:40px; color:var(--danger); margin-bottom:15px"></i>
+            <h3>Finalizar Sesión</h3>
+            <p style="margin:10px 0; font-size:14px; opacity:0.8">¿Desea cerrar el sistema de forma segura?</p>
+            <div class="grid-btns-2">
+                <button id="btn-logout-confirm" class="btn danger">SALIR</button>
+                <button id="btn-logout-cancel" class="btn ghost">CANCELAR</button>
             </div>
         </div>
     </div>
@@ -173,12 +172,9 @@
                 usuariosDB.forEach(u => {
                     const row = document.createElement("div");
                     row.className = "user-row";
-                    row.innerHTML = `
-                        <span><b>${u.usuario}</b> (${u.role})</span>
-                        <div style="display:flex; gap:12px">
-                            <i class="fas fa-edit" style="color:var(--primary); cursor:pointer" onclick="window.prepareEditUser('${u.id}')"></i>
-                            <i class="fas fa-trash" style="color:var(--danger); cursor:pointer" onclick="window.askConfirm('¿Eliminar acceso de ${u.usuario}?', 'deleteUser', '${u.id}')"></i>
-                        </div>`;
+                    row.innerHTML = `<span><b>${u.usuario}</b> (${u.role})</span>
+                        <div style="display:flex; gap:12px"><i class="fas fa-edit" style="color:var(--primary); cursor:pointer" onclick="window.prepareEditUser('${u.id}')"></i>
+                        <i class="fas fa-trash" style="color:var(--danger); cursor:pointer" onclick="window.askConfirm('¿Eliminar acceso de ${u.usuario}?', 'deleteUser', '${u.id}')"></i></div>`;
                     container.appendChild(row);
                 });
             });
@@ -199,98 +195,66 @@
             const p = document.getElementById("new-password").value.trim();
             const r = document.getElementById("new-role").value;
             if(!u || !p) return alert("Complete los campos");
-
-            try {
-                if(editUserId) {
-                    await updateDoc(doc(db, "usuarios", editUserId), { usuario: u, password: p, role: r });
-                    writeLog(`Usuario ${u} actualizado`, "info");
-                    editUserId = null;
-                } else {
-                    await addDoc(collection(db, "usuarios"), { usuario: u, password: p, role: r });
-                    writeLog(`Usuario ${u} creado`, "success");
-                }
-                document.querySelectorAll("#modal-create-user input").forEach(i => i.value = "");
-                document.getElementById("user-form-title").innerText = "Registrar Acceso";
-                document.getElementById("btn-save-user").innerText = "GUARDAR";
-            } catch (e) { alert("Error al guardar usuario"); }
+            if(editUserId) {
+                await updateDoc(doc(db, "usuarios", editUserId), { usuario: u, password: p, role: r });
+                editUserId = null;
+            } else {
+                await addDoc(collection(db, "usuarios"), { usuario: u, password: p, role: r });
+            }
+            document.querySelectorAll("#modal-create-user input").forEach(i => i.value = "");
+            document.getElementById("user-form-title").innerText = "Registrar Acceso";
+            document.getElementById("btn-save-user").innerText = "GUARDAR";
         };
 
-        // --- ACCESO (LOGIN LOCAL PARA EVITAR ERRORES) ---
+        // --- LOGIN LOCAL ---
         const login = async () => {
             const uInput = document.getElementById("login-user").value.trim();
             const pInput = document.getElementById("login-pass").value.trim();
             if(!uInput || !pInput) return;
-
-            try {
-                const snap = await getDocs(collection(db, "usuarios"));
-                let found = false;
-                snap.forEach(doc => {
-                    const data = doc.data();
-                    if(data.usuario === uInput && data.password === pInput) {
-                        found = true;
-                        localStorage.setItem("uf_auth", "true");
-                        localStorage.setItem("uf_user_role", data.role);
-                        localStorage.setItem("uf_username", data.usuario);
-                        location.reload();
-                    }
-                });
-                if(!found) alert("Usuario o Contraseña incorrectos");
-            } catch (e) { alert("Error de conexión"); }
+            const snap = await getDocs(collection(db, "usuarios"));
+            let found = false;
+            snap.forEach(doc => {
+                const data = doc.data();
+                if(data.usuario === uInput && data.password === pInput) {
+                    found = true;
+                    localStorage.setItem("uf_auth", "true");
+                    localStorage.setItem("uf_user_role", data.role);
+                    location.reload();
+                }
+            });
+            if(!found) alert("Usuario o Contraseña incorrectos");
         };
         document.getElementById("btn-login").onclick = login;
 
-        // --- COHETE ---
-        window.onscroll = () => { document.getElementById("btn-rocket").style.display = (window.scrollY > 300) ? "flex" : "none"; };
-        document.getElementById("btn-rocket").onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
-
-        // --- RENDERIZADO ---
+        // --- RENDERIZADO Y BÚSQUEDA ---
         function render(data) {
             const list = document.getElementById("list");
             list.innerHTML = "";
             data.forEach(d => {
-                const tp = String(d.TelefonoPropietario || "").trim();
-                const ti = String(d.TelefonoInquilino || "").trim();
-                const sinT = (!tp && !ti);
-                const telActivo = tp || ti || "";
-
+                const tel = d.TelefonoPropietario || d.TelefonoInquilino || "";
                 const div = document.createElement("div");
-                div.className = `item ${sinT ? 'no-phone' : ''}`;
-                div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center">
-                        <div><b>UF: ${d.UF}</b><small>${d.Propietario || 'S/D'}</small></div>
-                        <div style="display:flex; gap:15px; font-size:18px">
-                            <i class="fas fa-eye" style="cursor:pointer" onclick="document.getElementById('det-${d.id}').classList.toggle('hidden');"></i>
-                            <i class="fas fa-edit" style="color:var(--primary); cursor:pointer" onclick="window.editUF('${d.id}')"></i>
-                            ${userRole === 'admin' ? `<i class="fas fa-trash" style="color:var(--danger); cursor:pointer" onclick="window.askConfirm('¿Borrar registro UF ${d.UF}?', 'delete', '${d.id}')"></i>` : ''}
-                        </div>
-                    </div>
-                    <div id="det-${d.id}" class="details hidden">
-                        <p><b>Prop:</b> ${d.Propietario || '---'} | <b>Tel:</b> ${tp || 'N/C'}</p>
-                        <p><b>Inq:</b> ${d.Inquilino || '---'} | <b>Tel:</b> ${ti || 'N/C'}</p>
-                        <div class="grid-btns-2">
-                            <a href="tel:${telActivo}" class="btn primary" onclick="writeLog('Llamada a UF ${d.UF}', 'info')"><i class="fas fa-phone"></i> LLAMAR</a>
-                            <a href="https://wa.me/${telActivo.replace(/\D/g,'')}" target="_blank" class="btn" style="background:#22c55e" onclick="writeLog('WhatsApp a UF ${d.UF}', 'info')"><i class="fab fa-whatsapp"></i> CHAT</a>
-                        </div>
-                    </div>`;
+                div.className = `item ${!tel ? 'no-phone' : ''}`;
+                div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center">
+                    <div><b>UF: ${d.UF}</b><small>${d.Propietario || 'S/D'}</small></div>
+                    <div style="display:flex; gap:15px; font-size:18px">
+                        <i class="fas fa-eye" style="cursor:pointer" onclick="document.getElementById('det-${d.id}').classList.toggle('hidden');"></i>
+                        <i class="fas fa-edit" style="color:var(--primary); cursor:pointer" onclick="window.editUF('${d.id}')"></i>
+                        ${userRole === 'admin' ? `<i class="fas fa-trash" style="color:var(--danger); cursor:pointer" onclick="window.askConfirm('¿Borrar registro UF ${d.UF}?', 'delete', '${d.id}')"></i>` : ''}
+                    </div></div>
+                    <div id="det-${d.id}" class="details hidden"><p><b>Prop:</b> ${d.Propietario || '---'} | <b>Tel:</b> ${d.TelefonoPropietario || 'N/C'}</p>
+                    <p><b>Inq:</b> ${d.Inquilino || '---'} | <b>Tel:</b> ${d.TelefonoInquilino || 'N/C'}</p>
+                    <div class="grid-btns-2"><a href="tel:${tel}" class="btn primary"><i class="fas fa-phone"></i> LLAMAR</a>
+                    <a href="https://wa.me/${tel.replace(/\D/g,'')}" target="_blank" class="btn" style="background:#22c55e"><i class="fab fa-whatsapp"></i> CHAT</a></div></div>`;
                 list.appendChild(div);
             });
         }
 
-        // --- BÚSQUEDA Y FILTROS ---
-        const buscar = () => {
+        document.getElementById("btn-search").onclick = () => {
             const v = document.getElementById("search-input").value.toLowerCase();
-            const res = departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v));
-            render(res);
-        };
-        document.getElementById("btn-search").onclick = buscar;
-        document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; render(departamentos); };
-
-        document.getElementById("btn-filter-empty").onclick = () => {
-            const vacios = departamentos.filter(d => !String(d.TelefonoPropietario||"").trim() && !String(d.TelefonoInquilino||"").trim());
-            render(vacios);
+            render(departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v)));
         };
 
-        // --- ACCIONES PROTEGIDAS ---
+        // --- ACCIONES PROTEGIDAS CON CLAVE MAESTRA ---
         window.askConfirm = (msg, type, id = null) => {
             pendingAction = { type, id };
             document.getElementById("confirm-msg").innerText = msg;
@@ -308,21 +272,22 @@
             } else if(pendingAction.type === 'deleteAll') {
                 const s = await getDocs(collection(db, "departamentos"));
                 const b = writeBatch(db); s.forEach(d => b.delete(d.ref)); await b.commit();
+                writeLog("BASE DE DATOS VACIADA", "err");
             } else if(pendingAction.type === 'openUserForm') {
                 document.getElementById("modal-create-user").classList.remove("hidden");
                 syncUsersList();
             } else if(pendingAction.type === 'deleteUser') {
                 await deleteDoc(doc(db, "usuarios", pendingAction.id));
-                writeLog("Usuario eliminado", "err");
             } else if(pendingAction.type === 'export') {
                 const csv = "UF,Propietario,TelProp,Inquilino,TelInq\n" + departamentos.map(d => `${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}`).join("\n");
                 const link = document.createElement("a");
                 link.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
                 link.download = `Respaldo_UF.csv`; link.click();
+                writeLog("Respaldo exportado", "success");
             }
         };
 
-        // --- INICIO ---
+        // --- INICIO Y EVENTOS ---
         if(localStorage.getItem("uf_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
@@ -336,46 +301,28 @@
         document.getElementById("btn-add").onclick = () => { editId = null; document.querySelectorAll("#modal-form input").forEach(i => i.value = ""); document.getElementById("modal-form").classList.remove("hidden"); };
         window.editUF = (id) => {
             editId = id; const d = departamentos.find(x => x.id === id);
-            document.getElementById("f-uf").value = d.UF || ""; 
-            document.getElementById("f-prop").value = d.Propietario || "";
-            document.getElementById("f-telp").value = d.TelefonoPropietario || "";
-            document.getElementById("f-inq").value = d.Inquilino || "";
-            document.getElementById("f-teli").value = d.TelefonoInquilino || "";
-            document.getElementById("modal-form").classList.remove("hidden");
+            document.getElementById("f-uf").value = d.UF || ""; document.getElementById("f-prop").value = d.Propietario || "";
+            document.getElementById("f-telp").value = d.TelefonoPropietario || ""; document.getElementById("f-inq").value = d.Inquilino || "";
+            document.getElementById("f-teli").value = d.TelefonoInquilino || ""; document.getElementById("modal-form").classList.remove("hidden");
         };
 
         document.getElementById("btn-save").onclick = async () => {
             const d = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
-            if(!d.UF) return alert("UF obligatoria");
             if(editId) await updateDoc(doc(db, "departamentos", editId), d);
             else await addDoc(collection(db, "departamentos"), d);
             document.getElementById("modal-form").classList.add("hidden");
         };
 
-        // --- IMPORTACIÓN ---
-        document.getElementById("btn-import") && (document.getElementById("btn-import").onclick = () => document.getElementById("csv-file").click());
-        document.getElementById("csv-file").onchange = (e) => {
-            const reader = new FileReader();
-            reader.onload = async (ev) => {
-                const batch = writeBatch(db);
-                const lines = ev.target.result.split("\n").slice(1);
-                lines.forEach(l => {
-                    if(!l.trim()) return;
-                    const p = l.split(l.includes(';') ? ';' : ',');
-                    batch.set(doc(collection(db, "departamentos")), { UF: p?.trim() || "S/D", Propietario: p?.trim() || "", TelefonoPropietario: p?.trim() || "", Inquilino: p?.trim() || "", TelefonoInquilino: p?.trim() || "" });
-                });
-                await batch.commit();
-            };
-            reader.readAsText(e.target.files);
-        };
-
+        document.getElementById("btn-export") && (document.getElementById("btn-export").onclick = () => askConfirm("¿Descargar respaldo CSV?", "export"));
+        document.getElementById("btn-delete-all") && (document.getElementById("btn-delete-all").onclick = () => askConfirm("¡PELIGRO! ¿Borrar toda la nube?", "deleteAll"));
+        document.getElementById("btn-create-user-trigger").onclick = () => askConfirm("Gestión de Usuarios", "openUserForm");
         document.getElementById("btn-logout-trigger").onclick = () => document.getElementById("modal-logout").classList.remove("hidden");
         document.getElementById("btn-logout-confirm").onclick = () => { localStorage.clear(); location.reload(); };
-        document.getElementById("btn-create-user-trigger").onclick = () => askConfirm("Gestión de Usuarios", "openUserForm");
-
+        
         document.querySelectorAll("#btn-cancel, #btn-confirm-no, #btn-logout-cancel, #btn-cancel-user").forEach(b => b.onclick = () => {
             document.querySelectorAll(".modal").forEach(m => m.id !== "login-screen" && m.classList.add("hidden"));
         });
+
         document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("dark-mode");
         document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
     </script>
