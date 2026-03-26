@@ -12,31 +12,30 @@
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
 
-        /* 🏠 BOTÓN HOME - ENLACE HUB CENTRAL */
+        /* BOTÓN HOME */
         .btn-home-fixed {
             position: fixed !important; bottom: 30px !important; right: 25px !important;
             z-index: 9999; background: #2563eb !important;
             color: white !important; width: 65px; height: 65px; border-radius: 50%;
             display: flex !important; align-items: center; justify-content: center;
             text-decoration: none; box-shadow: 0 8px 25px rgba(0,0,0,0.5); border: 3px solid #ffffff;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        /* HEADER SEGÚN DISEÑO ORIGINAL */
-        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: #111b21; z-index: 1000; padding: 15px; border-bottom: 4px solid var(--primary); border-radius: 0 0 20px 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        /* HEADER SEGÚN FOTO */
+        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: #111b21; z-index: 1000; padding: 15px; border-bottom: 4px solid var(--primary); border-radius: 0 0 20px 20px; }
         .content-body { margin-top: 360px; width: 100%; padding-bottom: 120px; }
         
         .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
         .btn { height: 48px; border-radius: 12px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
-        .primary { background: #2563eb; } .danger { background: #e11d48; } .orange { background: #f97316; } .warning { background: #f59e0b; color: #000; }
+        .primary { background: #2563eb; } .danger { background: #e11d48; } .orange { background: #f97316; } .warning { background: #f59e0b; color: #000; } .ghost { background: #475569; }
 
-        /* CARDS - LÓGICA DE ESTADOS */
+        /* CARDS - LÓGICA AMARILLA SEGÚN INDEX SUBIDO */
         .item { background: #2a3942; border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 1px solid #374151; position: relative; border-left: 10px solid var(--success); }
-        .item.vacio { border-left: 10px solid var(--warning); }
-        .item b { font-size: 19px; color: #3b82f6; display: block; margin-bottom: 4px; }
-        .item small { font-size: 14px; color: #9ca3af; display: block; }
+        .item.no-phone { border-left: 10px solid var(--warning) !important; }
         
-        .details { margin-top: 12px; padding-top: 10px; border-top: 1px dashed #4b5563; font-size: 13px; color: #d1d5db; line-height: 1.6; }
+        .item b { font-size: 18px; color: #3b82f6; display: block; }
+        .item small { font-size: 14px; color: #9ca3af; }
+        .details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #4b5563; font-size: 13px; color: #d1d5db; }
         
         input { width: 100%; height: 50px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #374151; padding: 0 15px; background: #0b141a; color: white; font-size: 16px; outline: none; }
         
@@ -59,43 +58,43 @@
         </div>
     </div>
 
-    <div id="modal-security" class="modal hidden">
+    <div id="modal-confirm" class="modal hidden">
         <div class="modal-content">
-            <h2 style="color:white; margin-bottom:10px">Seguridad</h2>
-            <p id="security-msg" style="color:#9ca3af; margin-bottom:20px"></p>
-            <input id="security-pass" type="password" placeholder="Clave Administrativa">
+            <h3 style="color:white; margin-bottom:10px">Seguridad Requerida</h3>
+            <p id="confirm-msg" style="color:#9ca3af; margin-bottom:20px; font-size:13px"></p>
+            <input id="confirm-pass" type="password" placeholder="Clave Administrativa">
             <div style="display:flex; gap:10px">
-                <button id="btn-auth-delete" class="btn primary" style="flex:1">AUTORIZAR</button>
-                <button id="btn-close-security" class="btn danger" style="flex:1">VOLVER</button>
+                <button id="btn-confirm-yes" class="btn primary" style="flex:1">AUTORIZAR</button>
+                <button id="btn-confirm-no" class="btn danger" style="flex:1">VOLVER</button>
             </div>
         </div>
     </div>
 
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div style="font-size:10px; text-align:center; margin-bottom:12px; color:var(--success);">● SISTEMA ONLINE - TORRE URQUIZA</div>
+            <div style="font-size:10px; text-align:center; margin-bottom:12px; color:var(--success);">● EN LÍNEA - SEGURIDAD ACTIVA</div>
             
             <div class="grid-btns">
-                <button class="btn primary">HISTORIAL</button>
+                <button id="btn-logs" class="btn primary">LOGS</button>
                 <button id="btn-theme" class="btn primary">TEMA</button>
                 <button id="btn-logout" class="btn danger">CERRAR</button>
             </div>
             
             <div class="grid-btns">
                 <button id="btn-add" class="btn primary">NUEVA UF</button>
-                <button class="btn primary">IMPORTAR</button>
+                <button id="btn-import" class="btn primary">IMPORTAR</button>
                 <button id="btn-export" class="btn primary">RESPALDO</button>
             </div>
 
             <input id="search-input" placeholder="Buscar por Unidad o Apellido...">
             
             <div class="grid-btns">
-                <button id="btn-search-trigger" class="btn primary">BUSCAR</button>
-                <button id="btn-clear-trigger" class="btn primary">LIMPIAR</button>
+                <button id="btn-search" class="btn primary">BUSCAR</button>
+                <button id="btn-clear" class="btn ghost">LIMPIAR</button>
                 <button id="btn-filter-sd" class="btn warning">SIN DATOS</button>
             </div>
             
-            <button class="btn orange" style="width: 100%; height: 35px; font-size: 9px; margin-top:5px;">BORRAR TODA LA NUBE</button>
+            <button id="btn-delete-all" class="btn orange" style="width: 100%; height: 35px; font-size: 9px; margin-top:5px;">BORRAR TODA LA NUBE</button>
         </div>
 
         <div class="content-body">
@@ -120,18 +119,18 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, orderBy, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        let departamentos = [], editId = null, expandedId = null, deleteTarget = null;
-        const MASTER_CODE = "4750";
+        let departamentos = [], editId = null, expandedId = null, pendingAction = null;
+        const MASTER_CODE = "1131552679";
 
         // LOGIN
         document.getElementById("btn-login").onclick = () => {
-            if (document.getElementById("login-pass").value === MASTER_CODE) {
+            if (document.getElementById("login-pass").value === "4750") { // Mantenemos la clave corta que pediste antes o MASTER_CODE
                 localStorage.setItem("uf_auth", "true");
                 location.reload();
             } else { alert("Clave Incorrecta"); }
@@ -147,32 +146,35 @@
             });
         }
 
+        // RENDERIZADO CON LÓGICA DE TU INDEX (COLOR AMARILLO)
         function render(data) {
             const list = document.getElementById("list");
             list.innerHTML = "";
             data.forEach(d => {
-                const p = d.Propietario ? d.Propietario.toString().trim().toUpperCase() : "";
-                const esVacio = (p === "" || p === "S/D" || p === "SD" || !d.Propietario);
-                
+                // Lógica de color amarillo del index subido
+                const tp = String(d.TelefonoPropietario || "").trim();
+                const ti = String(d.TelefonoInquilino || "").trim();
+                const sinContacto = (!tp && !ti);
+
                 const div = document.createElement("div");
-                div.className = `item ${esVacio ? 'vacio' : ''}`;
+                div.className = `item ${sinContacto ? 'no-phone' : ''}`;
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center">
                         <div>
                             <b>UF: ${d.UF}</b>
-                            <small>${esVacio ? 'SIN DESIGNAR (S/D)' : d.Propietario}</small>
+                            <small>${d.Propietario || 'S/D'}</small>
                         </div>
-                        <div style="display:flex; gap:18px; font-size:22px">
+                        <div style="display:flex; gap:18px; font-size:20px">
                             <i class="fas fa-eye" style="color:#d1d5db" onclick="window.toggleExpand('${d.id}')"></i>
                             <i class="fas fa-edit" style="color:#3b82f6" onclick="window.editUF('${d.id}')"></i>
-                            <i class="fas fa-trash" style="color:#ef4444" onclick="window.askDelete('${d.id}', '${d.UF}')"></i>
+                            <i class="fas fa-trash" style="color:#ef4444" onclick="window.askConfirm('¿Borrar registro UF ${d.UF}?', 'delete', '${d.id}')"></i>
                         </div>
                     </div>
                     ${expandedId === d.id ? `
                         <div class="details">
-                            <p><strong><i class="fas fa-phone"></i> Tel Prop:</strong> ${d.TelefonoPropietario || '-'}</p>
-                            <p><strong><i class="fas fa-user"></i> Inquilino:</strong> ${d.Inquilino || '-'}</p>
-                            <p><strong><i class="fas fa-mobile-alt"></i> Tel Inq:</strong> ${d.TelefonoInquilino || '-'}</p>
+                            <p><strong>Tel Prop:</strong> ${tp || 'N/C'}</p>
+                            <p><strong>Inq:</strong> ${d.Inquilino || '-'}</p>
+                            <p><strong>Tel Inq:</strong> ${ti || 'N/C'}</p>
                         </div>
                     ` : ''}
                 `;
@@ -180,44 +182,48 @@
             });
         }
 
-        // FUNCIONALIDAD DE LOS BOTONES DEL HEADER
-        document.getElementById("btn-search-trigger").onclick = () => {
-            const val = document.getElementById("search-input").value.toLowerCase();
-            const filtered = departamentos.filter(d => d.UF.toLowerCase().includes(val) || (d.Propietario && d.Propietario.toLowerCase().includes(val)));
-            render(filtered);
+        // FUNCIONES DE BÚSQUEDA DEL INDEX
+        document.getElementById("btn-search").onclick = () => {
+            const v = document.getElementById("search-input").value.toLowerCase();
+            const res = departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v));
+            render(res);
         };
 
-        document.getElementById("btn-clear-trigger").onclick = () => {
+        document.getElementById("btn-clear").onclick = () => {
             document.getElementById("search-input").value = "";
             render(departamentos);
         };
 
         document.getElementById("btn-filter-sd").onclick = () => {
-            const filtered = departamentos.filter(d => {
-                const p = d.Propietario ? d.Propietario.toString().trim().toUpperCase() : "";
-                return (p === "" || p === "S/D" || p === "SD" || !d.Propietario);
-            });
-            render(filtered);
+            const vacios = departamentos.filter(d => !String(d.TelefonoPropietario||"").trim() && !String(d.TelefonoInquilino||"").trim());
+            render(vacios);
         };
 
-        // SEGURIDAD AL ELIMINAR
-        window.askDelete = (id, uf) => {
-            deleteTarget = id;
-            document.getElementById("security-msg").innerText = `Confirmar eliminación de la UF ${uf}`;
-            document.getElementById("security-pass").value = "";
-            document.getElementById("modal-security").classList.remove("hidden");
+        // ACCIONES PROTEGIDAS (ELIMINAR) DEL INDEX
+        window.askConfirm = (msg, type, id = null) => {
+            pendingAction = { type, id };
+            document.getElementById("confirm-msg").innerText = msg;
+            document.getElementById("confirm-pass").value = "";
+            document.getElementById("modal-confirm").classList.remove("hidden");
         };
 
-        document.getElementById("btn-auth-delete").onclick = async () => {
-            if(document.getElementById("security-pass").value === MASTER_CODE) {
-                await deleteDoc(doc(db, "departamentos", deleteTarget));
-                document.getElementById("modal-security").classList.add("hidden");
-            } else { alert("Clave de seguridad incorrecta"); }
+        document.getElementById("btn-confirm-yes").onclick = async () => {
+            if(document.getElementById("confirm-pass").value !== MASTER_CODE) {
+                return alert("Clave Administrativa Incorrecta");
+            }
+            document.getElementById("modal-confirm").classList.add("hidden");
+
+            if(pendingAction.type === 'delete') {
+                await deleteDoc(doc(db, "departamentos", pendingAction.id));
+            } else if(pendingAction.type === 'deleteAll') {
+                const s = await getDocs(collection(db, "departamentos"));
+                const b = writeBatch(db); s.forEach(d => b.delete(d.ref)); await b.commit();
+            }
         };
 
-        document.getElementById("btn-close-security").onclick = () => document.getElementById("modal-security").classList.add("hidden");
+        document.getElementById("btn-confirm-no").onclick = () => document.getElementById("modal-confirm").classList.add("hidden");
 
-        // GESTIÓN DE DATOS
+        // GESTIÓN UF
         window.toggleExpand = (id) => { expandedId = (expandedId === id) ? null : id; render(departamentos); };
         
         window.editUF = (id) => {
@@ -241,6 +247,7 @@
         document.getElementById("btn-add").onclick = () => { editId = null; document.querySelectorAll("#modal-form input").forEach(i => i.value = ""); document.getElementById("modal-form").classList.remove("hidden"); };
         document.getElementById("btn-cancel").onclick = () => document.getElementById("modal-form").classList.add("hidden");
         document.getElementById("btn-logout").onclick = () => { localStorage.removeItem("uf_auth"); location.reload(); };
+        document.getElementById("btn-delete-all").onclick = () => askConfirm("¡PELIGRO! Esto borrará todos los datos de la nube.", "deleteAll");
     </script>
 </body>
 </html>
