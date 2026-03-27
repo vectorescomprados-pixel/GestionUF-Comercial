@@ -13,7 +13,7 @@
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
         
-        /* 🏠 ESTILO COPIADO DE TU INDEX DE REPARACIONES */
+        /* 🏠 ESTILO COPIADO DE TU APP DE REPARACIONES */
         .btn-home {
             display: flex; width: 50px; height: 50px; background: rgba(37, 99, 235, 0.9);
             color: white; border-radius: 50%; align-items: center; justify-content: center; 
@@ -71,20 +71,13 @@
             </div>
             <button id="btn-delete-all" class="btn danger admin-only" style="width:100%; margin-top:5px">BORRAR TODO</button>
         </div>
-
-        <div class="content-body">
-            <div id="list"></div>
-        </div>
+        <div class="content-body"><div id="list"></div></div>
     </div>
 
     <div id="modal-form" class="modal hidden">
         <div class="modal-content">
             <h3 style="text-align:center; margin-bottom:15px">Datos de Unidad</h3>
-            <input id="f-uf" placeholder="UF">
-            <input id="f-prop" placeholder="Propietario">
-            <input id="f-telp" placeholder="Tel Prop">
-            <input id="f-inq" placeholder="Inquilino">
-            <input id="f-teli" placeholder="Tel Inq">
+            <input id="f-uf" placeholder="UF"><input id="f-prop" placeholder="Propietario"><input id="f-telp" placeholder="Tel Prop"><input id="f-inq" placeholder="Inquilino"><input id="f-teli" placeholder="Tel Inq">
             <div class="grid-btns-2">
                 <button id="btn-save" class="btn primary">GUARDAR</button>
                 <button id="btn-cancel" class="btn danger">VOLVER</button>
@@ -101,9 +94,16 @@
         const db = getFirestore(app);
 
         let departamentos = [], editId = null;
+        // 1. RECUPERAR EL ROL CORRECTAMENTE
         const userRole = localStorage.getItem("uf_user_role") || "operador";
 
-        // LOGIN (CON NOMBRE DE VARIABLE ORIGINAL)
+        // 2. FUNCIÓN DE PERMISOS (Crucial para que no se trabe)
+        const applyPermissions = () => {
+            if(userRole !== 'admin') {
+                document.querySelectorAll(".admin-only").forEach(el => el.remove());
+            }
+        };
+
         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("login-user").value;
             const p = document.getElementById("login-pass").value;
@@ -120,11 +120,7 @@
         if(localStorage.getItem("uf_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
-            
-            // Ocultar botones admin si no corresponde
-            if(userRole !== 'admin') {
-                document.querySelectorAll(".admin-only").forEach(el => el.remove());
-            }
+            applyPermissions(); // Se ejecuta al entrar
 
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -159,26 +155,17 @@
             editId = id; const d = departamentos.find(x => x.id === id);
             document.getElementById("f-uf").value = d.UF; document.getElementById("f-prop").value = d.Propietario;
             document.getElementById("f-telp").value = d.TelefonoPropietario; 
-            document.getElementById("f-inq").value = d.Inquilino; 
-            document.getElementById("f-teli").value = d.TelefonoInquilino;
+            document.getElementById("f-inq").value = d.Inquilino; document.getElementById("f-teli").value = d.TelefonoInquilino;
             document.getElementById("modal-form").classList.remove("hidden");
         };
 
-        window.delUF = async (id) => { if(confirm("¿Eliminar UF?")) await deleteDoc(doc(db, "departamentos", id)); };
-
+        window.delUF = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "departamentos", id)); };
         document.getElementById("btn-save").onclick = async () => {
-            const d = { 
-                UF: document.getElementById("f-uf").value, 
-                Propietario: document.getElementById("f-prop").value,
-                TelefonoPropietario: document.getElementById("f-telp").value,
-                Inquilino: document.getElementById("f-inq").value,
-                TelefonoInquilino: document.getElementById("f-teli").value
-            };
+            const d = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
             if(editId) await updateDoc(doc(db, "departamentos", editId), d);
             else await addDoc(collection(db, "departamentos"), d);
             document.getElementById("modal-form").classList.add("hidden");
         };
-
         document.getElementById("btn-logout-trigger").onclick = () => { localStorage.clear(); location.reload(); };
         document.getElementById("btn-add").onclick = () => { editId = null; document.getElementById("modal-form").classList.remove("hidden"); };
         document.getElementById("btn-cancel").onclick = () => document.getElementById("modal-form").classList.add("hidden");
