@@ -12,7 +12,7 @@
         body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
-
+        
         /* 🏠 ESTILO DE LA CASITA */
         .btn-home {
             display: flex; width: 50px; height: 50px; background: rgba(37, 99, 235, 0.9);
@@ -151,18 +151,21 @@
             const u = document.getElementById("login-user").value;
             const p = document.getElementById("login-pass").value;
             if(!u || !p) return;
-            const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
-            const snap = await getDocs(q);
-            if (!snap.empty) {
-                const data = snap.docs.data();
-                localStorage.setItem("uf_auth", "true");
-                // CORRECCIÓN AQUÍ: data.rol (antes era data.role)
-                localStorage.setItem("uf_user_role", data.rol || "operador");
-                localStorage.setItem("uf_username", data.usuario);
-                location.reload();
-            } else { alert("Usuario o Contraseña incorrectos"); }
+            try {
+                const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+                const snap = await getDocs(q);
+                if (!snap.empty) {
+                    const data = snap.docs.data();
+                    localStorage.setItem("uf_auth", "true");
+                    // Se busca 'rol' para coincidir con tu base de datos
+                    localStorage.setItem("uf_user_role", data.rol || data.role || "operador");
+                    localStorage.setItem("uf_username", data.usuario);
+                    window.location.reload();
+                } else { alert("Usuario o Contraseña incorrectos"); }
+            } catch(e) { console.error(e); alert("Error de conexión"); }
         };
         document.getElementById("btn-login").onclick = login;
+        document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
 
         if(localStorage.getItem("uf_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
