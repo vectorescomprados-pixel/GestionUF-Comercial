@@ -13,21 +13,12 @@
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
 
-        /* 🔥 BOTÓN HOME (AGREGADO) */
+        /* 🏠 ESTILO DE LA CASITA */
         .btn-home {
-            display: flex; 
-            width: 50px; 
-            height: 50px; 
-            background: #2563eb;
-            color: white; 
-            border-radius: 50%; 
-            align-items: center; 
-            justify-content: center; 
-            margin: 0 auto 20px; 
-            text-decoration: none; 
-            border: 2px solid white; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-            font-size: 20px;
+            display: flex; width: 50px; height: 50px; background: #2563eb;
+            color: white; border-radius: 50%; align-items: center; justify-content: center; 
+            margin: 0 auto 20px; text-decoration: none; border: 2px solid white; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-size: 20px;
         }
 
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -35,50 +26,113 @@
         .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
         .grid-btns-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
-        .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #64748b; } .warning { background: var(--warning); color: #000; }
-
-        #btn-rocket { position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px; border-radius: 50%; z-index: 5000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 20px; border: 2px solid white; display: none; }
-
+        .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #64748b; }
+        
         .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; }
-        .item.no-phone { border-left: 8px solid var(--warning) !important; }
-        .item b { font-size: 16px; color: var(--primary); display: block; margin-bottom: 5px; }
-        .details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 14px; line-height: 1.6; }
-        input, select { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
-
-        #log-container { position: relative; margin-bottom: 15px; }
-        #log-panel { background: #000; padding: 12px; font-size: 10px; height: 120px; overflow-y: auto; border-radius: 8px; font-family: 'Courier New', monospace; border: 1px solid #333; line-height: 1.4; }
-        #btn-download-log { position: absolute; top: 5px; right: 5px; width: 30px; height: 30px; font-size: 12px; opacity: 0.7; }
-        .log-success { color: #00ff41; } .log-warn { color: #fbff00; } .log-err { color: #ff3131; } .log-info { color: #00d4ff; }
+        input { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; }
     </style>
 </head>
 <body class="dark-mode">
 
-<button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
-<input type="file" id="csv-file" class="hidden">
-
-<!-- LOGIN -->
-<div id="login-screen" class="modal">
-    <div class="modal-content">
-        <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
-        <input id="login-user" placeholder="Usuario">
-        <input id="login-pass" type="password" placeholder="Contraseña">
-        <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
-        <button id="btn-create-user-trigger" class="btn ghost" style="width:100%; margin-top:10px">NUEVO USUARIO (ADMIN)</button>
+    <div id="login-screen" class="modal">
+        <div class="modal-content">
+            <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home">
+                <i class="fas fa-home"></i>
+            </a>
+            <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
+            <input id="login-user" placeholder="Usuario">
+            <input id="login-pass" type="password" placeholder="Contraseña">
+            <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
+            </div>
     </div>
-</div>
 
-<!-- MAIN APP -->
-<div id="main-screen" class="wrap hidden">
-    <div class="main-header">
+    <div id="main-screen" class="wrap hidden">
+        <div class="main-header">
+            <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● SISTEMA CONECTADO</div>
+            <div class="grid-btns">
+                <button id="btn-theme" class="btn ghost">TEMA</button>
+                <button id="btn-logout" class="btn danger">CERRAR SESIÓN</button>
+            </div>
+            <div class="grid-btns">
+                <button id="btn-add" class="btn primary">NUEVA UF</button>
+            </div>
+            <input id="search-input" placeholder="Buscar unidad o apellido...">
+        </div>
 
-        <!-- 🔥 BOTÓN HOME -->
-        <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home">
-            <i class="fas fa-home"></i>
-        </a>
+        <div class="content-body">
+            <div id="list"></div>
+        </div>
+    </div>
 
-        <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● EN LÍNEA - SEGURIDAD ACTIVA</div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        <!-- TODO EL RESTO DE TU ARCHIVO SIGUE IGUAL DESDE ACÁ -->
+        // Tu configuración de Firebase
+        const firebaseConfig = { 
+            apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", 
+            authDomain: "gestionuf-remoto.firebaseapp.com", 
+            projectId: "gestionuf-remoto", 
+            storageBucket: "gestionuf-remoto.firebasestorage.app", 
+            messagingSenderId: "724452752860", 
+            appId: "1:724452752860:web:4d25585addcdcbd146e319" 
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // LÓGICA DE LOGIN
+        document.getElementById("btn-login").onclick = async () => {
+            const u = document.getElementById("login-user").value.trim();
+            const p = document.getElementById("login-pass").value.trim();
+            
+            if(!u || !p) return;
+
+            try {
+                // Buscamos en la colección "usuarios" que vimos en tu foto
+                const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+                const snap = await getDocs(q);
+
+                if (!snap.empty) {
+                    const userData = snap.docs.data();
+                    localStorage.setItem("uf_auth", "true");
+                    localStorage.setItem("uf_user_role", userData.rol || "operador");
+                    location.reload(); 
+                } else {
+                    alert("Usuario o clave incorrectos");
+                }
+            } catch (err) {
+                alert("Error de conexión. Revisa tus reglas de Firebase.");
+            }
+        };
+
+        // CARGA DE DATOS SI ESTÁ LOGUEADO
+        if(localStorage.getItem("uf_auth") === "true") {
+            document.getElementById("login-screen").classList.add("hidden");
+            document.getElementById("main-screen").classList.remove("hidden");
+
+            onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
+                const list = document.getElementById("list");
+                list.innerHTML = "";
+                snap.forEach(docSnap => {
+                    const d = docSnap.data();
+                    const div = document.createElement("div");
+                    div.className = "item";
+                    div.innerHTML = `<b>UF: ${d.UF}</b><br><small>${d.Propietario || 'Sin datos'}</small>`;
+                    list.appendChild(div);
+                });
+            });
+        }
+
+        document.getElementById("btn-logout").onclick = () => {
+            localStorage.clear();
+            location.reload();
+        };
+
+        document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("dark-mode");
+    </script>
+</body>
+</html>
