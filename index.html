@@ -22,14 +22,14 @@
         }
 
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .content-body { margin-top: 380px; width: 100%; padding-bottom: 100px; }
-        .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
-        .grid-btns-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .content-body { margin-top: 250px; width: 100%; padding-bottom: 100px; }
+        .grid-btns { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
+        .btn { height: 45px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
         .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #64748b; }
         
         .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; }
-        input { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
+        .item b { font-size: 16px; color: var(--primary); }
+        input { width: 100%; height: 48px; margin-bottom: 12px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; }
@@ -43,23 +43,20 @@
                 <i class="fas fa-home"></i>
             </a>
             <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
-            <input id="login-user" placeholder="Usuario">
+            <input id="login-user" placeholder="Usuario" autocomplete="off">
             <input id="login-pass" type="password" placeholder="Contraseña">
             <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
-            </div>
+        </div>
     </div>
 
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● SISTEMA CONECTADO</div>
+            <div style="text-align:center; font-size:11px; margin-bottom:10px; color:var(--success)">CONEXIÓN ESTABLECIDA</div>
             <div class="grid-btns">
                 <button id="btn-theme" class="btn ghost">TEMA</button>
-                <button id="btn-logout" class="btn danger">CERRAR SESIÓN</button>
+                <button id="btn-logout" class="btn danger">SALIR</button>
             </div>
-            <div class="grid-btns">
-                <button id="btn-add" class="btn primary">NUEVA UF</button>
-            </div>
-            <input id="search-input" placeholder="Buscar unidad o apellido...">
+            <input id="search-input" placeholder="Buscar UF o Apellido...">
         </div>
 
         <div class="content-body">
@@ -71,7 +68,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, query, where, getDocs, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Tu configuración de Firebase
+        // CONFIGURACIÓN (Verificada)
         const firebaseConfig = { 
             apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", 
             authDomain: "gestionuf-remoto.firebaseapp.com", 
@@ -84,45 +81,51 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // LÓGICA DE LOGIN
-        document.getElementById("btn-login").onclick = async () => {
-            const u = document.getElementById("login-user").value.trim();
-            const p = document.getElementById("login-pass").value.trim();
+        // LOGIN
+        async function ejecutarLogin() {
+            const userVal = document.getElementById("login-user").value.trim();
+            const passVal = document.getElementById("login-pass").value.trim();
             
-            if(!u || !p) return;
+            if(!userVal || !passVal) return;
 
             try {
-                // Buscamos en la colección "usuarios" que vimos en tu foto
-                const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+                // Buscamos exactamente como en tu base de datos
+                const q = query(collection(db, "usuarios"), 
+                                where("usuario", "==", userVal), 
+                                where("password", "==", passVal));
+                
                 const snap = await getDocs(q);
 
                 if (!snap.empty) {
-                    const userData = snap.docs.data();
-                    localStorage.setItem("uf_auth", "true");
-                    localStorage.setItem("uf_user_role", userData.rol || "operador");
+                    const d = snap.docs.data();
+                    localStorage.setItem("uf_auth_session", "true");
+                    localStorage.setItem("uf_user_role", d.rol || "operador");
                     location.reload(); 
                 } else {
                     alert("Usuario o clave incorrectos");
                 }
             } catch (err) {
-                alert("Error de conexión. Revisa tus reglas de Firebase.");
+                console.error("Error completo:", err);
+                alert("Error de conexión. Si usas Chrome, intenta subir el archivo a internet o usar otro navegador.");
             }
-        };
+        }
 
-        // CARGA DE DATOS SI ESTÁ LOGUEADO
-        if(localStorage.getItem("uf_auth") === "true") {
+        document.getElementById("btn-login").onclick = ejecutarLogin;
+
+        // CARGA DE DATOS
+        if(localStorage.getItem("uf_auth_session") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
 
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
-                const list = document.getElementById("list");
-                list.innerHTML = "";
+                const listEl = document.getElementById("list");
+                listEl.innerHTML = "";
                 snap.forEach(docSnap => {
                     const d = docSnap.data();
                     const div = document.createElement("div");
                     div.className = "item";
-                    div.innerHTML = `<b>UF: ${d.UF}</b><br><small>${d.Propietario || 'Sin datos'}</small>`;
-                    list.appendChild(div);
+                    div.innerHTML = `<b>UF: ${d.UF}</b><br><small>${d.Propietario || 'S/D'}</small>`;
+                    listEl.appendChild(div);
                 });
             });
         }
