@@ -3,56 +3,56 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF - Original Restored</title>
+    <title>GestiónUF Pro - Sistema Unificado</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0b141a; --card: #111b21; --header-border: #2563eb; --text-main: #e9edef; --text-dim: #a1a1aa; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        .light-theme { --bg: #f0f2f5; --card: #ffffff; --text-main: #1f293b; --text-dim: #64748b; }
+        
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; transition: background 0.3s; }
         body { background: var(--bg); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
 
-        /* 🏠 BOTÓN HOME EN LOGIN */
+        /* 🏠 BOTÓN HOME */
         .btn-home { display: flex; width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; align-items: center; justify-content: center; margin: 0 auto 20px; text-decoration: none; border: 2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 
-        /* 🖥️ CABECERA EXACTA (FOTO) */
-        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border: 2px solid var(--header-border); border-top: none; border-radius: 0 0 20px 20px; }
-        .status-bar { font-size: 11px; text-align: center; margin-bottom: 12px; color: #22c55e; font-weight: bold; }
-        .content-body { margin-top: 360px; width: 100%; padding-bottom: 50px; }
+        /* 🖥️ CABECERA (FOTO 1) */
+        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border: 2px solid var(--header-border); border-top: none; border-radius: 0 0 20px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .status-bar { font-size: 11px; text-align: center; margin-bottom: 12px; color: #22c55e; font-weight: bold; text-transform: uppercase; }
+        .content-body { margin-top: 365px; width: 100%; padding-bottom: 50px; }
         
         .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
-        .btn { height: 48px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
+        .btn { height: 45px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
         
-        /* Colores de botones según foto */
         .btn-gray { background: #4a5568; }
         .btn-red { background: #e11d48; }
         .btn-blue { background: #2563eb; }
         .btn-orange { background: #f59e0b; color: #000; }
 
-        .search-box { width: 100%; height: 50px; background: #0b141a; border: 1px solid #222d34; border-radius: 10px; padding: 0 15px; color: white; margin-bottom: 10px; font-size: 15px; }
+        .search-box { width: 100%; height: 50px; background: rgba(0,0,0,0.2); border: 1px solid #222d34; border-radius: 10px; padding: 0 15px; color: inherit; margin-bottom: 10px; font-size: 15px; }
 
-        /* 📱 LISTADO Y TARJETAS (FOTO) */
-        .item { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; border-left: 6px solid #f97316; position: relative; }
+        /* 📱 TARJETAS Y DETALLES (FOTO 2) */
+        .item { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; border-left: 6px solid #f97316; position: relative; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
         .item b { color: #2563eb; font-size: 17px; display: block; margin-bottom: 4px; }
         .item p { color: var(--text-dim); font-size: 14px; }
         
-        .item-tools { position: absolute; top: 15px; right: 15px; display: flex; gap: 15px; color: white; font-size: 18px; }
-        .icon-btn { cursor: pointer; opacity: 0.9; }
+        .item-tools { position: absolute; top: 15px; right: 15px; display: flex; gap: 15px; color: var(--text-main); font-size: 18px; }
+        .icon-btn { cursor: pointer; }
 
-        /* DETALLES DESPLEGADOS (FOTO) */
-        .details { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #222d34; display: none; }
+        .details { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #444; display: none; }
         .item.open .details { display: block; }
         .label { color: #2563eb; font-weight: bold; display: block; margin-top: 10px; font-size: 15px; }
-        .val { color: var(--text-main); margin-bottom: 5px; font-size: 15px; }
+        .val { color: var(--text-main); margin-bottom: 5px; font-size: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 2px; }
 
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
         .btn-action { height: 55px; border-radius: 12px; border: none; font-weight: bold; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; font-size: 13px; }
         .bg-call { background: #2563eb; }
         .bg-chat { background: #22c55e; }
 
-        /* MODAL */
+        /* MODALES */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .modal-inner { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; }
+        .modal-inner { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; border: 1px solid #333; }
     </style>
 </head>
 <body>
@@ -72,15 +72,15 @@
             <div class="status-bar">● EN LÍNEA - SEGURIDAD ACTIVA</div>
             
             <div class="grid-3">
-                <button class="btn btn-gray">HISTORIAL</button>
-                <button class="btn btn-gray">TEMA</button>
+                <button id="h-btn" class="btn btn-gray">HISTORIAL</button>
+                <button id="t-btn" class="btn btn-gray">TEMA</button>
                 <button id="logout" class="btn btn-red">CERRAR</button>
             </div>
             
             <div class="grid-3">
                 <button id="add" class="btn btn-blue">NUEVA UF</button>
-                <button class="btn btn-gray">IMPORTAR</button>
-                <button class="btn btn-gray">RESPALDO</button>
+                <button id="i-btn" class="btn btn-gray">IMPORTAR</button>
+                <button id="r-btn" class="btn btn-gray">RESPALDO</button>
             </div>
             
             <input id="search" class="search-box" placeholder="Buscar por Unidad o Apellido...">
@@ -88,10 +88,10 @@
             <div class="grid-3">
                 <button id="go-search" class="btn btn-blue">BUSCAR</button>
                 <button id="clear" class="btn btn-gray">LIMPIAR</button>
-                <button class="btn btn-orange">SIN DATOS</button>
+                <button id="sd-btn" class="btn btn-orange">SIN DATOS</button>
             </div>
             
-            <button class="btn btn-red" style="width:100%">BORRAR TODA LA NUBE</button>
+            <button id="del-all" class="btn btn-red" style="width:100%">BORRAR TODA LA NUBE</button>
         </div>
 
         <div id="list" class="content-body"></div>
@@ -99,12 +99,12 @@
 
     <div id="modal-form" class="modal hidden">
         <div class="modal-inner">
-            <h3 style="margin-bottom:15px">Datos de UF</h3>
-            <input id="f-uf" class="search-box" placeholder="UF">
-            <input id="f-prop" class="search-box" placeholder="Propietario">
-            <input id="f-telp" class="search-box" placeholder="Tel Propietario">
-            <input id="f-inq" class="search-box" placeholder="Inquilino">
-            <input id="f-teli" class="search-box" placeholder="Tel Inquilino">
+            <h3 style="margin-bottom:15px">Datos de Unidad</h3>
+            <input id="f-uf" class="search-box" placeholder="UF (ej: 0001)">
+            <input id="f-prop" class="search-box" placeholder="Nombre Propietario">
+            <input id="f-telp" class="search-box" placeholder="Teléfono Propietario">
+            <input id="f-inq" class="search-box" placeholder="Nombre Inquilino">
+            <input id="f-teli" class="search-box" placeholder="Teléfono Inquilino">
             <div class="action-grid">
                 <button id="save" class="btn btn-blue">GUARDAR</button>
                 <button id="cancel" class="btn btn-red">CANCELAR</button>
@@ -129,17 +129,21 @@
         const db = getFirestore(app);
         let dptos = [], editId = null;
 
-        // LOGIN
+        // --- LÓGICA DE LOGIN ---
         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("l-u").value.trim();
             const p = document.getElementById("l-p").value.trim();
-            const qU = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
-            const s = await getDocs(qU);
-            if(!s.empty) { localStorage.setItem("uf_v2", "ok"); location.reload(); }
-            else alert("Error");
+            try {
+                const qU = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+                const s = await getDocs(qU);
+                if(!s.empty) {
+                    localStorage.setItem("uf_auth_session", "active");
+                    location.reload();
+                } else { alert("Usuario o clave incorrectos"); }
+            } catch (e) { alert("Error de conexión"); }
         };
 
-        if(localStorage.getItem("uf_v2") === "ok") {
+        if(localStorage.getItem("uf_auth_session") === "active") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (s) => {
@@ -148,6 +152,7 @@
             });
         }
 
+        // --- RENDERIZADO DE LISTA ---
         function render(data) {
             const list = document.getElementById("list");
             list.innerHTML = "";
@@ -158,7 +163,7 @@
                 div.id = d.id;
                 div.innerHTML = `
                     <b>UF: ${d.UF}</b>
-                    <p>${d.Propietario || 'S/D'}</p>
+                    <p>${d.Propietario || 'Munic. Tres de Febrero'}</p>
                     <div class="item-tools">
                         <i class="fas fa-eye icon-btn" onclick="document.getElementById('${d.id}').classList.toggle('open')"></i>
                         <i class="fas fa-edit icon-btn" style="color:#2563eb" onclick="window.edit('${d.id}')"></i>
@@ -178,38 +183,55 @@
             });
         }
 
-        window.edit = (id) => {
-            editId = id; const d = dptos.find(x => x.id === id);
-            document.getElementById("f-uf").value = d.UF;
-            document.getElementById("f-prop").value = d.Propietario;
-            document.getElementById("f-telp").value = d.TelefonoPropietario;
-            document.getElementById("f-inq").value = d.Inquilino;
-            document.getElementById("f-teli").value = d.TelefonoInquilino;
-            document.getElementById("modal-form").classList.remove("hidden");
+        // --- FUNCIONES DE CABECERA ---
+        document.getElementById("t-btn").onclick = () => document.body.classList.toggle("light-theme");
+        document.getElementById("h-btn").onclick = () => alert("Historial: No hay cambios recientes.");
+        document.getElementById("r-btn").onclick = () => {
+            const blob = new Blob([JSON.stringify(dptos)], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url; a.download = "respaldo_gestion.json"; a.click();
+        };
+        document.getElementById("sd-btn").onclick = () => {
+            render(dptos.filter(d => !d.Propietario || d.Propietario === "" || d.Propietario === "S/D"));
+        };
+        document.getElementById("del-all").onclick = async () => {
+            if(confirm("¿BORRAR TODO? Esta acción es irreversible.")) {
+                const s = await getDocs(collection(db, "departamentos"));
+                s.forEach(async d => await deleteDoc(doc(db, "departamentos", d.id)));
+            }
         };
 
-        window.del = async (id) => { if(confirm("¿Borrar?")) await deleteDoc(doc(db, "departamentos", id)); };
-        document.getElementById("add").onclick = () => { editId = null; document.getElementById("modal-form").classList.remove("hidden"); };
-        document.getElementById("cancel").onclick = () => document.getElementById("modal-form").classList.add("hidden");
-        
-        document.getElementById("save").onclick = async () => {
-            const data = { 
-                UF: document.getElementById("f-uf").value, 
-                Propietario: document.getElementById("f-prop").value,
-                TelefonoPropietario: document.getElementById("f-telp").value,
-                Inquilino: document.getElementById("f-inq").value,
-                TelefonoInquilino: document.getElementById("f-teli").value
-            };
-            if(editId) await updateDoc(doc(db, "departamentos", editId), data);
-            else await addDoc(collection(db, "departamentos"), data);
-            document.getElementById("modal-form").classList.add("hidden");
-        };
-
+        // --- BUSQUEDA ---
         document.getElementById("go-search").onclick = () => {
             const v = document.getElementById("search").value.toLowerCase();
             render(dptos.filter(d => d.UF.toString().includes(v) || d.Propietario.toLowerCase().includes(v)));
         };
         document.getElementById("clear").onclick = () => { document.getElementById("search").value = ""; render(dptos); };
+
+        // --- CRUD ---
+        window.edit = (id) => {
+            editId = id; const d = dptos.find(x => x.id === id);
+            document.getElementById("f-uf").value = d.UF || "";
+            document.getElementById("f-prop").value = d.Propietario || "";
+            document.getElementById("f-telp").value = d.TelefonoPropietario || "";
+            document.getElementById("f-inq").value = d.Inquilino || "";
+            document.getElementById("f-teli").value = d.TelefonoInquilino || "";
+            document.getElementById("modal-form").classList.remove("hidden");
+        };
+        window.del = async (id) => { if(confirm("¿Borrar unidad?")) await deleteDoc(doc(db, "departamentos", id)); };
+        
+        document.getElementById("add").onclick = () => { editId = null; document.getElementById("modal-form").classList.remove("hidden"); };
+        document.getElementById("cancel").onclick = () => document.getElementById("modal-form").classList.add("hidden");
+        document.getElementById("save").onclick = async () => {
+            const data = { 
+                UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value,
+                TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value,
+                TelefonoInquilino: document.getElementById("f-teli").value
+            };
+            editId ? await updateDoc(doc(db, "departamentos", editId), data) : await addDoc(collection(db, "departamentos"), data);
+            document.getElementById("modal-form").classList.add("hidden");
+        };
         document.getElementById("logout").onclick = () => { localStorage.clear(); location.reload(); };
     </script>
 </body>
