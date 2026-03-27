@@ -2,38 +2,90 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Gestión UF - REPARADO</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
+    <title>GestiónUF Pro - Enterprise Gold</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #0b141a; color: white; padding: 20px; }
-        .hidden { display: none; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
-        button { width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .card { background: #111b21; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #222d34; }
-        .btn-home { display: block; width: 40px; text-align: center; margin: 0 auto 10px; color: #2563eb; font-size: 24px; }
+        :root { --bg: #f0f2f5; --card: #ffffff; --primary: #2563eb; --danger: #e11d48; --text: #1f293b; --border: #e5e7eb; --success: #22c55e; }
+        body.dark-mode { --bg: #0b141a; --card: #111b21; --text: #e9edef; --border: #222d34; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; transition: background 0.2s; }
+        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
+        .wrap { width: 95%; max-width: 450px; position: relative; }
+        .hidden { display: none !important; }
+
+        /* 🏠 BOTÓN HOME */
+        .btn-home {
+            display: flex; width: 50px; height: 50px; background: #2563eb;
+            color: white; border-radius: 50%; align-items: center; justify-content: center; 
+            margin: 0 auto 20px; text-decoration: none; border: 2px solid white; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-size: 20px;
+        }
+
+        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .content-body { margin-top: 200px; width: 100%; padding-bottom: 100px; }
+        
+        .grid-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 13px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #64748b; }
+        
+        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .item b { font-size: 16px; color: var(--primary); display: block; margin-bottom: 5px; }
+        .item small { color: #64748b; font-weight: normal; }
+        
+        input { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; }
     </style>
 </head>
-<body>
+<body class="dark-mode">
 
-    <div id="login-screen">
-        <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home"><i class="fas fa-home"></i></a>
-        <h2 style="text-align:center">Ingreso</h2>
-        <input id="u" type="text" placeholder="Usuario">
-        <input id="p" type="password" placeholder="Contraseña">
-        <button id="btn-entrar">ENTRAR</button>
+    <div id="login-screen" class="modal">
+        <div class="modal-content">
+            <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home">
+                <i class="fas fa-home"></i>
+            </a>
+            <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
+            <input id="login-user" placeholder="Usuario">
+            <input id="login-pass" type="password" placeholder="Contraseña">
+            <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
+        </div>
     </div>
 
-    <div id="main-screen" class="hidden">
-        <button id="btn-salir" style="background:#e11d48; margin-bottom:20px">CERRAR SESIÓN</button>
-        <div id="lista">Cargando unidades...</div>
+    <div id="main-screen" class="wrap hidden">
+        <div class="main-header">
+            <div class="grid-btns">
+                <button id="btn-logout" class="btn danger"><i class="fas fa-sign-out-alt"></i> SALIR</button>
+                <button id="btn-add" class="btn primary"><i class="fas fa-plus"></i> NUEVA UF</button>
+            </div>
+            <input id="search-input" placeholder="🔍 Buscar por UF o Propietario...">
+        </div>
+
+        <div class="content-body">
+            <div id="list"></div>
+        </div>
+    </div>
+
+    <div id="modal-form" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="form-title" style="text-align:center; margin-bottom:15px">Datos de Unidad</h3>
+            <input id="f-uf" placeholder="Unidad (Ej: 1A)">
+            <input id="f-prop" placeholder="Nombre Propietario">
+            <input id="f-telp" placeholder="Teléfono Propietario">
+            <input id="f-inq" placeholder="Nombre Inquilino">
+            <input id="f-teli" placeholder="Teléfono Inquilino">
+            <div class="grid-btns">
+                <button id="btn-save" class="btn primary">GUARDAR</button>
+                <button id="btn-cancel" class="btn ghost">CANCELAR</button>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, orderBy, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const conf = { 
+        const firebaseConfig = { 
             apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", 
             authDomain: "gestionuf-remoto.firebaseapp.com", 
             projectId: "gestionuf-remoto", 
@@ -42,47 +94,98 @@
             appId: "1:724452752860:web:4d25585addcdcbd146e319" 
         };
 
-        const app = initializeApp(conf);
+        const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        
+        let departamentos = [], editId = null;
 
-        // LOGIN SIN VUELTAS
-        document.getElementById("btn-entrar").onclick = async () => {
-            const user = document.getElementById("u").value.trim();
-            const pass = document.getElementById("p").value.trim();
-
+        // --- LOGIN ---
+        document.getElementById("btn-login").onclick = async () => {
+            const u = document.getElementById("login-user").value.trim();
+            const p = document.getElementById("login-pass").value.trim();
+            
             try {
-                const q = query(collection(db, "usuarios"), where("usuario", "==", user), where("password", "==", pass));
+                const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
                 const snap = await getDocs(q);
-                
                 if (!snap.empty) {
-                    // El arreglo que pedía la consola
-                    localStorage.setItem("sesion_activa", "si");
+                    localStorage.setItem("uf_sesion", "active");
                     location.reload();
-                } else {
-                    alert("Usuario o clave mal escritos");
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Error técnico al conectar. Revisa tu conexión.");
-            }
+                } else { alert("Datos incorrectos"); }
+            } catch (e) { alert("Error de conexión"); }
         };
 
-        // SI YA ESTÁ LOGUEADO
-        if(localStorage.getItem("sesion_activa") === "si") {
+        // --- INICIO ---
+        if(localStorage.getItem("uf_sesion") === "active") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
 
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
-                const listado = document.getElementById("lista");
-                listado.innerHTML = "";
-                snap.docs.forEach(doc => {
-                    const d = doc.data();
-                    listado.innerHTML += `<div class="card"><b>UF: ${d.UF}</b><br>${d.Propietario || 'S/N'}</div>`;
-                });
+                departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                render(departamentos);
             });
         }
 
-        document.getElementById("btn-salir").onclick = () => { localStorage.clear(); location.reload(); };
+        // --- RENDER & BUSCADOR ---
+        function render(data) {
+            const list = document.getElementById("list");
+            list.innerHTML = "";
+            data.forEach(d => {
+                const tel = d.TelefonoPropietario || d.TelefonoInquilino || "";
+                const div = document.createElement("div");
+                div.className = "item";
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center">
+                        <div>
+                            <b>UF: ${d.UF}</b>
+                            <small>${d.Propietario || 'Sin Datos'}</small>
+                        </div>
+                        <div style="display:flex; gap:15px; font-size:18px">
+                            <i class="fas fa-edit" style="color:var(--primary); cursor:pointer" onclick="window.editUF('${d.id}')"></i>
+                            <a href="https://wa.me/${tel.replace(/\D/g,'')}" target="_blank" style="color:var(--success)"><i class="fab fa-whatsapp"></i></a>
+                            <a href="tel:${tel}" style="color:var(--primary)"><i class="fas fa-phone"></i></a>
+                        </div>
+                    </div>`;
+                list.appendChild(div);
+            });
+        }
+
+        document.getElementById("search-input").oninput = (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtered = departamentos.filter(d => 
+                d.UF.toString().toLowerCase().includes(val) || 
+                (d.Propietario && d.Propietario.toLowerCase().includes(val))
+            );
+            render(filtered);
+        };
+
+        // --- CRUD ---
+        window.editUF = (id) => {
+            editId = id; const d = departamentos.find(x => x.id === id);
+            document.getElementById("f-uf").value = d.UF || ""; 
+            document.getElementById("f-prop").value = d.Propietario || "";
+            document.getElementById("f-telp").value = d.TelefonoPropietario || "";
+            document.getElementById("f-inq").value = d.Inquilino || "";
+            document.getElementById("f-teli").value = d.TelefonoInquilino || "";
+            document.getElementById("modal-form").classList.remove("hidden");
+        };
+
+        document.getElementById("btn-add").onclick = () => { editId = null; document.getElementById("modal-form").classList.remove("hidden"); };
+        
+        document.getElementById("btn-save").onclick = async () => {
+            const d = { 
+                UF: document.getElementById("f-uf").value, 
+                Propietario: document.getElementById("f-prop").value, 
+                TelefonoPropietario: document.getElementById("f-telp").value, 
+                Inquilino: document.getElementById("f-inq").value, 
+                TelefonoInquilino: document.getElementById("f-teli").value 
+            };
+            if(editId) await updateDoc(doc(db, "departamentos", editId), d);
+            else await addDoc(collection(db, "departamentos"), d);
+            document.getElementById("modal-form").classList.add("hidden");
+        };
+
+        document.getElementById("btn-cancel").onclick = () => document.getElementById("modal-form").classList.add("hidden");
+        document.getElementById("btn-logout").onclick = () => { localStorage.clear(); location.reload(); };
     </script>
 </body>
 </html>
