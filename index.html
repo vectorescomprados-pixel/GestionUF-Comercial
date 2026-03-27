@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - Enterprise Gold V4</title>
+    <title>GestiónUF Pro - Enterprise Gold V3 Fixed</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #f0f2f5; --card: #ffffff; --primary: #2563eb; --danger: #e11d48; --text: #1f293b; --border: #e5e7eb; --warning: #f59e0b; --success: #22c55e; }
@@ -13,6 +13,7 @@
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
         
+        /* BOTÓN CASITA FLOTANTE */
         #btn-home-floating { position: fixed; top: 20px; left: 20px; width: 45px; height: 45px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; z-index: 10001; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-decoration: none; border: 2px solid white; font-size: 18px; }
 
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -27,7 +28,7 @@
         .details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 14px; line-height: 1.6; }
         input, select { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
         
-        #log-panel { background: #000; padding: 12px; font-size: 10px; height: 120px; overflow-y: auto; border-radius: 8px; font-family: 'Courier New', monospace; border: 1px solid #333; line-height: 1.4; }
+        #log-panel { background: #000; padding: 12px; font-size: 10px; height: 120px; overflow-y: auto; border-radius: 8px; font-family: 'Courier New', monospace; border: 1px solid #333; line-height: 1.4; color: #00ff41; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; }
         .user-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
@@ -40,16 +41,16 @@
     <div id="login-screen" class="modal">
         <div class="modal-content">
             <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Login</h2>
-            <input id="l-user" placeholder="Usuario">
-            <input id="l-pass" type="password" placeholder="Contraseña">
-            <button id="btn-do-login" class="btn primary" style="width:100%">ENTRAR</button>
-            <button id="btn-admin-access" class="btn ghost" style="width:100%; margin-top:10px">GESTIÓN DE USUARIOS</button>
+            <input id="login-u" placeholder="Usuario">
+            <input id="login-p" type="password" placeholder="Contraseña">
+            <button id="btn-ingresar" class="btn primary" style="width:100%">ENTRAR AL SISTEMA</button>
+            <button id="btn-admin-users" class="btn ghost" style="width:100%; margin-top:10px">GESTIÓN DE ACCESOS</button>
         </div>
     </div>
 
-    <div id="main-screen" class="wrap hidden">
+    <div id="main-app" class="wrap hidden">
         <div class="main-header">
-            <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● NUBE ACTIVA</div>
+            <div style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● SISTEMA EN LÍNEA</div>
             <div class="grid-btns">
                 <button id="btn-log-toggle" class="btn ghost">LOGS</button>
                 <button id="btn-theme" class="btn ghost">TEMA</button>
@@ -57,16 +58,16 @@
             </div>
             <div class="grid-btns">
                 <button id="btn-add" class="btn primary">NUEVA UF</button>
-                <button id="btn-import" class="btn ghost admin-only">IMPORTAR</button>
-                <button id="btn-export" class="btn ghost admin-only">RESPALDO</button>
+                <button id="btn-import" class="btn ghost">IMPORTAR</button>
+                <button id="btn-export" class="btn ghost">RESPALDO</button>
             </div>
             <input id="search-input" placeholder="Buscar UF o Apellido...">
             <div class="grid-btns">
                 <button id="btn-search" class="btn primary">BUSCAR</button>
                 <button id="btn-clear" class="btn ghost">LIMPIAR</button>
-                <button id="btn-filter-empty" class="btn warning">SIN DATOS</button>
             </div>
         </div>
+
         <div class="content-body">
             <div id="log-container" class="hidden"><div id="log-panel"></div></div>
             <div id="list"></div>
@@ -75,39 +76,24 @@
 
     <div id="modal-users" class="modal hidden">
         <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
-            <h3 id="u-title">Usuarios del Sistema</h3>
+            <h3>Control de Accesos</h3>
             <div style="margin-top:10px; background:var(--bg); padding:10px; border-radius:10px">
-                <input id="adm-u" placeholder="Usuario">
-                <input id="adm-p" type="password" placeholder="Contraseña">
-                <select id="adm-r"><option value="operador">Operador</option><option value="admin">Admin</option></select>
-                <button id="btn-save-u" class="btn primary" style="width:100%">GUARDAR</button>
+                <input id="u-nom" placeholder="Nuevo Usuario">
+                <input id="u-pass" type="password" placeholder="Nueva Clave">
+                <select id="u-rol"><option value="operador">Operador</option><option value="admin">Admin</option></select>
+                <button id="btn-u-save" class="btn primary" style="width:100%">GUARDAR USUARIO</button>
             </div>
-            <div id="u-list" style="margin-top:15px"></div>
-            <button id="btn-close-u" class="btn danger" style="width:100%; margin-top:10px">CERRAR</button>
+            <div id="u-list-box" style="margin-top:15px"></div>
+            <button id="btn-u-close" class="btn danger" style="width:100%; margin-top:10px">CERRAR</button>
         </div>
     </div>
 
     <div id="modal-master" class="modal hidden">
         <div class="modal-content" style="text-align:center">
-            <h3>Acceso Maestro</h3>
-            <input id="m-key" type="password" placeholder="Clave de Recuperación" style="margin-top:15px">
-            <button id="btn-m-ok" class="btn primary" style="width:100%">VALIDAR</button>
+            <h3>Acceso Administrativo</h3>
+            <input id="m-key" type="password" placeholder="Clave Maestra" style="margin-top:15px">
+            <button id="btn-m-verify" class="btn primary" style="width:100%">AUTORIZAR</button>
             <button id="btn-m-cancel" class="btn ghost" style="width:100%; margin-top:10px">VOLVER</button>
-        </div>
-    </div>
-
-    <div id="modal-form" class="modal hidden">
-        <div class="modal-content">
-            <h3 id="f-title">Datos Unidad</h3>
-            <input id="f-uf" placeholder="UF (Ej: 01-A)">
-            <input id="f-prop" placeholder="Propietario">
-            <input id="f-telp" placeholder="Tel. Propietario">
-            <input id="f-inq" placeholder="Inquilino">
-            <input id="f-teli" placeholder="Tel. Inquilino">
-            <div class="grid-btns-2">
-                <button id="btn-f-save" class="btn primary">GUARDAR</button>
-                <button id="btn-f-cancel" class="btn danger">CANCELAR</button>
-            </div>
         </div>
     </div>
 
@@ -120,78 +106,77 @@
         const db = getFirestore(app);
 
         const MASTER_CODE = "1131552679";
-        let deps = [], editId = null, editUId = null;
+        let deps = [], editUId = null;
 
-        // --- LOGIN ---
-        document.getElementById("btn-do-login").onclick = async () => {
-            const u = document.getElementById("l-user").value.trim();
-            const p = document.getElementById("l-pass").value.trim();
-            if(!u || !p) return;
-            const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+        // --- LOGIN CORREGIDO ---
+        document.getElementById("btn-ingresar").onclick = async () => {
+            const u = document.getElementById("login-u").value.trim();
+            const p = document.getElementById("login-p").value.trim();
+            if(!u || !p) return alert("Complete los campos");
+
             try {
+                const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
                 const snap = await getDocs(q);
                 if(!snap.empty) {
-                    localStorage.setItem("uf_session", "true");
-                    localStorage.setItem("uf_role", snap.docs.data().role);
+                    localStorage.setItem("uf_login_status", "ok");
                     location.reload();
-                } else { alert("Usuario/Clave incorrectos"); }
-            } catch(e) { alert("Error de conexión con Firebase"); }
+                } else { alert("Usuario o contraseña incorrectos"); }
+            } catch(e) { alert("Error de conexión. Intente nuevamente."); }
         };
 
-        // --- GESTIÓN USUARIOS ---
+        // --- GESTIÓN DE USUARIOS (CON LÁPIZ) ---
         const renderUsers = async () => {
-            const list = document.getElementById("u-list");
-            list.innerHTML = "Cargando...";
+            const box = document.getElementById("u-list-box");
+            box.innerHTML = "Cargando...";
             const snap = await getDocs(collection(db, "usuarios"));
-            list.innerHTML = "";
-            snap.forEach(udoc => {
-                const d = udoc.data();
+            box.innerHTML = "";
+            snap.forEach(userDoc => {
+                const d = userDoc.data();
                 const div = document.createElement("div");
                 div.className = "user-row";
-                div.innerHTML = `<div><b>${d.usuario}</b><br><small>${d.role}</small></div>
-                <div style="display:flex; gap:10px">
-                    <i class="fas fa-edit" onclick="window.editU('${udoc.id}','${d.usuario}','${d.password}','${d.role}')"></i>
-                    <i class="fas fa-trash" style="color:var(--danger)" onclick="window.delU('${udoc.id}')"></i>
+                div.innerHTML = `<div><b>${d.usuario}</b> (${d.role})</div>
+                <div style="display:flex; gap:12px">
+                    <i class="fas fa-edit" style="color:var(--primary); cursor:pointer" onclick="window.prepareEditU('${userDoc.id}','${d.usuario}','${d.password}','${d.role}')"></i>
+                    <i class="fas fa-trash" style="color:var(--danger); cursor:pointer" onclick="window.delU('${userDoc.id}')"></i>
                 </div>`;
-                list.appendChild(div);
+                box.appendChild(div);
             });
         };
 
-        window.editU = (id, u, p, r) => {
-            editUId = id; document.getElementById("adm-u").value = u; document.getElementById("adm-p").value = p; document.getElementById("adm-r").value = r;
+        window.prepareEditU = (id, u, p, r) => {
+            editUId = id; document.getElementById("u-nom").value = u; 
+            document.getElementById("u-pass").value = p; document.getElementById("u-rol").value = r;
         };
 
-        window.delU = async (id) => { if(confirm("¿Borrar?")) { await deleteDoc(doc(db, "usuarios", id)); renderUsers(); } };
+        window.delU = async (id) => { if(confirm("¿Eliminar acceso?")) { await deleteDoc(doc(db, "usuarios", id)); renderUsers(); } };
 
-        document.getElementById("btn-save-u").onclick = async () => {
-            const u = document.getElementById("adm-u").value, p = document.getElementById("adm-p").value, r = document.getElementById("adm-r").value;
+        document.getElementById("btn-u-save").onclick = async () => {
+            const u = document.getElementById("u-nom").value, p = document.getElementById("u-pass").value, r = document.getElementById("u-rol").value;
             if(editUId) await updateDoc(doc(db, "usuarios", editUId), { usuario: u, password: p, role: r });
             else await addDoc(collection(db, "usuarios"), { usuario: u, password: p, role: r });
-            editUId = null; renderUsers();
+            editUId = null; document.getElementById("u-nom").value = ""; document.getElementById("u-pass").value = "";
+            renderUsers();
         };
 
-        // --- APP LOGIC ---
-        if(localStorage.getItem("uf_session")) {
+        // --- INICIO DE APP ---
+        if(localStorage.getItem("uf_login_status")) {
             document.getElementById("login-screen").classList.add("hidden");
-            document.getElementById("main-screen").classList.remove("hidden");
+            document.getElementById("main-app").classList.remove("hidden");
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 deps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderDeps(deps);
+                renderList(deps);
             });
         }
 
-        function renderDeps(data) {
+        function renderList(data) {
             const list = document.getElementById("list"); list.innerHTML = "";
             data.forEach(d => {
                 const div = document.createElement("div");
                 div.className = `item ${(!d.TelefonoPropietario && !d.TelefonoInquilino) ? 'no-phone' : ''}`;
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center">
-                        <div><b>UF: ${d.UF}</b><small>${d.Propietario || 'S/D'}</small></div>
-                        <div style="display:flex; gap:15px; font-size:18px">
-                            <i class="fas fa-eye" onclick="document.getElementById('det-${d.id}').classList.toggle('hidden')"></i>
-                            <i class="fas fa-edit" style="color:var(--primary)" onclick="window.editDep('${d.id}')"></i>
-                        </div>
+                        <div><b>UF: ${d.UF}</b><small>${d.Propietario || 'Sin Datos'}</small></div>
+                        <i class="fas fa-eye" style="font-size:18px" onclick="document.getElementById('det-${d.id}').classList.toggle('hidden')"></i>
                     </div>
                     <div id="det-${d.id}" class="details hidden">
                         <p>Prop: ${d.Propietario} | Tel: ${d.TelefonoPropietario}</p>
@@ -201,39 +186,20 @@
             });
         }
 
-        window.editDep = (id) => {
-            editId = id; const d = deps.find(x => x.id === id);
-            document.getElementById("f-uf").value = d.UF; document.getElementById("f-prop").value = d.Propietario;
-            document.getElementById("f-telp").value = d.TelefonoPropietario; document.getElementById("f-inq").value = d.Inquilino;
-            document.getElementById("f-teli").value = d.TelefonoInquilino;
-            document.getElementById("modal-form").classList.remove("hidden");
-        };
-
-        document.getElementById("btn-f-save").onclick = async () => {
-            const d = { UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value, TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value, TelefonoInquilino: document.getElementById("f-teli").value };
-            if(editId) await updateDoc(doc(db, "departamentos", editId), d);
-            else await addDoc(collection(db, "departamentos"), d);
-            document.getElementById("modal-form").classList.add("hidden");
-        };
-
-        // --- NAVEGACION ---
-        document.getElementById("btn-admin-access").onclick = () => document.getElementById("modal-master").classList.remove("hidden");
-        document.getElementById("btn-m-ok").onclick = () => {
+        // --- BOTONES ---
+        document.getElementById("btn-admin-users").onclick = () => document.getElementById("modal-master").classList.remove("hidden");
+        document.getElementById("btn-m-verify").onclick = () => {
             if(document.getElementById("m-key").value === MASTER_CODE) {
                 document.getElementById("modal-master").classList.add("hidden");
                 document.getElementById("modal-users").classList.remove("hidden");
                 renderUsers();
-            } else { alert("Clave Incorrecta"); }
+            } else { alert("Código incorrecto"); }
         };
         document.getElementById("btn-logout").onclick = () => { localStorage.clear(); location.reload(); };
-        document.querySelectorAll("#btn-close-u, #btn-m-cancel, #btn-f-cancel").forEach(b => b.onclick = () => {
+        document.querySelectorAll("#btn-u-close, #btn-m-cancel").forEach(b => b.onclick = () => {
             document.querySelectorAll(".modal").forEach(m => m.id !== "login-screen" && m.classList.add("hidden"));
         });
-        document.getElementById("btn-add").onclick = () => { editId = null; document.getElementById("modal-form").classList.remove("hidden"); };
-        document.getElementById("btn-search").onclick = () => {
-            const v = document.getElementById("search-input").value.toLowerCase();
-            renderDeps(deps.filter(d => d.UF.toLowerCase().includes(v) || d.Propietario.toLowerCase().includes(v)));
-        };
+        document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("dark-mode");
     </script>
 </body>
 </html>
