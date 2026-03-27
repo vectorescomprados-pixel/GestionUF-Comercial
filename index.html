@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - Sistema Unificado V3</title>
+    <title>GestiónUF Pro - Full Restored</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0b141a; --card: #111b21; --header-border: #2563eb; --text-main: #e9edef; --text-dim: #a1a1aa; }
@@ -14,7 +14,10 @@
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
 
-        /* CABECERA (FOTO ORIGINAL) */
+        /* 🏠 BOTÓN HOME RESTAURADO */
+        .btn-home { display: flex; width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; align-items: center; justify-content: center; margin: 0 auto 20px; text-decoration: none; border: 2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 20px; }
+
+        /* CABECERA */
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border: 2px solid var(--header-border); border-top: none; border-radius: 0 0 20px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         .status-bar { font-size: 11px; text-align: center; margin-bottom: 12px; color: #22c55e; font-weight: bold; text-transform: uppercase; }
         .content-body { margin-top: 365px; width: 100%; padding-bottom: 50px; }
@@ -29,7 +32,7 @@
 
         .search-box { width: 100%; height: 50px; background: rgba(0,0,0,0.2); border: 1px solid #222d34; border-radius: 10px; padding: 0 15px; color: inherit; margin-bottom: 10px; font-size: 15px; }
 
-        /* PANEL DE LOGS (HISTORIAL) */
+        /* PANEL DE LOGS */
         #log-container { background: #000; color: #00ff41; font-family: monospace; font-size: 10px; padding: 10px; height: 100px; overflow-y: auto; border-radius: 10px; margin-bottom: 10px; border: 1px solid #333; }
 
         /* TARJETAS */
@@ -53,6 +56,9 @@
 
     <div id="login-screen" class="modal">
         <div class="modal-inner">
+            <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home">
+                <i class="fas fa-home"></i>
+            </a>
             <h2 style="margin-bottom:20px;">GestiónUF Pro</h2>
             <input id="l-u" class="search-box" placeholder="Usuario">
             <input id="l-p" class="search-box" type="password" placeholder="Contraseña">
@@ -108,9 +114,9 @@
         <div class="modal-inner">
             <h3 style="margin-bottom:15px">Datos de Unidad</h3>
             <input id="f-uf" class="search-box" placeholder="UF (ej: 0001)">
-            <input id="f-prop" class="search-box" placeholder="Propietario">
+            <input id="f-prop" class="search-box" placeholder="Nombre Propietario">
             <input id="f-telp" class="search-box" placeholder="Tel. Propietario">
-            <input id="f-inq" class="search-box" placeholder="Inquilino">
+            <input id="f-inq" class="search-box" placeholder="Nombre Inquilino">
             <input id="f-teli" class="search-box" placeholder="Tel. Inquilino">
             <div class="action-grid">
                 <button id="btn-guardar" class="btn btn-blue">GUARDAR</button>
@@ -145,11 +151,11 @@
             const p = document.getElementById("l-p").value.trim();
             const qU = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
             const s = await getDocs(qU);
-            if(!s.empty) { localStorage.setItem("uf_v3", "ok"); location.reload(); }
+            if(!s.empty) { localStorage.setItem("uf_v4_final", "ok"); location.reload(); }
             else alert("Acceso Denegado");
         };
 
-        if(localStorage.getItem("uf_v3") === "ok") {
+        if(localStorage.getItem("uf_v4_final") === "ok") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (s) => {
@@ -166,7 +172,7 @@
                 const div = document.createElement("div");
                 div.className = "item"; div.id = d.id;
                 div.innerHTML = `
-                    <b>UF: ${d.UF}</b><p>${d.Propietario || 'S/D'}</p>
+                    <b>UF: ${d.UF}</b><p>${d.Propietario || '---'}</p>
                     <div class="item-tools">
                         <i class="fas fa-eye" onclick="document.getElementById('${d.id}').classList.toggle('open')"></i>
                         <i class="fas fa-edit" style="color:#2563eb" onclick="window.edit('${d.id}')"></i>
@@ -199,13 +205,12 @@
         };
         document.getElementById("btn-limpiar").onclick = () => { document.getElementById("search").value = ""; render(dptos); };
         
-        // SIN DATOS: Busca específicamente en el campo Inquilino
         document.getElementById("btn-sin-datos").onclick = () => {
             const f = dptos.filter(d => !d.Inquilino || d.Inquilino === "" || d.Inquilino === "S/D");
             render(f); writeLog(`Filtro Inquilinos vacíos: ${f.length} UFs.`);
         };
 
-        // --- IMPORTAR CSV (RESTAURADO) ---
+        // --- IMPORTAR CSV ---
         document.getElementById("btn-importar").onclick = () => document.getElementById("csv-file").click();
         document.getElementById("csv-file").onchange = (e) => {
             const reader = new FileReader();
