@@ -2,57 +2,38 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - Final Mundial</title>
+    <title>Gestión UF - REPARADO</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #f0f2f5; --card: #ffffff; --primary: #2563eb; --danger: #e11d48; --text: #1f293b; --border: #e5e7eb; --warning: #f59e0b; --success: #22c55e; }
-        body.dark-mode { --bg: #0b141a; --card: #111b21; --text: #e9edef; --border: #222d34; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
-        .wrap { width: 95%; max-width: 450px; }
-        .hidden { display: none !important; }
-        .btn-home { display: flex; width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; align-items: center; justify-content: center; margin: 0 auto 20px; text-decoration: none; border: 2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; }
-        .content-body { margin-top: 320px; width: 100%; padding-bottom: 50px; }
-        .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
-        .primary { background: var(--primary); } .danger { background: var(--danger); }
-        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); }
-        input { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; }
+        body { font-family: sans-serif; background: #0b141a; color: white; padding: 20px; }
+        .hidden { display: none; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
+        button { width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .card { background: #111b21; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #222d34; }
+        .btn-home { display: block; width: 40px; text-align: center; margin: 0 auto 10px; color: #2563eb; font-size: 24px; }
     </style>
 </head>
-<body class="dark-mode">
+<body>
 
-    <div id="login-screen" class="modal">
-        <div class="modal-content">
-            <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home"><i class="fas fa-home"></i></a>
-            <h2 style="text-align:center; margin-bottom:20px;">Iniciar Sesión</h2>
-            <input id="login-user" placeholder="Usuario">
-            <input id="login-pass" type="password" placeholder="Contraseña">
-            <button id="btn-login" class="btn primary">ENTRAR</button>
-        </div>
+    <div id="login-screen">
+        <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home"><i class="fas fa-home"></i></a>
+        <h2 style="text-align:center">Ingreso</h2>
+        <input id="u" type="text" placeholder="Usuario">
+        <input id="p" type="password" placeholder="Contraseña">
+        <button id="btn-entrar">ENTRAR</button>
     </div>
 
-    <div id="main-screen" class="wrap hidden">
-        <div class="main-header">
-            <div style="display:flex; gap:10px; margin-bottom:10px;">
-                <button id="btn-logout" class="btn danger">CERRAR</button>
-                <button id="btn-add" class="btn primary">NUEVA UF</button>
-            </div>
-            <input id="search-input" placeholder="Buscar unidad...">
-        </div>
-        <div class="content-body">
-            <div id="list"></div>
-        </div>
+    <div id="main-screen" class="hidden">
+        <button id="btn-salir" style="background:#e11d48; margin-bottom:20px">CERRAR SESIÓN</button>
+        <div id="lista">Cargando unidades...</div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs, onSnapshot, orderBy, doc, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = { 
+        const conf = { 
             apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", 
             authDomain: "gestionuf-remoto.firebaseapp.com", 
             projectId: "gestionuf-remoto", 
@@ -61,46 +42,47 @@
             appId: "1:724452752860:web:4d25585addcdcbd146e319" 
         };
 
-        const app = initializeApp(firebaseConfig);
+        const app = initializeApp(conf);
         const db = getFirestore(app);
 
-        // --- EL LOGIN QUE SACA CAMPEÓN ---
-        document.getElementById("btn-login").onclick = async () => {
-            const u = document.getElementById("login-user").value.trim();
-            const p = document.getElementById("login-pass").value.trim();
-            
+        // LOGIN SIN VUELTAS
+        document.getElementById("btn-entrar").onclick = async () => {
+            const user = document.getElementById("u").value.trim();
+            const pass = document.getElementById("p").value.trim();
+
             try {
-                const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+                const q = query(collection(db, "usuarios"), where("usuario", "==", user), where("password", "==", pass));
                 const snap = await getDocs(q);
                 
                 if (!snap.empty) {
-                    // LA LÍNEA DEL TRIUNFO: snap.docs.data()
-                    const data = snap.docs.data(); 
-                    localStorage.setItem("uf_ok", "true");
+                    // El arreglo que pedía la consola
+                    localStorage.setItem("sesion_activa", "si");
                     location.reload();
                 } else {
-                    alert("Datos incorrectos");
+                    alert("Usuario o clave mal escritos");
                 }
-            } catch (e) {
-                alert("Error de red");
+            } catch (err) {
+                console.error(err);
+                alert("Error técnico al conectar. Revisa tu conexión.");
             }
         };
 
-        if(localStorage.getItem("uf_ok") === "true") {
+        // SI YA ESTÁ LOGUEADO
+        if(localStorage.getItem("sesion_activa") === "si") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
 
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
-                const list = document.getElementById("list");
-                list.innerHTML = "";
+                const listado = document.getElementById("lista");
+                listado.innerHTML = "";
                 snap.docs.forEach(doc => {
                     const d = doc.data();
-                    list.innerHTML += `<div class="item"><b>UF: ${d.UF}</b><br>${d.Propietario || 'Sin nombre'}</div>`;
+                    listado.innerHTML += `<div class="card"><b>UF: ${d.UF}</b><br>${d.Propietario || 'S/N'}</div>`;
                 });
             });
         }
 
-        document.getElementById("btn-logout").onclick = () => { localStorage.clear(); location.reload(); };
+        document.getElementById("btn-salir").onclick = () => { localStorage.clear(); location.reload(); };
     </script>
 </body>
 </html>
