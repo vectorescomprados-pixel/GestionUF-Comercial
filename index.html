@@ -3,16 +3,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - Enterprise Gold V3</title>
+    <title>GestiónUF Pro - Gold V3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #f0f2f5; --card: #ffffff; --primary: #2563eb; --danger: #e11d48; --text: #1f293b; --border: #e5e7eb; --warning: #f59e0b; --success: #22c55e; }
         body.dark-mode { --bg: #0b141a; --card: #111b21; --text: #e9edef; --border: #222d34; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; transition: background 0.2s; }
-        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
-
+        
         /* 🏠 ESTILO DE LA CASITA */
         .btn-home {
             display: flex; width: 50px; height: 50px; background: #2563eb;
@@ -21,16 +21,12 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-size: 20px;
         }
 
-        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .content-body { margin-top: 250px; width: 100%; padding-bottom: 100px; }
-        .grid-btns { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
-        .btn { height: 45px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; }
+        .content-body { margin-top: 280px; width: 100%; padding-bottom: 100px; }
+        .btn { height: 45px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; width: 100%; }
         .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #64748b; }
-        
-        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; }
-        .item b { font-size: 16px; color: var(--primary); }
-        input { width: 100%; height: 48px; margin-bottom: 12px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
-
+        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); }
+        input { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; }
     </style>
@@ -43,32 +39,28 @@
                 <i class="fas fa-home"></i>
             </a>
             <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
-            <input id="login-user" placeholder="Usuario" autocomplete="off">
+            <input id="login-user" placeholder="Usuario">
             <input id="login-pass" type="password" placeholder="Contraseña">
-            <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
+            <button id="btn-login" class="btn primary">INICIAR SESIÓN</button>
         </div>
     </div>
 
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div style="text-align:center; font-size:11px; margin-bottom:10px; color:var(--success)">CONEXIÓN ESTABLECIDA</div>
-            <div class="grid-btns">
+            <div style="text-align:center; font-size:10px; margin-bottom:10px; color:var(--success)">● SISTEMA EN LÍNEA</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px">
                 <button id="btn-theme" class="btn ghost">TEMA</button>
                 <button id="btn-logout" class="btn danger">SALIR</button>
             </div>
-            <input id="search-input" placeholder="Buscar UF o Apellido...">
+            <input id="search-input" placeholder="Buscar unidad...">
         </div>
-
-        <div class="content-body">
-            <div id="list"></div>
-        </div>
+        <div class="content-body"><div id="list"></div></div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, query, where, getDocs, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN (Verificada)
         const firebaseConfig = { 
             apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", 
             authDomain: "gestionuf-remoto.firebaseapp.com", 
@@ -81,60 +73,51 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // LOGIN
-        async function ejecutarLogin() {
-            const userVal = document.getElementById("login-user").value.trim();
-            const passVal = document.getElementById("login-pass").value.trim();
+        // --- CORRECCIÓN DEL LOGIN ---
+        document.getElementById("btn-login").onclick = async () => {
+            const u = document.getElementById("login-user").value.trim();
+            const p = document.getElementById("login-pass").value.trim();
             
-            if(!userVal || !passVal) return;
+            if(!u || !p) return;
 
             try {
-                // Buscamos exactamente como en tu base de datos
-                const q = query(collection(db, "usuarios"), 
-                                where("usuario", "==", userVal), 
-                                where("password", "==", passVal));
-                
+                const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
                 const snap = await getDocs(q);
 
                 if (!snap.empty) {
-                    const d = snap.docs.data();
-                    localStorage.setItem("uf_auth_session", "true");
-                    localStorage.setItem("uf_user_role", d.rol || "operador");
+                    // AQUÍ ESTABA EL ERROR: Se debe acceder al primer documento de la lista
+                    const userData = snap.docs.data(); 
+                    localStorage.setItem("uf_auth_ok", "true");
+                    localStorage.setItem("uf_user_role", userData.role || userData.rol || "operador");
                     location.reload(); 
                 } else {
                     alert("Usuario o clave incorrectos");
                 }
             } catch (err) {
                 console.error("Error completo:", err);
-                alert("Error de conexión. Si usas Chrome, intenta subir el archivo a internet o usar otro navegador.");
+                alert("Error de conexión con la base de datos.");
             }
-        }
+        };
 
-        document.getElementById("btn-login").onclick = ejecutarLogin;
-
-        // CARGA DE DATOS
-        if(localStorage.getItem("uf_auth_session") === "true") {
+        // --- CARGA DE LA APP ---
+        if(localStorage.getItem("uf_auth_ok") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
 
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
-                const listEl = document.getElementById("list");
-                listEl.innerHTML = "";
+                const list = document.getElementById("list");
+                list.innerHTML = "";
                 snap.forEach(docSnap => {
                     const d = docSnap.data();
                     const div = document.createElement("div");
                     div.className = "item";
                     div.innerHTML = `<b>UF: ${d.UF}</b><br><small>${d.Propietario || 'S/D'}</small>`;
-                    listEl.appendChild(div);
+                    list.appendChild(div);
                 });
             });
         }
 
-        document.getElementById("btn-logout").onclick = () => {
-            localStorage.clear();
-            location.reload();
-        };
-
+        document.getElementById("btn-logout").onclick = () => { localStorage.clear(); location.reload(); };
         document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("dark-mode");
     </script>
 </body>
