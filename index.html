@@ -13,7 +13,7 @@
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
 
-        /* 🏠 ESTILO BOTÓN HOME */
+        /* 🏠 BOTÓN HOME */
         .btn-home {
             display: flex; width: 50px; height: 50px; background: #2563eb;
             color: white; border-radius: 50%; align-items: center; justify-content: center; 
@@ -30,7 +30,6 @@
         
         #btn-rocket { position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px; border-radius: 50%; z-index: 5000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 20px; border: 2px solid white; display: none; }
         .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; }
-        .item.no-phone { border-left: 8px solid var(--warning) !important; }
         .item b { font-size: 16px; color: var(--primary); display: block; margin-bottom: 5px; }
         .details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 14px; line-height: 1.6; }
         input, select { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
@@ -46,7 +45,6 @@
 <body class="dark-mode">
 
     <button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
-    <input type="file" id="csv-file" class="hidden">
 
     <div id="login-screen" class="modal">
         <div class="modal-content">
@@ -57,13 +55,12 @@
             <input id="login-user" placeholder="Usuario">
             <input id="login-pass" type="password" placeholder="Contraseña">
             <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
-            <button id="btn-create-user-trigger" class="btn ghost" style="width:100%; margin-top:10px">NUEVO USUARIO (ADMIN)</button>
         </div>
     </div>
 
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● EN LÍNEA - SEGURIDAD ACTIVA</div>
+            <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● EN LÍNEA</div>
             <div class="grid-btns">
                 <button id="btn-log-toggle" class="btn ghost">LOGS</button>
                 <button id="btn-theme" class="btn ghost">TEMA</button>
@@ -71,15 +68,8 @@
             </div>
             <div class="grid-btns">
                 <button id="btn-add" class="btn primary">NUEVA UF</button>
-                <button id="btn-import" class="btn ghost admin-only">IMPORTAR</button>
-                <button id="btn-export" class="btn ghost admin-only">RESPALDO</button>
             </div>
             <input id="search-input" placeholder="Buscar por Unidad o Apellido...">
-            <div class="grid-btns">
-                <button id="btn-search" class="btn primary">BUSCAR</button>
-                <button id="btn-clear" class="btn ghost">LIMPIAR</button>
-                <button id="btn-filter-empty" class="btn warning">SIN DATOS</button>
-            </div>
         </div>
 
         <div class="content-body">
@@ -107,7 +97,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, orderBy, getDocs, writeBatch, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, orderBy, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", 
@@ -122,7 +112,6 @@
         const db = getFirestore(app);
         
         let departamentos = [], editId = null;
-        const userRole = localStorage.getItem("uf_user_role") || "operador";
 
         const writeLog = (msg, type = 'success') => {
             const lp = document.getElementById("log-panel");
@@ -132,7 +121,7 @@
             }
         };
 
-        // --- LOGIN CORREGIDO (EL ARREGLO FINAL) ---
+        // --- LOGIN CORREGIDO (EL ARREGLO) ---
         const login = async () => {
             const u = document.getElementById("login-user").value.trim();
             const p = document.getElementById("login-pass").value.trim();
@@ -143,30 +132,31 @@
                 const snap = await getDocs(q);
                 
                 if (!snap.empty) {
-                    // FIX: .docs.data() corrige el error de la consola
+                    // EL ARREGLO: Agregamos para pedir la data del primer usuario
                     const data = snap.docs.data(); 
-                    localStorage.setItem("uf_auth_secure", "true");
-                    localStorage.setItem("uf_user_role", data.role || data.rol || "operador");
+                    localStorage.setItem("uf_auth_final", "true");
+                    localStorage.setItem("uf_user_role", data.role || "operador");
                     location.reload();
                 } else { 
                     alert("Usuario o Contraseña incorrectos"); 
                 }
             } catch (e) {
                 console.error(e);
-                alert("Error de conexión.");
+                alert("Error de conexión con la nube.");
             }
         };
 
         document.getElementById("btn-login").onclick = login;
 
-        // --- CARGA DE DATOS ---
-        if(localStorage.getItem("uf_auth_secure") === "true") {
+        // --- INICIO APP ---
+        if(localStorage.getItem("uf_auth_final") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
 
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 render(departamentos);
+                writeLog("Sincronizado", "info");
             });
         }
 
