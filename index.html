@@ -3,87 +3,118 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - Enterprise Gold</title>
+    <title>GestiónUF - Original Restored</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #f0f2f5; --card: #ffffff; --primary: #2563eb; --danger: #e11d48; --text: #1f293b; --border: #e5e7eb; --success: #22c55e; }
-        body.dark-mode { --bg: #0b141a; --card: #111b21; --text: #e9edef; --border: #222d34; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; transition: background 0.2s; }
-        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
+        :root { --bg: #0b141a; --card: #111b21; --header-border: #2563eb; --text-main: #e9edef; --text-dim: #a1a1aa; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
 
-        /* 🏠 BOTÓN HOME */
-        .btn-home {
-            display: flex; width: 50px; height: 50px; background: #2563eb;
-            color: white; border-radius: 50%; align-items: center; justify-content: center; 
-            margin: 0 auto 20px; text-decoration: none; border: 2px solid white; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-size: 20px;
-        }
+        /* 🏠 BOTÓN HOME EN LOGIN */
+        .btn-home { display: flex; width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; align-items: center; justify-content: center; margin: 0 auto 20px; text-decoration: none; border: 2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 
-        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .content-body { margin-top: 200px; width: 100%; padding-bottom: 100px; }
+        /* 🖥️ CABECERA EXACTA (FOTO) */
+        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border: 2px solid var(--header-border); border-top: none; border-radius: 0 0 20px 20px; }
+        .status-bar { font-size: 11px; text-align: center; margin-bottom: 12px; color: #22c55e; font-weight: bold; }
+        .content-body { margin-top: 360px; width: 100%; padding-bottom: 50px; }
         
-        .grid-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 13px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
-        .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #64748b; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+        .btn { height: 48px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
         
-        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .item b { font-size: 16px; color: var(--primary); display: block; margin-bottom: 5px; }
-        .item small { color: #64748b; font-weight: normal; }
-        
-        input { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
+        /* Colores de botones según foto */
+        .btn-gray { background: #4a5568; }
+        .btn-red { background: #e11d48; }
+        .btn-blue { background: #2563eb; }
+        .btn-orange { background: #f59e0b; color: #000; }
 
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; }
+        .search-box { width: 100%; height: 50px; background: #0b141a; border: 1px solid #222d34; border-radius: 10px; padding: 0 15px; color: white; margin-bottom: 10px; font-size: 15px; }
+
+        /* 📱 LISTADO Y TARJETAS (FOTO) */
+        .item { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; border-left: 6px solid #f97316; position: relative; }
+        .item b { color: #2563eb; font-size: 17px; display: block; margin-bottom: 4px; }
+        .item p { color: var(--text-dim); font-size: 14px; }
+        
+        .item-tools { position: absolute; top: 15px; right: 15px; display: flex; gap: 15px; color: white; font-size: 18px; }
+        .icon-btn { cursor: pointer; opacity: 0.9; }
+
+        /* DETALLES DESPLEGADOS (FOTO) */
+        .details { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #222d34; display: none; }
+        .item.open .details { display: block; }
+        .label { color: #2563eb; font-weight: bold; display: block; margin-top: 10px; font-size: 15px; }
+        .val { color: var(--text-main); margin-bottom: 5px; font-size: 15px; }
+
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .btn-action { height: 55px; border-radius: 12px; border: none; font-weight: bold; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; font-size: 13px; }
+        .bg-call { background: #2563eb; }
+        .bg-chat { background: #22c55e; }
+
+        /* MODAL */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .modal-inner { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; }
     </style>
 </head>
-<body class="dark-mode">
+<body>
 
     <div id="login-screen" class="modal">
-        <div class="modal-content">
-            <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home">
-                <i class="fas fa-home"></i>
-            </a>
-            <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
-            <input id="login-user" placeholder="Usuario">
-            <input id="login-pass" type="password" placeholder="Contraseña">
-            <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
+        <div class="modal-inner">
+            <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home"><i class="fas fa-home"></i></a>
+            <h2 style="text-align:center; margin-bottom:20px;">Acceso GestiónUF</h2>
+            <input id="l-u" class="search-box" placeholder="Usuario">
+            <input id="l-p" class="search-box" type="password" placeholder="Contraseña">
+            <button id="btn-login" class="btn btn-blue" style="width:100%">ENTRAR</button>
         </div>
     </div>
 
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div class="grid-btns">
-                <button id="btn-logout" class="btn danger"><i class="fas fa-sign-out-alt"></i> SALIR</button>
-                <button id="btn-add" class="btn primary"><i class="fas fa-plus"></i> NUEVA UF</button>
+            <div class="status-bar">● EN LÍNEA - SEGURIDAD ACTIVA</div>
+            
+            <div class="grid-3">
+                <button class="btn btn-gray">HISTORIAL</button>
+                <button class="btn btn-gray">TEMA</button>
+                <button id="logout" class="btn btn-red">CERRAR</button>
             </div>
-            <input id="search-input" placeholder="🔍 Buscar por UF o Propietario...">
+            
+            <div class="grid-3">
+                <button id="add" class="btn btn-blue">NUEVA UF</button>
+                <button class="btn btn-gray">IMPORTAR</button>
+                <button class="btn btn-gray">RESPALDO</button>
+            </div>
+            
+            <input id="search" class="search-box" placeholder="Buscar por Unidad o Apellido...">
+            
+            <div class="grid-3">
+                <button id="go-search" class="btn btn-blue">BUSCAR</button>
+                <button id="clear" class="btn btn-gray">LIMPIAR</button>
+                <button class="btn btn-orange">SIN DATOS</button>
+            </div>
+            
+            <button class="btn btn-red" style="width:100%">BORRAR TODA LA NUBE</button>
         </div>
 
-        <div class="content-body">
-            <div id="list"></div>
-        </div>
+        <div id="list" class="content-body"></div>
     </div>
 
     <div id="modal-form" class="modal hidden">
-        <div class="modal-content">
-            <h3 id="form-title" style="text-align:center; margin-bottom:15px">Datos de Unidad</h3>
-            <input id="f-uf" placeholder="Unidad (Ej: 1A)">
-            <input id="f-prop" placeholder="Nombre Propietario">
-            <input id="f-telp" placeholder="Teléfono Propietario">
-            <input id="f-inq" placeholder="Nombre Inquilino">
-            <input id="f-teli" placeholder="Teléfono Inquilino">
-            <div class="grid-btns">
-                <button id="btn-save" class="btn primary">GUARDAR</button>
-                <button id="btn-cancel" class="btn ghost">CANCELAR</button>
+        <div class="modal-inner">
+            <h3 style="margin-bottom:15px">Datos de UF</h3>
+            <input id="f-uf" class="search-box" placeholder="UF">
+            <input id="f-prop" class="search-box" placeholder="Propietario">
+            <input id="f-telp" class="search-box" placeholder="Tel Propietario">
+            <input id="f-inq" class="search-box" placeholder="Inquilino">
+            <input id="f-teli" class="search-box" placeholder="Tel Inquilino">
+            <div class="action-grid">
+                <button id="save" class="btn btn-blue">GUARDAR</button>
+                <button id="cancel" class="btn btn-red">CANCELAR</button>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, orderBy, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, orderBy, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", 
@@ -96,36 +127,27 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        
-        let departamentos = [], editId = null;
+        let dptos = [], editId = null;
 
-        // --- LOGIN ---
+        // LOGIN
         document.getElementById("btn-login").onclick = async () => {
-            const u = document.getElementById("login-user").value.trim();
-            const p = document.getElementById("login-pass").value.trim();
-            
-            try {
-                const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
-                const snap = await getDocs(q);
-                if (!snap.empty) {
-                    localStorage.setItem("uf_sesion", "active");
-                    location.reload();
-                } else { alert("Datos incorrectos"); }
-            } catch (e) { alert("Error de conexión"); }
+            const u = document.getElementById("l-u").value.trim();
+            const p = document.getElementById("l-p").value.trim();
+            const qU = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+            const s = await getDocs(qU);
+            if(!s.empty) { localStorage.setItem("uf_v2", "ok"); location.reload(); }
+            else alert("Error");
         };
 
-        // --- INICIO ---
-        if(localStorage.getItem("uf_sesion") === "active") {
+        if(localStorage.getItem("uf_v2") === "ok") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
-
-            onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
-                departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                render(departamentos);
+            onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (s) => {
+                dptos = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                render(dptos);
             });
         }
 
-        // --- RENDER & BUSCADOR ---
         function render(data) {
             const list = document.getElementById("list");
             list.innerHTML = "";
@@ -133,59 +155,62 @@
                 const tel = d.TelefonoPropietario || d.TelefonoInquilino || "";
                 const div = document.createElement("div");
                 div.className = "item";
+                div.id = d.id;
                 div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center">
-                        <div>
-                            <b>UF: ${d.UF}</b>
-                            <small>${d.Propietario || 'Sin Datos'}</small>
-                        </div>
-                        <div style="display:flex; gap:15px; font-size:18px">
-                            <i class="fas fa-edit" style="color:var(--primary); cursor:pointer" onclick="window.editUF('${d.id}')"></i>
-                            <a href="https://wa.me/${tel.replace(/\D/g,'')}" target="_blank" style="color:var(--success)"><i class="fab fa-whatsapp"></i></a>
-                            <a href="tel:${tel}" style="color:var(--primary)"><i class="fas fa-phone"></i></a>
+                    <b>UF: ${d.UF}</b>
+                    <p>${d.Propietario || 'S/D'}</p>
+                    <div class="item-tools">
+                        <i class="fas fa-eye icon-btn" onclick="document.getElementById('${d.id}').classList.toggle('open')"></i>
+                        <i class="fas fa-edit icon-btn" style="color:#2563eb" onclick="window.edit('${d.id}')"></i>
+                        <i class="fas fa-trash icon-btn" style="color:#e11d48" onclick="window.del('${d.id}')"></i>
+                    </div>
+                    <div class="details">
+                        <span class="label">Prop:</span><div class="val">${d.Propietario || 'S/D'} |</div>
+                        <span class="label">Tel:</span><div class="val">${d.TelefonoPropietario || 'N/C'}</div>
+                        <span class="label">Inq:</span><div class="val">${d.Inquilino || 'S/D'} |</div>
+                        <span class="label">Tel:</span><div class="val">${d.TelefonoInquilino || 'N/C'}</div>
+                        <div class="action-grid">
+                            <a href="tel:${tel}" class="btn-action bg-call"><i class="fas fa-phone-alt"></i> LLAMAR</a>
+                            <a href="https://wa.me/${tel.replace(/\D/g,'')}" target="_blank" class="btn-action bg-chat"><i class="fab fa-whatsapp"></i> CHAT</a>
                         </div>
                     </div>`;
                 list.appendChild(div);
             });
         }
 
-        document.getElementById("search-input").oninput = (e) => {
-            const val = e.target.value.toLowerCase();
-            const filtered = departamentos.filter(d => 
-                d.UF.toString().toLowerCase().includes(val) || 
-                (d.Propietario && d.Propietario.toLowerCase().includes(val))
-            );
-            render(filtered);
-        };
-
-        // --- CRUD ---
-        window.editUF = (id) => {
-            editId = id; const d = departamentos.find(x => x.id === id);
-            document.getElementById("f-uf").value = d.UF || ""; 
-            document.getElementById("f-prop").value = d.Propietario || "";
-            document.getElementById("f-telp").value = d.TelefonoPropietario || "";
-            document.getElementById("f-inq").value = d.Inquilino || "";
-            document.getElementById("f-teli").value = d.TelefonoInquilino || "";
+        window.edit = (id) => {
+            editId = id; const d = dptos.find(x => x.id === id);
+            document.getElementById("f-uf").value = d.UF;
+            document.getElementById("f-prop").value = d.Propietario;
+            document.getElementById("f-telp").value = d.TelefonoPropietario;
+            document.getElementById("f-inq").value = d.Inquilino;
+            document.getElementById("f-teli").value = d.TelefonoInquilino;
             document.getElementById("modal-form").classList.remove("hidden");
         };
 
-        document.getElementById("btn-add").onclick = () => { editId = null; document.getElementById("modal-form").classList.remove("hidden"); };
+        window.del = async (id) => { if(confirm("¿Borrar?")) await deleteDoc(doc(db, "departamentos", id)); };
+        document.getElementById("add").onclick = () => { editId = null; document.getElementById("modal-form").classList.remove("hidden"); };
+        document.getElementById("cancel").onclick = () => document.getElementById("modal-form").classList.add("hidden");
         
-        document.getElementById("btn-save").onclick = async () => {
-            const d = { 
+        document.getElementById("save").onclick = async () => {
+            const data = { 
                 UF: document.getElementById("f-uf").value, 
-                Propietario: document.getElementById("f-prop").value, 
-                TelefonoPropietario: document.getElementById("f-telp").value, 
-                Inquilino: document.getElementById("f-inq").value, 
-                TelefonoInquilino: document.getElementById("f-teli").value 
+                Propietario: document.getElementById("f-prop").value,
+                TelefonoPropietario: document.getElementById("f-telp").value,
+                Inquilino: document.getElementById("f-inq").value,
+                TelefonoInquilino: document.getElementById("f-teli").value
             };
-            if(editId) await updateDoc(doc(db, "departamentos", editId), d);
-            else await addDoc(collection(db, "departamentos"), d);
+            if(editId) await updateDoc(doc(db, "departamentos", editId), data);
+            else await addDoc(collection(db, "departamentos"), data);
             document.getElementById("modal-form").classList.add("hidden");
         };
 
-        document.getElementById("btn-cancel").onclick = () => document.getElementById("modal-form").classList.add("hidden");
-        document.getElementById("btn-logout").onclick = () => { localStorage.clear(); location.reload(); };
+        document.getElementById("go-search").onclick = () => {
+            const v = document.getElementById("search").value.toLowerCase();
+            render(dptos.filter(d => d.UF.toString().includes(v) || d.Propietario.toLowerCase().includes(v)));
+        };
+        document.getElementById("clear").onclick = () => { document.getElementById("search").value = ""; render(dptos); };
+        document.getElementById("logout").onclick = () => { localStorage.clear(); location.reload(); };
     </script>
 </body>
 </html>
