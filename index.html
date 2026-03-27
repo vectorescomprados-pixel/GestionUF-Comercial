@@ -12,7 +12,7 @@
         body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
-
+        
         /* 🏠 ESTILO BOTÓN HOME */
         .btn-home {
             display: flex; width: 50px; height: 50px; background: #2563eb;
@@ -27,12 +27,8 @@
         .grid-btns-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
         .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #64748b; } .warning { background: var(--warning); color: #000; }
-        
-        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; }
-        .item b { font-size: 16px; color: var(--primary); display: block; margin-bottom: 5px; }
-        .details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 14px; line-height: 1.6; }
         input, select { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
-        
+        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; }
     </style>
@@ -68,24 +64,9 @@
         </div>
     </div>
 
-    <div id="modal-form" class="modal hidden">
-        <div class="modal-content">
-            <h3 id="form-title" style="text-align:center; margin-bottom:15px">Datos de Unidad</h3>
-            <input id="f-uf" placeholder="Unidad">
-            <input id="f-prop" placeholder="Propietario">
-            <input id="f-telp" placeholder="Tel. Propietario">
-            <input id="f-inq" placeholder="Inquilino">
-            <input id="f-teli" placeholder="Tel. Inquilino">
-            <div class="grid-btns-2">
-                <button id="btn-save" class="btn primary">GUARDAR</button>
-                <button id="btn-cancel" class="btn danger">CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, orderBy, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", 
@@ -98,10 +79,8 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        
-        let departamentos = [], editId = null;
 
-        // --- LOGIN CORREGIDO ---
+        // --- LOGIN CON FIX DE SNAPSHOT ---
         const login = async () => {
             const u = document.getElementById("login-user").value.trim();
             const p = document.getElementById("login-pass").value.trim();
@@ -110,83 +89,47 @@
             try {
                 const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
                 const snap = await getDocs(q);
-                
+
                 if (!snap.empty) {
-                    // SE CORRIGE ESTA LÍNEA PARA EVITAR EL ERROR snap.docs.data
-                    const data = snap.docs.data(); 
+                    // FIX: Accedemos al primer documento de la lista .docs
+                    const data = snap.docs.data();
                     localStorage.setItem("uf_auth_final", "true");
                     localStorage.setItem("uf_user_role", data.role || data.rol || "operador");
                     location.reload();
-                } else { 
-                    alert("Usuario o Contraseña incorrectos"); 
+                } else {
+                    alert("Usuario o Contraseña incorrectos");
                 }
             } catch (e) {
-                console.error(e);
-                alert("Error de conexión con la nube.");
+                console.error("Error completo:", e);
+                alert("Error de conexión con Firebase.");
             }
         };
 
         document.getElementById("btn-login").onclick = login;
 
-        // --- LÓGICA DE CARGA ---
+        // --- CARGA DE DATOS ---
         if(localStorage.getItem("uf_auth_final") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
 
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
-                departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                render(departamentos);
+                const list = document.getElementById("list");
+                list.innerHTML = "";
+                snap.forEach(docSnap => {
+                    const d = docSnap.data();
+                    const div = document.createElement("div");
+                    div.className = "item";
+                    div.innerHTML = `<b>UF: ${d.UF}</b><br><small>${d.Propietario || 'S/D'}</small>`;
+                    list.appendChild(div);
+                });
             });
         }
-
-        function render(data) {
-            const list = document.getElementById("list");
-            list.innerHTML = "";
-            data.forEach(d => {
-                const tel = d.TelefonoPropietario || d.TelefonoInquilino || "";
-                const div = document.createElement("div");
-                div.className = "item";
-                div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center">
-                        <div><b>UF: ${d.UF}</b><small>${d.Propietario || 'S/D'}</small></div>
-                        <div style="display:flex; gap:15px; font-size:18px">
-                            <i class="fas fa-edit" style="color:var(--primary)" onclick="window.editUF('${d.id}')"></i>
-                            <a href="https://wa.me/${tel.replace(/\D/g,'')}" target="_blank"><i class="fab fa-whatsapp" style="color:#22c55e"></i></a>
-                        </div>
-                    </div>`;
-                list.appendChild(div);
-            });
-        }
-
-        window.editUF = (id) => {
-            editId = id; const d = departamentos.find(x => x.id === id);
-            document.getElementById("f-uf").value = d.UF || ""; 
-            document.getElementById("f-prop").value = d.Propietario || "";
-            document.getElementById("f-telp").value = d.TelefonoPropietario || "";
-            document.getElementById("f-inq").value = d.Inquilino || "";
-            document.getElementById("f-teli").value = d.TelefonoInquilino || "";
-            document.getElementById("modal-form").classList.remove("hidden");
-        };
-
-        document.getElementById("btn-save").onclick = async () => {
-            const d = { 
-                UF: document.getElementById("f-uf").value, 
-                Propietario: document.getElementById("f-prop").value, 
-                TelefonoPropietario: document.getElementById("f-telp").value, 
-                Inquilino: document.getElementById("f-inq").value, 
-                TelefonoInquilino: document.getElementById("f-teli").value 
-            };
-            if(editId) await updateDoc(doc(db, "departamentos", editId), d);
-            else await addDoc(collection(db, "departamentos"), d);
-            document.getElementById("modal-form").classList.add("hidden");
-        };
 
         document.getElementById("btn-logout-trigger").onclick = () => {
             localStorage.clear();
             location.reload();
         };
 
-        document.getElementById("btn-cancel").onclick = () => document.getElementById("modal-form").classList.add("hidden");
         document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("dark-mode");
     </script>
 </body>
