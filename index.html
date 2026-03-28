@@ -56,6 +56,7 @@
 
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
+            <div id="user-display" style="font-size: 10px; text-align: right; margin-bottom: 5px; opacity: 0.7;"></div>
             <div class="status-bar">● EN LÍNEA - SEGURIDAD ACTIVA</div>
             <div id="log-container" class="hidden"></div>
             
@@ -67,8 +68,8 @@
             
             <div class="grid-3">
                 <button id="btn-nueva" class="btn btn-blue">NUEVA UF</button>
-                <button id="btn-importar" class="btn btn-gray">IMPORTAR</button>
-                <button id="btn-respaldo" class="btn btn-gray">RESPALDO</button>
+                <button id="btn-importar" class="btn btn-gray admin-only hidden">IMPORTAR</button>
+                <button id="btn-respaldo" class="btn btn-gray admin-only hidden">RESPALDO</button>
             </div>
             
             <input id="search" class="search-box" placeholder="Buscar por Unidad o Apellido...">
@@ -79,7 +80,7 @@
                 <button id="btn-sin-datos" class="btn btn-orange">SIN DATOS</button>
             </div>
             
-            <button id="btn-borrar-nube-trigger" class="btn btn-red" style="width:100%">BORRAR TODA LA NUBE</button>
+            <button id="btn-borrar-nube-trigger" class="btn btn-red admin-only hidden" style="width:100%">BORRAR TODA LA NUBE</button>
             <input type="file" id="csv-file" class="hidden" accept=".csv">
         </div>
 
@@ -133,7 +134,7 @@
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
         
         let dptos = [], editId = null, pendingAction = null;
-        const MASTER_CODE = "1131552679"; // Basado en Saved Information
+        const MASTER_CODE = "1131552679";
 
         const writeLog = (m) => {
             const log = document.getElementById("log-container");
@@ -141,18 +142,32 @@
             log.scrollTop = log.scrollHeight;
         };
 
-        // --- LOGIN ---
+        // --- LOGIN CON ROLES ---
         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("l-u").value, p = document.getElementById("l-p").value;
             const qU = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
             const s = await getDocs(qU);
-            if(!s.empty) { localStorage.setItem("uf_v5_full", "ok"); location.reload(); }
+            if(!s.empty) { 
+                const userData = s.docs.data();
+                localStorage.setItem("uf_user_role", userData.rol || "operador");
+                localStorage.setItem("uf_user_name", userData.usuario);
+                localStorage.setItem("uf_v5_full", "ok"); 
+                location.reload(); 
+            }
             else alert("Acceso Denegado");
         };
 
         if(localStorage.getItem("uf_v5_full") === "ok") {
+            const role = localStorage.getItem("uf_user_role");
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
+            document.getElementById("user-display").innerText = `Usuario: ${localStorage.getItem("uf_user_name")} (${role})`;
+
+            // Mostrar botones solo si es admin
+            if(role === "admin") {
+                document.querySelectorAll(".admin-only").forEach(el => el.classList.remove("hidden"));
+            }
+
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (s) => {
                 dptos = s.docs.map(d => ({ id: d.id, ...d.data() }));
                 render(dptos);
@@ -161,15 +176,21 @@
 
         function render(data) {
             const list = document.getElementById("list"); list.innerHTML = "";
+            const role = localStorage.getItem("uf_user_role");
+            
             data.forEach(d => {
                 const div = document.createElement("div");
                 div.className = "item";
+                
+                // El icono de trash solo aparece si el rol es admin
+                const trashBtn = (role === "admin") ? `<i class="fas fa-trash" style="color:var(--danger)" onclick="window.askAuth('¿Borrar registro UF ${d.UF}?', 'delete', '${d.id}')"></i>` : '';
+                
                 div.innerHTML = `
                     <b>UF: ${d.UF}</b><p>${d.Propietario || '---'}</p>
                     <div class="item-tools">
                         <i class="fas fa-eye" onclick="this.closest('.item').classList.toggle('open')"></i>
                         <i class="fas fa-edit" style="color:#2563eb" onclick="window.editUF('${d.id}')"></i>
-                        <i class="fas fa-trash" style="color:var(--danger)" onclick="window.askAuth('¿Borrar registro UF ${d.UF}?', 'delete', '${d.id}')"></i>
+                        ${trashBtn}
                     </div>
                     <div class="details">
                         <p>Prop: ${d.Propietario} | Tel: ${d.TelefonoPropietario || 'N/C'}</p>
@@ -244,10 +265,13 @@
             document.getElementById("modal-form").classList.add("hidden");
         };
 
-        // Búsquedas y filtros
         document.getElementById("btn-buscar").onclick = () => {
             const v = document.getElementById("search").value.toLowerCase();
             render(dptos.filter(d => d.UF.includes(v) || (d.Propietario||"").toLowerCase().includes(v)));
+        };
+        document.getElementById("btn-limpiar").onclick = () => {
+            document.getElementById("search").value = "";
+            render(dptos);
         };
         document.getElementById("btn-sin-datos").onclick = () => render(dptos.filter(d => !d.Inquilino || d.Inquilino === "S/D" || d.Inquilino === ""));
     </script>
