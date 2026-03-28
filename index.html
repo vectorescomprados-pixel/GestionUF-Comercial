@@ -26,19 +26,18 @@
         .btn { height: 45px; border-radius: 10px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; }
         .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: var(--ghost); } .warning { background: var(--warning); color: #000; }
         
-        .item { background: var(--card); border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
+        .item { background: var(--card); border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border); }
         .item b { font-size: 16px; color: var(--primary); display: block; margin-bottom: 4px; }
         
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 380px; border: 1px solid var(--border); text-align: center; }
         input, select { width: 100%; height: 45px; margin-bottom: 12px; border-radius: 10px; border: 1px solid var(--border); padding: 0 12px; background: #1a242b; color: #fff; }
-
         #log-panel { background: #000; padding: 12px; font-size: 10px; height: 110px; overflow-y: auto; border-radius: 8px; font-family: monospace; border: 1px solid #333; color: #00ff41; text-align: left; }
     </style>
 </head>
 <body class="dark-mode">
 
-    <a href="#" onclick="location.reload()" class="btn-home"><i class="fas fa-home"></i></a>
+    <a href="javascript:void(0)" onclick="location.href=location.pathname" class="btn-home"><i class="fas fa-home"></i></a>
 
     <div id="login-screen" class="modal">
         <div class="modal-content">
@@ -70,7 +69,6 @@
                 <button id="btn-filter-empty" class="btn warning">DISPONIBLES</button>
             </div>
         </div>
-
         <div class="content-body">
             <div id="log-container" class="hidden" style="margin-bottom:15px">
                 <div id="log-panel"></div>
@@ -96,7 +94,7 @@
             if(lp) { lp.innerHTML += `<div>» [${new Date().toLocaleTimeString()}] ${m}</div>`; lp.scrollTop = lp.scrollHeight; }
         };
 
-        // --- INTEGRACIÓN DE TU CÓDIGO DE LOGIN ---
+        // ✅ TU CÓDIGO DE LOGIN (SIN ALTERACIONES)
         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("login-user").value.trim();
             const p = document.getElementById("login-pass").value.trim();
@@ -120,7 +118,6 @@
             }
         };
 
-        // LÓGICA DE INICIO Y RENDERIZADO
         if(localStorage.getItem("uf_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
@@ -144,12 +141,10 @@
             });
         }
 
-        // FUNCIONES DE UI
         document.getElementById("btn-logout").onclick = () => { localStorage.clear(); location.reload(); };
         document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("light-mode");
         document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
         document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; render(departamentos); };
-        
         document.getElementById("btn-search").onclick = () => {
             const v = document.getElementById("search-input").value.toLowerCase();
             render(departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v)));
