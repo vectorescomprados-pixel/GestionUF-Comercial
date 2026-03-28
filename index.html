@@ -98,7 +98,13 @@
         const MASTER_CODE = "1131552679";
         const userRole = localStorage.getItem("uf_user_role") || "operador";
 
-        // --- MOTOR DE LOGS (ORIGINAL - CORRECTO) ---
+        // --- RESTAURAR TEMA ---
+        const savedTheme = localStorage.getItem("uf_theme");
+        if(savedTheme === "light") {
+            document.body.classList.add("light-mode");
+        }
+
+        // --- LOGS ---
         const writeLog = (msg, type = 'success') => {
             const lp = document.getElementById("log-panel");
             if(lp) {
@@ -167,10 +173,17 @@
         });
 
         document.getElementById("btn-logout").onclick = () => { localStorage.clear(); location.reload(); };
+
+        // --- BOTÓN TEMA MEJORADO ---
         document.getElementById("btn-theme").onclick = () => {
             document.body.classList.toggle("light-mode");
+
+            const isLight = document.body.classList.contains("light-mode");
+            localStorage.setItem("uf_theme", isLight ? "light" : "dark");
+
             writeLog("Cambio de tema visual", "info");
         };
+
         document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
         
         document.getElementById("btn-search").onclick = () => {
