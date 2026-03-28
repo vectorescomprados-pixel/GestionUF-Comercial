@@ -95,27 +95,18 @@
         };
 
         // ✅ TU CÓDIGO DE LOGIN (SIN ALTERACIONES)
-        document.getElementById("btn-login").onclick = async () => {
+         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("login-user").value.trim();
             const p = document.getElementById("login-pass").value.trim();
             if(!u || !p) return alert("Complete los campos");
-
-            try {
-                const qLogin = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
-                const snap = await getDocs(qLogin);
-                
-                if(!snap.empty) {
-                    const userData = snap.docs.data();
-                    localStorage.setItem("uf_auth", "true");
-                    localStorage.setItem("uf_user_role", userData.role || "operador");
-                    location.reload();
-                } else {
-                    alert("Credenciales incorrectas");
-                }
-            } catch (error) {
-                console.error("Error al ingresar:", error);
-                alert("Error de conexión al servidor");
-            }
+            const qLogin = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+            const snap = await getDocs(qLogin);
+            if(!snap.empty) {
+                localStorage.setItem("uf_auth", "true");
+                localStorage.setItem("uf_user_role", snap.docs[0].data().role || "operador");
+                location.reload();
+            } else alert("Credenciales incorrectas");
+        };
         };
 
         if(localStorage.getItem("uf_auth") === "true") {
