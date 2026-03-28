@@ -18,13 +18,13 @@
         .grid-btns-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
         .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #64748b; } .warning { background: var(--warning); color: #000; }
-        
+
         /* ===== BOTÓN HOME ===== */
         .btn-home {
             position: fixed;
             top: 15px;
             left: 15px;
-            z-index: 9999999;
+            z-index: 9998;
             background: rgba(37, 99, 235, 0.9);
             color: white;
             border: none;
@@ -50,7 +50,7 @@
         .item b { font-size: 16px; color: var(--primary); display: block; margin-bottom: 5px; }
         .details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 14px; line-height: 1.6; }
         input, select { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
-        
+
         #log-container { position: relative; margin-bottom: 15px; }
         #log-panel { background: #000; padding: 12px; font-size: 10px; height: 120px; overflow-y: auto; border-radius: 8px; font-family: 'Courier New', monospace; border: 1px solid #333; line-height: 1.4; }
         #btn-download-log { position: absolute; top: 5px; right: 5px; width: 30px; height: 30px; font-size: 12px; opacity: 0.7; }
@@ -178,12 +178,11 @@
 
         const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
-        
+
         let departamentos = [], editId = null, pendingAction = null;
         const MASTER_CODE = "1131552679";
         const userRole = localStorage.getItem("uf_user_role") || "operador";
 
-        // --- MOTOR DE LOGS MEJORADO ---
         const writeLog = (msg, type = 'success') => {
             const lp = document.getElementById("log-panel");
             if(lp) {
@@ -191,6 +190,7 @@
                 lp.scrollTop = lp.scrollHeight;
             }
         };
+        window.writeLog = writeLog;
 
         const applyPermissions = () => {
             if(userRole !== 'admin') {
@@ -198,25 +198,27 @@
             }
         };
 
-        // --- ACCESO ---
         const login = async () => {
             const u = document.getElementById("login-user").value;
             const p = document.getElementById("login-pass").value;
             if(!u || !p) return;
-            const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
-            const snap = await getDocs(q);
-            if (!snap.empty) {
-                const data = snap.docs[0].data();
-                localStorage.setItem("uf_auth", "true");
-                localStorage.setItem("uf_user_role", data.role);
-                localStorage.setItem("uf_username", data.usuario);
-                location.reload();
-            } else { 
-                alert("Usuario o Contraseña incorrectos"); 
-                writeLog("Intento de acceso fallido: " + u, "err");
+            try {
+                const q2 = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+                const snap = await getDocs(q2);
+                if (!snap.empty) {
+                    const data = snap.docs[0].data();
+                    localStorage.setItem("uf_auth", "true");
+                    localStorage.setItem("uf_user_role", data.role);
+                    localStorage.setItem("uf_username", data.usuario);
+                    location.reload();
+                } else {
+                    alert("Usuario o Contraseña incorrectos");
+                    writeLog("Intento de acceso fallido: " + u, "err");
+                }
+            } catch(e) {
+                alert("Error de conexión");
+                writeLog("Error login: " + e.message, "err");
             }
         };
         document.getElementById("btn-login").onclick = login;
-        document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
-
-        
+        document.getElementById("login-pass").onkeyup = (e) => e.key
