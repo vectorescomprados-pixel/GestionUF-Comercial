@@ -38,7 +38,7 @@
 </head>
 <body class="dark-mode">
 
-    <a id="home-btn" href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home hidden"><i class="fas fa-home"></i></a>
+    <a id="home-btn" href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home"><i class="fas fa-home"></i></a>
 
     <button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
 <input type="file" id="csv-file" class="hidden">
@@ -288,7 +288,7 @@
         if(localStorage.getItem("uf_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
-            document.getElementById("home-btn").classList.remove("hidden");
+            document.getElementById("home-btn").classList.add("hidden");
             applyPermissions();
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
