@@ -3,38 +3,26 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-    <title>GestiónUF Pro - V4.8 Ultra Blindado</title>
-    
+    <title>GestiónUF Pro - V4.8 Restaurado</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0b141a; --card: #111b21; --primary: #2563eb; --danger: #e11d48; --text: #e9edef; --border: #222d34; --warning: #f59e0b; --success: #22c55e; --ghost: #374151; }
         body.light-mode { --bg: #f0f2f5; --card: #ffffff; --text: #1f293b; --border: #e5e7eb; }
         html, body { overscroll-behavior-y: contain; margin: 0; padding: 0; background: var(--bg); color: var(--text); transition: 0.3s; }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        
         .wrap { width: 95%; max-width: 450px; margin: 0 auto; }
         .hidden { display: none !important; }
-        
-        /* BOTÓN HOME */
         .btn-home { position: fixed; top: 15px; left: 15px; z-index: 10001; background: var(--primary); color: #fff; border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-size: 18px; }
-
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 20px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .content-body { margin-top: 420px; padding-bottom: 100px; }
-        
         .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
         .btn { height: 45px; border-radius: 10px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; }
         .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: var(--ghost); } .warning { background: var(--warning); color: #000; }
-        
-        #log-container { background: #000; border-radius: 12px; border: 1px solid #333; position: relative; padding: 15px; margin-bottom: 20px; }
-        #log-panel { height: 110px; overflow-y: auto; font-family: monospace; font-size: 11px; color: #40c4ff; line-height: 1.5; padding-right: 35px; }
-        
         .item { background: var(--card); border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
         .item b { font-size: 16px; color: var(--primary); display: block; margin-bottom: 4px; }
-        
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 380px; border: 1px solid var(--border); text-align: center; }
         input { width: 100%; height: 45px; margin-bottom: 12px; border-radius: 10px; border: 1px solid var(--border); padding: 0 12px; background: #1a242b; color: #fff; }
-
         #btn-rocket { position: fixed; bottom: 25px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: white; border: none; display: none; align-items: center; justify-content: center; font-size: 18px; z-index: 2000; }
     </style>
 </head>
@@ -49,7 +37,6 @@
             <input id="login-user" placeholder="Usuario">
             <input id="login-pass" type="password" placeholder="Contraseña">
             <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
-            <button id="btn-master-users" class="btn ghost" style="width:100%; margin-top:10px">GESTIÓN ACCESOS</button>
         </div>
     </div>
 
@@ -88,11 +75,8 @@
                 <button id="btn-empty" class="btn warning">DISPONIBLES</button>
             </div>
         </div>
-
         <div class="content-body">
-            <div id="log-container" class="hidden">
-                <div id="log-panel"></div>
-            </div>
+            <div id="log-container" class="hidden"><div id="log-panel" style="background:#000; padding:10px; height:100px; overflow-y:auto; color:#40c4ff; font-family:monospace; font-size:11px; border-radius:10px;"></div></div>
             <div id="list"></div>
         </div>
     </div>
@@ -106,8 +90,7 @@
         const db = getFirestore(app);
         
         let departamentos = [];
-        let editUfId = null; // Para control de edición
-        const MASTER_CODE = "1131552679";
+        let editUfId = null;
         const userRole = localStorage.getItem("uf_user_role") || "operador";
 
         const writeLog = (m) => {
@@ -115,7 +98,7 @@
             if(lp) { lp.innerHTML += `<div>» [${new Date().toLocaleTimeString()}] ${m}</div>`; lp.scrollTop = lp.scrollHeight; }
         };
 
-        // --- LÓGICA LOGIN (SIN CAMBIOS) ---
+        // --- LOGIN CON TU LINEA EXACTA ---
         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("login-user").value.trim();
             const p = document.getElementById("login-pass").value.trim();
@@ -124,20 +107,18 @@
                 const qLogin = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
                 const snap = await getDocs(qLogin);
                 if (!snap.empty) {
-                    const userData = snap.docs.data(); // ✅ Mantenido
+                    const userData = snap.docs.data(); // ✅ TU LINEA RESTAURADA
                     localStorage.setItem("uf_auth", "true");
                     localStorage.setItem("uf_user_role", userData.role || "operador");
                     location.reload();
                 } else { alert("Usuario o contraseña incorrectos"); }
-            } catch (error) { console.error("Error al ingresar:", error); alert("Error de conexión"); }
+            } catch (error) { alert("Error de conexión"); }
         };
 
-        // --- INICIO DE APP ---
         if(localStorage.getItem("uf_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
             if(userRole !== 'admin') document.querySelectorAll(".admin-only").forEach(e => e.classList.add("hidden"));
-
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (s) => {
                 departamentos = s.docs.map(d => ({ id: d.id, ...d.data() }));
                 render(departamentos);
@@ -145,7 +126,6 @@
             });
         }
 
-        // --- RENDERIZADO (RESTAURADO CON ICONOS) ---
         function render(data) {
             const list = document.getElementById("list"); list.innerHTML = "";
             data.forEach(d => {
@@ -153,10 +133,7 @@
                 div.className = "item";
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center">
-                        <div>
-                            <b>UF: ${d.UF}</b>
-                            <p style="margin:5px 0 0 0">${d.Propietario || '---'}</p>
-                        </div>
+                        <div><b>UF: ${d.UF}</b><p style="margin:0">${d.Propietario || '---'}</p></div>
                         <div style="display:flex; gap:15px">
                             <i class="fas fa-edit" style="color:var(--primary); cursor:pointer" onclick="window.prepareEdit('${d.id}')"></i>
                             <i class="fas fa-trash ${userRole==='admin'?'':'hidden'}" style="color:var(--danger); cursor:pointer" onclick="window.deleteUF('${d.id}')"></i>
@@ -166,7 +143,6 @@
             });
         }
 
-        // --- FUNCIONALIDAD DE BOTONES INTERNOS (RESTAURADA) ---
         document.getElementById("btn-add").onclick = () => {
             editUfId = null;
             document.getElementById("form-title").innerText = "Nueva Unidad";
@@ -177,7 +153,6 @@
         window.prepareEdit = (id) => {
             editUfId = id;
             const d = departamentos.find(x => x.id === id);
-            document.getElementById("form-title").innerText = "Editar Unidad " + d.UF;
             document.getElementById("f-uf").value = d.UF;
             document.getElementById("f-prop").value = d.Propietario || "";
             document.getElementById("f-telp").value = d.TelefonoPropietario || "";
@@ -188,44 +163,28 @@
 
         document.getElementById("btn-save-uf").onclick = async () => {
             const p = { 
-                UF: document.getElementById("f-uf").value.trim(), 
-                Propietario: document.getElementById("f-prop").value.trim(),
-                TelefonoPropietario: document.getElementById("f-telp").value.trim(),
-                Inquilino: document.getElementById("f-inq").value.trim(),
-                TelefonoInquilino: document.getElementById("f-teli").value.trim()
+                UF: document.getElementById("f-uf").value, 
+                Propietario: document.getElementById("f-prop").value,
+                TelefonoPropietario: document.getElementById("f-telp").value,
+                Inquilino: document.getElementById("f-inq").value,
+                TelefonoInquilino: document.getElementById("f-teli").value
             };
-            if(!p.UF) return alert("UF obligatoria");
             try {
-                if(editUfId) { await updateDoc(doc(db, "departamentos", editUfId), p); } 
-                else { await addDoc(collection(db, "departamentos"), p); }
+                editUfId ? await updateDoc(doc(db, "departamentos", editUfId), p) : await addDoc(collection(db, "departamentos"), p);
                 document.getElementById("modal-form").classList.add("hidden");
-                writeLog("Datos guardados en Cloud");
             } catch (e) { alert("Error al guardar"); }
         };
 
-        window.deleteUF = async (id) => {
-            if(confirm("¿Seguro que desea eliminar esta unidad?")) {
-                await deleteDoc(doc(db, "departamentos", id));
-                writeLog("Unidad eliminada");
-            }
-        };
-
-        document.getElementById("btn-empty").onclick = () => {
-            render(departamentos.filter(d => !d.Propietario && !d.Inquilino));
-            writeLog("Filtrando unidades libres");
-        };
-
+        window.deleteUF = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "departamentos", id)); };
+        document.getElementById("btn-empty").onclick = () => render(departamentos.filter(d => !d.Propietario && !d.Inquilino));
         document.getElementById("btn-logout").onclick = () => { localStorage.clear(); location.reload(); };
         document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("light-mode");
         document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
-        
         document.getElementById("btn-search").onclick = () => {
             const v = document.getElementById("search-input").value.toLowerCase();
             render(departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v)));
         };
-        
         document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; render(departamentos); };
-
         window.onscroll = () => document.getElementById("btn-rocket").style.display = window.scrollY > 300 ? 'flex' : 'none';
         document.getElementById("btn-rocket").onclick = () => window.scrollTo({top:0, behavior:'smooth'});
     </script>
