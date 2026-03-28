@@ -1,73 +1,278 @@
-﻿<style>
-    body:not(.es-admin) .admin-only { display: none !important; }
-</style>
-
-<div class="grid-3">
-    <button id="btn-nueva" class="btn btn-blue">NUEVA UF</button>
-    <button id="btn-importar" class="btn btn-gray admin-only">IMPORTAR</button>
-    <button id="btn-respaldo" class="btn btn-gray admin-only">RESPALDO</button>
-</div>
-<button id="btn-borrar-nube-trigger" class="btn btn-red admin-only" style="width:100%">BORRAR TODA LA NUBE</button>
-
-<script type="module">
-    // ... (Tu configuración de Firebase y variables iniciales se mantienen igual) ...
-
-    // --- SECCIÓN DE LOGIN REEMPLAZADA ---
-    document.getElementById("btn-login").onclick = async () => {
-        const u = document.getElementById("l-u").value, p = document.getElementById("l-p").value;
-        const qU = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
-        const s = await getDocs(qU);
+﻿<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
+    <title>GestiónUF Pro - Seguridad Total</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #0b141a; --card: #111b21; --header-border: #2563eb; --text-main: #e9edef; --text-dim: #a1a1aa; --danger: #e11d48; }
+        .light-theme { --bg: #f0f2f5; --card: #ffffff; --text-main: #1f293b; --text-dim: #64748b; }
         
-        if(!s.empty) { 
-            const userData = s.docs.data();
-            localStorage.setItem("uf_v5_full", "ok");
-            // Guardamos el rol para usarlo en las restricciones visuales
-            localStorage.setItem("user_role", userData.rol || "operador"); 
-            location.reload(); 
-        }
-        else alert("Acceso Denegado");
-    };
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; transition: background 0.3s; }
+        body { background: var(--bg); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
+        .wrap { width: 95%; max-width: 450px; position: relative; }
+        .hidden { display: none !important; }
 
-    if(localStorage.getItem("uf_v5_full") === "ok") {
-        const role = localStorage.getItem("user_role");
-        // Si es admin, quitamos la restricción visual
-        if(role === "admin") { document.body.classList.add("es-admin"); }
+        /* RESTRICCIÓN PARA OPERADOR */
+        body:not(.es-admin) .admin-only { display: none !important; }
+
+        .btn-home { display: flex; width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; align-items: center; justify-content: center; margin: 0 auto 20px; text-decoration: none; border: 2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 20px; }
+
+        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border: 2px solid var(--header-border); border-top: none; border-radius: 0 0 20px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .status-bar { font-size: 11px; text-align: center; margin-bottom: 12px; color: #22c55e; font-weight: bold; text-transform: uppercase; }
+        .content-body { margin-top: 365px; width: 100%; padding-bottom: 50px; }
         
-        document.getElementById("login-screen").classList.add("hidden");
-        document.getElementById("main-screen").classList.remove("hidden");
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+        .btn { height: 45px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-transform: uppercase; gap: 5px; }
         
-        onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (s) => {
-            dptos = s.docs.map(d => ({ id: d.id, ...d.data() }));
-            render(dptos);
-        });
-    }
+        .btn-gray { background: #4a5568; }
+        .btn-red { background: var(--danger); }
+        .btn-blue { background: #2563eb; }
+        .btn-orange { background: #f59e0b; color: #000; }
 
-    // --- FUNCIÓN RENDER REEMPLAZADA (OCULTA EL BOTÓN ELIMINAR) ---
-    function render(data) {
-        const list = document.getElementById("list"); list.innerHTML = "";
-        const role = localStorage.getItem("user_role");
+        .search-box { width: 100%; height: 50px; background: rgba(0,0,0,0.2); border: 1px solid #222d34; border-radius: 10px; padding: 0 15px; color: inherit; margin-bottom: 10px; font-size: 15px; }
 
-        data.forEach(d => {
-            const div = document.createElement("div");
-            div.className = "item";
+        #log-container { background: #000; color: #00ff41; font-family: monospace; font-size: 10px; padding: 10px; height: 100px; overflow-y: auto; border-radius: 10px; margin-bottom: 10px; border: 1px solid #333; }
+
+        .item { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; border-left: 6px solid #f97316; position: relative; border: 1px solid rgba(255,255,255,0.05); }
+        .item b { color: #2563eb; font-size: 17px; display: block; }
+        .item-tools { position: absolute; top: 15px; right: 15px; display: flex; gap: 15px; font-size: 18px; }
+        .details { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #444; display: none; }
+        .item.open .details { display: block; }
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .modal-inner { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen" class="modal">
+        <div class="modal-inner">
+            <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home"><i class="fas fa-home"></i></a>
+            <h2 style="margin-bottom:20px;">GestiónUF Pro</h2>
+            <input id="l-u" class="search-box" placeholder="Usuario">
+            <input id="l-p" class="search-box" type="password" placeholder="Contraseña">
+            <button id="btn-login" class="btn btn-blue" style="width:100%">ENTRAR</button>
+        </div>
+    </div>
+
+    <div id="main-screen" class="wrap hidden">
+        <div class="main-header">
+            <div class="status-bar">● EN LÍNEA - SEGURIDAD ACTIVA</div>
+            <div id="log-container" class="hidden"></div>
             
-            // Solo se crea el icono de basura si el rol es 'admin'
-            const botonBasura = (role === 'admin') ? 
-                `<i class="fas fa-trash" style="color:var(--danger)" onclick="window.askAuth('¿Borrar registro UF ${d.UF}?', 'delete', '${d.id}')"></i>` : '';
+            <div class="grid-3">
+                <button id="btn-historial" class="btn btn-gray">HISTORIAL</button>
+                <button id="btn-tema" class="btn btn-gray">TEMA</button>
+                <button id="btn-cerrar-trigger" class="btn btn-red">CERRAR</button>
+            </div>
+            
+            <div class="grid-3">
+                <button id="btn-nueva" class="btn btn-blue">NUEVA UF</button>
+                <button id="btn-importar" class="btn btn-gray admin-only">IMPORTAR</button>
+                <button id="btn-respaldo" class="btn btn-gray admin-only">RESPALDO</button>
+            </div>
+            
+            <input id="search" class="search-box" placeholder="Buscar por Unidad o Apellido...">
+            
+            <div class="grid-3">
+                <button id="btn-buscar" class="btn btn-blue">BUSCAR</button>
+                <button id="btn-limpiar" class="btn btn-gray">LIMPIAR</button>
+                <button id="btn-sin-datos" class="btn btn-orange">SIN DATOS</button>
+            </div>
+            
+            <button id="btn-borrar-nube-trigger" class="btn btn-red admin-only" style="width:100%">BORRAR TODA LA NUBE</button>
+            <input type="file" id="csv-file" class="hidden" accept=".csv">
+        </div>
 
-            div.innerHTML = `
-                <b>UF: ${d.UF}</b><p>${d.Propietario || '---'}</p>
-                <div class="item-tools">
-                    <i class="fas fa-eye" onclick="this.closest('.item').classList.toggle('open')"></i>
-                    <i class="fas fa-edit" style="color:#2563eb" onclick="window.editUF('${d.id}')"></i>
-                    ${botonBasura}
-                </div>
-                <div class="details">
-                    <p>Prop: ${d.Propietario} | Tel: ${d.TelefonoPropietario || 'N/C'}</p>
-                    <p>Inq: ${d.Inquilino} | Tel: ${d.TelefonoInquilino || 'N/C'}</p>
-                </div>`;
-            list.appendChild(div);
-        });
-    }
-    // ... (El resto de tus funciones de Seguridad, CSV y CRUD se mantienen igual) ...
-</script>
+        <div id="list" class="content-body"></div>
+    </div>
+
+    <div id="modal-salir" class="modal hidden">
+        <div class="modal-inner">
+            <i class="fas fa-sign-out-alt" style="font-size:40px; color:var(--danger); margin-bottom:15px"></i>
+            <h3>Finalizar Sesión</h3>
+            <div class="grid-3" style="grid-template-columns: 1fr 1fr;">
+                <button id="confirm-logout" class="btn btn-red">SALIR</button>
+                <button onclick="document.getElementById('modal-salir').classList.add('hidden')" class="btn btn-gray">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-confirm" class="modal hidden">
+        <div class="modal-inner">
+            <h3>Seguridad Requerida</h3>
+            <p id="confirm-msg" style="margin:10px 0; font-size:14px;"></p>
+            <input id="confirm-pass" class="search-box" type="password" placeholder="Clave Administrativa">
+            <div class="grid-3" style="grid-template-columns: 1fr 1fr;">
+                <button id="btn-auth-yes" class="btn btn-blue">AUTORIZAR</button>
+                <button onclick="document.getElementById('modal-confirm').classList.add('hidden')" class="btn btn-red">VOLVER</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-form" class="modal hidden">
+        <div class="modal-inner">
+            <h3>Datos de Unidad</h3><br>
+            <input id="f-uf" class="search-box" placeholder="UF">
+            <input id="f-prop" class="search-box" placeholder="Propietario">
+            <input id="f-telp" class="search-box" placeholder="Tel. Propietario">
+            <input id="f-inq" class="search-box" placeholder="Inquilino">
+            <input id="f-teli" class="search-box" placeholder="Tel. Inquilino">
+            <div class="grid-3" style="grid-template-columns: 1fr 1fr;">
+                <button id="btn-guardar" class="btn btn-blue">GUARDAR</button>
+                <button onclick="document.getElementById('modal-form').classList.add('hidden')" class="btn btn-red">DESCARTAR</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, orderBy, getDocs, where, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+        
+        let dptos = [], editId = null, pendingAction = null;
+        const MASTER_CODE = "1131552679";
+
+        const writeLog = (m) => {
+            const log = document.getElementById("log-container");
+            if(log) {
+                log.innerHTML += `<div>> [${new Date().toLocaleTimeString()}] ${m}</div>`;
+                log.scrollTop = log.scrollHeight;
+            }
+        };
+
+        // --- LOGIN INTEGRADO CON ROL ---
+        document.getElementById("btn-login").onclick = async () => {
+            const u = document.getElementById("l-u").value, p = document.getElementById("l-p").value;
+            const qU = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+            const s = await getDocs(qU);
+            if(!s.empty) { 
+                const userData = s.docs.data();
+                localStorage.setItem("uf_v5_full", "ok");
+                localStorage.setItem("user_role", userData.rol || "operador");
+                location.reload(); 
+            }
+            else alert("Acceso Denegado");
+        };
+
+        if(localStorage.getItem("uf_v5_full") === "ok") {
+            const role = localStorage.getItem("user_role");
+            if(role === "admin") document.body.classList.add("es-admin");
+
+            document.getElementById("login-screen").classList.add("hidden");
+            document.getElementById("main-screen").classList.remove("hidden");
+            
+            onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (s) => {
+                dptos = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                render(dptos);
+            });
+        }
+
+        function render(data) {
+            const list = document.getElementById("list"); list.innerHTML = "";
+            const role = localStorage.getItem("user_role");
+
+            data.forEach(d => {
+                const div = document.createElement("div");
+                div.className = "item";
+                
+                // Restricción: El icono de basura solo aparece para admin
+                const btnTrash = (role === 'admin') ? 
+                    `<i class="fas fa-trash" style="color:var(--danger)" onclick="window.askAuth('¿Borrar registro UF ${d.UF}?', 'delete', '${d.id}')"></i>` : '';
+
+                div.innerHTML = `
+                    <b>UF: ${d.UF}</b><p>${d.Propietario || '---'}</p>
+                    <div class="item-tools">
+                        <i class="fas fa-eye" onclick="this.closest('.item').classList.toggle('open')"></i>
+                        <i class="fas fa-edit" style="color:#2563eb" onclick="window.editUF('${d.id}')"></i>
+                        ${btnTrash}
+                    </div>
+                    <div class="details">
+                        <p>Prop: ${d.Propietario} | Tel: ${d.TelefonoPropietario || 'N/C'}</p>
+                        <p>Inq: ${d.Inquilino} | Tel: ${d.TelefonoInquilino || 'N/C'}</p>
+                    </div>`;
+                list.appendChild(div);
+            });
+        }
+
+        // --- SEGURIDAD ---
+        window.askAuth = (msg, type, id = null) => {
+            pendingAction = { type, id };
+            document.getElementById("confirm-msg").innerText = msg;
+            document.getElementById("confirm-pass").value = "";
+            document.getElementById("modal-confirm").classList.remove("hidden");
+        };
+
+        document.getElementById("btn-auth-yes").onclick = async () => {
+            if(document.getElementById("confirm-pass").value !== MASTER_CODE) return alert("Clave Maestra Incorrecta");
+            document.getElementById("modal-confirm").classList.add("hidden");
+
+            if(pendingAction.type === 'delete') {
+                await deleteDoc(doc(db, "departamentos", pendingAction.id));
+                writeLog("Registro eliminado.");
+            } else if(pendingAction.type === 'deleteAll') {
+                const s = await getDocs(collection(db, "departamentos"));
+                const b = writeBatch(db); s.forEach(d => b.delete(d.ref)); await b.commit();
+                writeLog("NUBE VACIADA.");
+            }
+        };
+
+        // --- CSV RESPALDO ---
+        document.getElementById("btn-respaldo").onclick = () => {
+            const csvRows = ["UF,Propietario,TelProp,Inquilino,TelInq"];
+            dptos.forEach(d => {
+                csvRows.push(`${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}`);
+            });
+            const blob = new Blob([csvRows.join("\n")], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = `Respaldo_UF_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            writeLog("Respaldo CSV exportado.");
+        };
+
+        // --- OTROS BOTONES ---
+        document.getElementById("btn-historial").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
+        document.getElementById("btn-tema").onclick = () => document.body.classList.toggle("light-theme");
+        document.getElementById("btn-cerrar-trigger").onclick = () => document.getElementById("modal-salir").classList.remove("hidden");
+        document.getElementById("confirm-logout").onclick = () => { localStorage.clear(); location.reload(); };
+        document.getElementById("btn-borrar-nube-trigger").onclick = () => askAuth("¿ESTÁ SEGURO? Se borrará toda la base de datos.", "deleteAll");
+
+        // --- CRUD BÁSICO ---
+        window.editUF = (id) => {
+            editId = id; const d = dptos.find(x => x.id === id);
+            document.getElementById("f-uf").value = d.UF;
+            document.getElementById("f-prop").value = d.Propietario || "";
+            document.getElementById("f-telp").value = d.TelefonoPropietario || "";
+            document.getElementById("f-inq").value = d.Inquilino || "";
+            document.getElementById("f-teli").value = d.TelefonoInquilino || "";
+            document.getElementById("modal-form").classList.remove("hidden");
+        };
+
+        document.getElementById("btn-nueva").onclick = () => { editId = null; document.getElementById("modal-form").classList.remove("hidden"); };
+        document.getElementById("btn-guardar").onclick = async () => {
+            const data = { 
+                UF: document.getElementById("f-uf").value, Propietario: document.getElementById("f-prop").value,
+                TelefonoPropietario: document.getElementById("f-telp").value, Inquilino: document.getElementById("f-inq").value,
+                TelefonoInquilino: document.getElementById("f-teli").value
+            };
+            editId ? await updateDoc(doc(db, "departamentos", editId), data) : await addDoc(collection(db, "departamentos"), data);
+            document.getElementById("modal-form").classList.add("hidden");
+        };
+
+        document.getElementById("btn-buscar").onclick = () => {
+            const v = document.getElementById("search").value.toLowerCase();
+            render(dptos.filter(d => d.UF.includes(v) || (d.Propietario||"").toLowerCase().includes(v)));
+        };
+        document.getElementById("btn-limpiar").onclick = () => {
+            document.getElementById("search").value = "";
+            render(dptos);
+        };
+        document.getElementById("btn-sin-datos").onclick = () => render(dptos.filter(d => !d.Inquilino || d.Inquilino === "S/D" || d.Inquilino === ""));
+    </script>
+</body>
+</html>
