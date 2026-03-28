@@ -12,6 +12,10 @@
         body { background: var(--bg); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
+
+        /* Lógica visual para el Operador */
+        body:not(.es-admin) .admin-only { display: none !important; }
+
         .btn-home { display: flex; width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; align-items: center; justify-content: center; margin: 0 auto 20px; text-decoration: none; border: 2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 20px; }
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border: 2px solid var(--header-border); border-top: none; border-radius: 0 0 20px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         .status-bar { font-size: 11px; text-align: center; margin-bottom: 12px; color: #22c55e; font-weight: bold; text-transform: uppercase; }
@@ -51,8 +55,8 @@
             </div>
             <div class="grid-3">
                 <button id="btn-nueva" class="btn btn-blue">NUEVA UF</button>
-                <button id="btn-importar" class="btn btn-gray">IMPORTAR</button>
-                <button id="btn-respaldo" class="btn btn-gray">RESPALDO</button>
+                <button id="btn-importar" class="btn btn-gray admin-only">IMPORTAR</button>
+                <button id="btn-respaldo" class="btn btn-gray admin-only">RESPALDO</button>
             </div>
             <input id="search" class="search-box" placeholder="Buscar por Unidad o Apellido...">
             <div class="grid-3">
@@ -60,6 +64,7 @@
                 <button id="btn-limpiar" class="btn btn-gray">LIMPIAR</button>
                 <button id="btn-sin-datos" class="btn btn-orange">SIN DATOS</button>
             </div>
+            <button id="btn-borrar-nube" class="btn btn-red admin-only" style="width:100%">BORRAR TODA LA NUBE</button>
         </div>
         <div id="list" class="content-body"></div>
     </div>
@@ -71,27 +76,43 @@
         const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
+        // LOGIN EXTRAÍDO DEL OTRO ARCHIVO
         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("l-u").value, p = document.getElementById("l-p").value;
             const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
             const s = await getDocs(q);
             if(!s.empty) { 
+                const data = s.docs.data();
                 localStorage.setItem("uf_auth", "true");
+                localStorage.setItem("uf_role", data.rol || "operador");
                 location.reload(); 
             } else alert("Acceso Denegado");
         };
 
         if(localStorage.getItem("uf_auth") === "true") {
+            const userRole = localStorage.getItem("uf_role");
+            if(userRole === 'admin') document.body.classList.add('es-admin');
+
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
+
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (s) => {
                 const list = document.getElementById("list"); list.innerHTML = "";
                 s.docs.forEach(doc => {
                     const d = doc.data();
                     const div = document.createElement("div");
                     div.className = "item";
-                    div.innerHTML = `<b>UF: ${d.UF}</b><p>${d.Propietario || '---'}</p>
-                        <div class="item-tools"><i class="fas fa-eye" onclick="this.closest('.item').classList.toggle('open')"></i></div>
+                    
+                    // Solo mostramos el icono de borrar si es admin
+                    const trashBtn = (userRole === 'admin') ? `<i class="fas fa-trash" style="color:var(--danger)"></i>` : '';
+
+                    div.innerHTML = `
+                        <b>UF: ${d.UF}</b><p>${d.Propietario || '---'}</p>
+                        <div class="item-tools">
+                            <i class="fas fa-eye" onclick="this.closest('.item').classList.toggle('open')"></i>
+                            <i class="fas fa-edit" style="color:#2563eb"></i>
+                            ${trashBtn}
+                        </div>
                         <div class="details"><p>Inquilino: ${d.Inquilino || '---'}</p></div>`;
                     list.appendChild(div);
                 });
