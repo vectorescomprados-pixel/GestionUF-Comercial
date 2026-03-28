@@ -153,27 +153,28 @@
             if(lp) { lp.innerHTML += `<div>» [${new Date().toLocaleTimeString()}] ${m}</div>`; lp.scrollTop = lp.scrollHeight; }
         };
 
-        // ✅ INGRESO CORREGIDO (Funciona ahora)
+        // --- LÓGICA DE INGRESO CORREGIDA ---
         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("login-user").value.trim();
             const p = document.getElementById("login-pass").value.trim();
             if(!u || !p) return alert("Complete los campos");
-            
+
             try {
                 const qLogin = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
                 const snap = await getDocs(qLogin);
                 
                 if(!snap.empty) {
-                    // Accedemos correctamente al primer documento
-                    const userData = snap.docs.data(); 
+                    // SE CORRIGE AQUÍ: snap.docs.data()
+                    const userData = snap.docs.data();
                     localStorage.setItem("uf_auth", "true");
                     localStorage.setItem("uf_user_role", userData.role || "operador");
                     location.reload();
                 } else {
                     alert("Credenciales incorrectas");
                 }
-            } catch (e) {
-                alert("Error de conexión: " + e.message);
+            } catch (error) {
+                console.error("Error al ingresar:", error);
+                alert("Error de conexión al servidor");
             }
         };
 
@@ -220,15 +221,13 @@
             if(a.type === 'import') document.getElementById("csv-file").click();
             
             if(a.type === 'deleteAll') {
-                writeLog("Iniciando borrado total...");
-                try {
-                    const snap = await getDocs(collection(db, "departamentos"));
-                    const batch = writeBatch(db);
-                    snap.forEach(d => batch.delete(d.ref));
-                    await batch.commit();
-                    writeLog("BASE DE DATOS VACIADA");
-                    alert("Base de datos borrada con éxito");
-                } catch(e) { writeLog("Error al borrar base"); }
+                writeLog("Borrando base de datos...");
+                const snap = await getDocs(collection(db, "departamentos"));
+                const batch = writeBatch(db);
+                snap.forEach(d => batch.delete(d.ref));
+                await batch.commit();
+                writeLog("BASE VACIADA");
+                alert("Datos borrados");
             }
         };
 
@@ -257,7 +256,7 @@
             else await addDoc(collection(db, "usuarios"), {usuario:u, password:p, role:"operador"});
             editUserId = null; document.getElementById("btn-save-user").innerText = "CREAR";
             document.getElementById("new-u-name").value = ""; document.getElementById("new-u-pass").value = "";
-            loadUsers(); writeLog(`Usuario ${u} procesado`);
+            loadUsers();
         };
 
         document.getElementById("btn-trigger-logout").onclick = () => document.getElementById("modal-logout").classList.remove("hidden");
@@ -272,12 +271,11 @@
             const r = new FileReader();
             r.onload = async (ev) => {
                 const lines = ev.target.result.split("\n").slice(1);
-                writeLog("Importando...");
                 for(let l of lines) {
                     const c = l.split(",");
                     if(c.length > 1) await addDoc(collection(db, "departamentos"), {UF:c, Propietario:c||'', TelefonoPropietario:c||'', Inquilino:c||'', TelefonoInquilino:c||''});
                 }
-                writeLog("Importación Exitosa");
+                writeLog("Importación OK");
             };
             r.readAsText(e.target.files);
         };
@@ -285,7 +283,6 @@
         document.getElementById("btn-export").onclick = () => {
             const csv = "UF,Prop,TelP,Inq,TelI\n" + departamentos.map(d => `${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}`).join("\n");
             const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download="Respaldo_UF.csv"; a.click();
-            writeLog("Exportación generada");
         };
 
         document.getElementById("btn-add").onclick = () => { editUfId = null; document.querySelectorAll("#modal-form input").forEach(i => i.value=""); document.getElementById("modal-form").classList.remove("hidden"); };
@@ -316,7 +313,7 @@
             if(userRole !== 'admin') document.querySelectorAll(".admin-only").forEach(e => e.classList.add("hidden"));
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (s) => {
                 departamentos = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                render(departamentos); writeLog("Sincronización Cloud OK");
+                render(departamentos);
             });
         }
         
