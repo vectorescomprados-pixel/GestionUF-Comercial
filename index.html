@@ -14,7 +14,7 @@
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
 
-        /* RESTRICCIÓN VISUAL PARA OPERADOR */
+        /* RESTRICCIÓN PARA OPERADOR */
         body:not(.es-admin) .admin-only { display: none !important; }
 
         .btn-home { display: flex; width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; align-items: center; justify-content: center; margin: 0 auto 20px; text-decoration: none; border: 2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 20px; }
@@ -72,22 +72,21 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, orderBy, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, onSnapshot, orderBy, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
         
         let dptos = [];
 
-        // LOGIN INTEGRADO
         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("l-u").value, p = document.getElementById("l-p").value;
-            const qU = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
-            const s = await getDocs(qU);
+            const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+            const s = await getDocs(q);
             if(!s.empty) { 
-                const userData = s.docs.data();
+                const data = s.docs.data();
                 localStorage.setItem("uf_v5_full", "ok");
-                localStorage.setItem("user_role", userData.rol || "operador");
+                localStorage.setItem("user_role", data.rol || "operador");
                 location.reload(); 
             } else alert("Acceso Denegado");
         };
@@ -95,10 +94,8 @@
         if(localStorage.getItem("uf_v5_full") === "ok") {
             const role = localStorage.getItem("user_role");
             if(role === "admin") document.body.classList.add("es-admin");
-
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
-            
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (s) => {
                 dptos = s.docs.map(d => ({ id: d.id, ...d.data() }));
                 render(dptos);
@@ -108,15 +105,10 @@
         function render(data) {
             const list = document.getElementById("list"); list.innerHTML = "";
             const role = localStorage.getItem("user_role");
-
             data.forEach(d => {
                 const div = document.createElement("div");
                 div.className = "item";
-                
-                // CONDICIÓN PARA EL BOTÓN ELIMINAR
-                const btnTrash = (role === 'admin') ? 
-                    `<i class="fas fa-trash" style="color:var(--danger)" onclick="window.delUF('${d.id}')"></i>` : '';
-
+                const btnTrash = (role === 'admin') ? `<i class="fas fa-trash" style="color:var(--danger)" onclick="if(confirm('¿Borrar?')) window.delUF('${d.id}')"></i>` : '';
                 div.innerHTML = `
                     <b>UF: ${d.UF}</b><p>${d.Propietario || '---'}</p>
                     <div class="item-tools">
@@ -124,14 +116,12 @@
                         <i class="fas fa-edit" style="color:#2563eb"></i>
                         ${btnTrash}
                     </div>
-                    <div class="details">
-                        <p>Prop: ${d.Propietario} | Inq: ${d.Inquilino || '---'}</p>
-                    </div>`;
+                    <div class="details"><p>Prop: ${d.Propietario} | Inq: ${d.Inquilino || '---'}</p></div>`;
                 list.appendChild(div);
             });
         }
 
-        window.delUF = async (id) => { if(confirm("¿Borrar?")) await deleteDoc(doc(db, "departamentos", id)); };
+        window.delUF = async (id) => { await deleteDoc(doc(db, "departamentos", id)); };
         document.getElementById("btn-cerrar-trigger").onclick = () => { localStorage.clear(); location.reload(); };
         document.getElementById("btn-tema").onclick = () => document.body.classList.toggle("light-theme");
     </script>
