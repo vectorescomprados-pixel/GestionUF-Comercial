@@ -30,14 +30,12 @@
         
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .modal-inner { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
-        .btn-home { display: flex; width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; align-items: center; justify-content: center; margin: 0 auto 20px; text-decoration: none; border: 2px solid white; font-size: 20px; }
     </style>
 </head>
 <body>
 
     <div id="login-screen" class="modal">
         <div class="modal-inner">
-            <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home"><i class="fas fa-home"></i></a>
             <h2>GestiónUF Pro</h2><br>
             <input id="l-u" class="search-box" placeholder="Usuario">
             <input id="l-p" class="search-box" type="password" placeholder="Contraseña">
@@ -47,24 +45,24 @@
 
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
-            <div id="user-info" class="status-bar">● SESIÓN INICIADA</div>
+            <div id="user-info" class="status-bar">● CONEXIÓN SEGURA</div>
             <div class="grid-3">
-                <button id="btn-historial" class="btn btn-gray">HISTORIAL</button>
+                <button onclick="location.reload()" class="btn btn-gray">RECARGAR</button>
                 <button onclick="document.body.classList.toggle('light-theme')" class="btn btn-gray">TEMA</button>
-                <button onclick="document.getElementById('modal-salir').classList.remove('hidden')" class="btn btn-red">CERRAR</button>
+                <button id="btn-logout-trig" class="btn btn-red">CERRAR</button>
             </div>
             <div class="grid-3">
                 <button id="btn-nueva" class="btn btn-blue">NUEVA UF</button>
-                <button id="btn-import-trig" class="btn btn-gray admin-only hidden">IMPORTAR</button>
+                <button id="btn-import-trig" class="btn btn-gray">IMPORTAR</button>
                 <button id="btn-respaldo" class="btn btn-gray">RESPALDO</button>
             </div>
-            <input id="search" class="search-box" placeholder="Buscar unidad...">
+            <input id="search" class="search-box" placeholder="Buscar unidad o apellido...">
             <div class="grid-3">
                 <button id="btn-buscar" class="btn btn-blue">BUSCAR</button>
                 <button id="btn-limpiar" class="btn btn-gray">LIMPIAR</button>
                 <button id="btn-sin-datos" class="btn btn-orange">SIN DATOS</button>
             </div>
-            <button id="btn-borrar-todo" class="btn btn-red admin-only hidden" style="width:100%">BORRAR TODA LA NUBE</button>
+            <button id="btn-borrar-todo" class="btn btn-red" style="width:100%">BORRAR TODA LA NUBE</button>
             <input type="file" id="csv-file" class="hidden" accept=".csv">
         </div>
         <div id="list" class="content-body"></div>
@@ -74,21 +72,10 @@
         <div class="modal-inner">
             <h3>Seguridad Requerida</h3>
             <p id="auth-msg" style="margin:10px 0; font-size:13px; opacity:0.8"></p>
-            <input id="master-pass" class="search-box" type="password" placeholder="Clave Maestra (4750)">
+            <input id="master-pass" class="search-box" type="password" placeholder="Clave Administrativa">
             <div class="grid-3" style="grid-template-columns:1fr 1fr;">
                 <button id="btn-authorize" class="btn btn-blue">AUTORIZAR</button>
-                <button onclick="document.getElementById('modal-auth').classList.add('hidden')" class="btn btn-red">CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-salir" class="modal hidden">
-        <div class="modal-inner">
-            <i class="fas fa-sign-out-alt" style="font-size:40px; color:var(--danger); margin-bottom:15px"></i>
-            <h3>Finalizar Sesión</h3>
-            <div class="grid-3" style="grid-template-columns:1fr 1fr; margin-top:20px;">
-                <button id="confirm-logout" class="btn btn-red">SALIR</button>
-                <button onclick="document.getElementById('modal-salir').classList.add('hidden')" class="btn btn-gray">VOLVER</button>
+                <button onclick="document.getElementById('modal-auth').classList.add('hidden')" class="btn btn-red">VOLVER</button>
             </div>
         </div>
     </div>
@@ -116,7 +103,7 @@
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
         
         let dptos = [], editId = null, pendingAction = null;
-        const MASTER_CODE = "4750"; 
+        const MASTER_CODE = "1131552679"; // Tu clave de recuperación
 
         // --- LOGIN ---
         document.getElementById("btn-login").onclick = async () => {
@@ -124,25 +111,14 @@
             const qU = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
             const s = await getDocs(qU);
             if(!s.empty) {
-                const userData = s.docs.data();
-                localStorage.setItem("uf_user", u);
-                // Si el rol no está definido o es el usuario principal, es ADMIN
-                const rolAsignado = (userData.rol === "operador") ? "operador" : "admin";
-                localStorage.setItem("uf_role", rolAsignado);
+                localStorage.setItem("uf_logged", "true");
                 location.reload();
             } else alert("Acceso Denegado");
         };
 
-        if(localStorage.getItem("uf_user")) {
-            const role = localStorage.getItem("uf_role");
+        if(localStorage.getItem("uf_logged")) {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
-            document.getElementById("user-info").innerText = `● MODO: ${role.toUpperCase()}`;
-            
-            if(role === "admin") {
-                document.querySelectorAll(".admin-only").forEach(el => el.classList.remove("hidden"));
-            }
-
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (s) => {
                 dptos = s.docs.map(d => ({ id: d.id, ...d.data() }));
                 render(dptos);
@@ -168,6 +144,7 @@
             });
         }
 
+        // --- LÓGICA DE SEGURIDAD PARA BORRADO/IMPORTACIÓN ---
         window.askAuth = (msg, type, id = null) => {
             pendingAction = { type, id };
             document.getElementById("auth-msg").innerText = msg;
@@ -178,15 +155,19 @@
         document.getElementById("btn-authorize").onclick = async () => {
             if(document.getElementById("master-pass").value !== MASTER_CODE) return alert("CLAVE INCORRECTA");
             document.getElementById("modal-auth").classList.add("hidden");
+            
             if(pendingAction.type === 'del') await deleteDoc(doc(db, "departamentos", pendingAction.id));
             if(pendingAction.type === 'clearAll') {
                 const s = await getDocs(collection(db, "departamentos"));
                 const b = writeBatch(db); s.forEach(d => b.delete(d.ref)); await b.commit();
             }
+            if(pendingAction.type === 'import') document.getElementById("csv-file").click();
         };
 
-        // --- IMPORTAR / RESPALDO ---
-        document.getElementById("btn-import-trig").onclick = () => document.getElementById("csv-file").click();
+        document.getElementById("btn-import-trig").onclick = () => askAuth("Importar base de datos", "import");
+        document.getElementById("btn-borrar-todo").onclick = () => askAuth("¡BORRADO TOTAL!", "clearAll");
+
+        // --- IMPORTACIÓN / RESPALDO ---
         document.getElementById("csv-file").onchange = (e) => {
             const reader = new FileReader();
             reader.onload = async (ev) => {
@@ -202,7 +183,7 @@
                         TelefonoInquilino: p?.trim() || ""
                     });
                 });
-                await batch.commit(); alert("Importado con éxito");
+                await batch.commit(); alert("Sincronización completa");
             };
             reader.readAsText(e.target.files);
         };
@@ -212,17 +193,16 @@
             dptos.forEach(d => { csv += `${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}\n`; });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-            a.download = `Respaldo_UF.csv`; a.click();
+            a.download = `Respaldo.csv`; a.click();
         };
 
-        document.getElementById("confirm-logout").onclick = () => { localStorage.clear(); location.reload(); };
-        document.getElementById("btn-borrar-todo").onclick = () => askAuth("¡BORRADO TOTAL!", "clearAll");
+        document.getElementById("btn-logout-trig").onclick = () => { localStorage.clear(); location.reload(); };
         document.getElementById("btn-buscar").onclick = () => {
             const v = document.getElementById("search").value.toLowerCase();
             render(dptos.filter(d => d.UF.includes(v) || (d.Propietario||"").toLowerCase().includes(v)));
         };
         document.getElementById("btn-limpiar").onclick = () => { document.getElementById("search").value = ""; render(dptos); };
-        document.getElementById("btn-sin-datos").onclick = () => render(dptos.filter(d => !d.Inquilino || d.Inquilino === "" || d.Inquilino === "S/D"));
+        document.getElementById("btn-sin-datos").onclick = () => render(dptos.filter(d => !d.Inquilino || d.Inquilino === ""));
 
         window.editUF = (id) => {
             editId = id; const d = dptos.find(x => x.id === id);
