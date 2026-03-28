@@ -6,219 +6,201 @@
     <title>GestiónUF Pro - Enterprise Gold V3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #f0f2f5; --card: #ffffff; --primary: #2563eb; --danger: #e11d48; --text: #1f293b; --border: #e5e7eb; --warning: #f59e0b; --success: #22c55e; }
-        body.dark-mode { --bg: #0b141a; --card: #111b21; --text: #e9edef; --border: #222d34; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; transition: background 0.2s; }
-        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
-        .wrap { width: 95%; max-width: 450px; position: relative; }
-        .hidden { display: none !important; }
-        .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 3px solid var(--primary); border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .content-body { margin-top: 380px; width: 100%; padding-bottom: 100px; }
-        .grid-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
-        .grid-btns-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn { height: 42px; border-radius: 8px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
-        .primary { background: var(--primary); } .danger { background: var(--danger); } .ghost { background: #64748b; } .warning { background: var(--warning); color: #000; }
+        :root{--bg:#f0f2f5;--card:#fff;--primary:#2563eb;--danger:#e11d48;--text:#1f293b;--border:#e5e7eb;--warning:#f59e0b;--success:#22c55e}
+        body.dark-mode{--bg:#0b141a;--card:#111b21;--text:#e9edef;--border:#222d34}
+        *{box-sizing:border-box;font-family:'Segoe UI',sans-serif;margin:0;padding:0;transition:background .2s}
+        body{background:var(--bg);color:var(--text);display:flex;justify-content:center;min-height:100vh;overflow-x:hidden}
+        .wrap{width:95%;max-width:450px;position:relative}
+        .hidden{display:none!important}
+        .main-header{position:fixed;top:0;width:95%;max-width:450px;background:var(--card);z-index:1000;padding:15px;border-bottom:3px solid var(--primary);border-radius:0 0 15px 15px;box-shadow:0 4px 15px rgba(0,0,0,.1)}
+        .content-body{margin-top:380px;width:100%;padding-bottom:100px}
+        .grid-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+        .grid-btns-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+        .btn{height:42px;border-radius:8px;border:none;font-weight:700;font-size:11px;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+        .primary{background:var(--primary)}.danger{background:var(--danger)}.ghost{background:#64748b}.warning{background:var(--warning);color:#000}
 
-        /* ===== BOTÓN HOME ===== */
-        .btn-home {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            z-index: 9998;
-            background: rgba(37, 99, 235, 0.9);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-size: 18px;
-        }
-        .btn-home:hover {
-            background: rgba(37, 99, 235, 1);
-            transform: scale(1.1);
-        }
+        .btn-home{position:fixed;top:15px;left:15px;z-index:9998;background:rgba(37,99,235,.9);color:#fff;border:none;border-radius:50%;width:45px;height:45px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:18px}
+        .btn-home:hover{background:rgba(37,99,235,1);transform:scale(1.1)}
 
-        #btn-rocket { position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px; border-radius: 50%; z-index: 5000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 20px; border: 2px solid white; display: none; }
-        .item { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); width: 100%; }
-        .item.no-phone { border-left: 8px solid var(--warning) !important; }
-        .item b { font-size: 16px; color: var(--primary); display: block; margin-bottom: 5px; }
-        .details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 14px; line-height: 1.6; }
-        input, select { width: 100%; height: 45px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border); padding: 0 15px; background: var(--bg); color: var(--text); font-size: 16px; }
-
-        #log-container { position: relative; margin-bottom: 15px; }
-        #log-panel { background: #000; padding: 12px; font-size: 10px; height: 120px; overflow-y: auto; border-radius: 8px; font-family: 'Courier New', monospace; border: 1px solid #333; line-height: 1.4; }
-        #btn-download-log { position: absolute; top: 5px; right: 5px; width: 30px; height: 30px; font-size: 12px; opacity: 0.7; }
-        .log-success { color: #00ff41; } .log-warn { color: #fbff00; } .log-err { color: #ff3131; } .log-info { color: #00d4ff; }
-
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #btn-rocket{position:fixed;bottom:25px;right:25px;width:55px;height:55px;border-radius:50%;z-index:5000;box-shadow:0 4px 15px rgba(0,0,0,.3);font-size:20px;border:2px solid #fff;display:none}
+        .item{background:var(--card);border-radius:12px;padding:15px;margin-bottom:12px;border:1px solid var(--border);width:100%}
+        .item.no-phone{border-left:8px solid var(--warning)!important}
+        .item b{font-size:16px;color:var(--primary);display:block;margin-bottom:5px}
+        .details{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:14px;line-height:1.6}
+        input,select{width:100%;height:45px;margin-bottom:10px;border-radius:10px;border:1px solid var(--border);padding:0 15px;background:var(--bg);color:var(--text);font-size:16px}
+        #log-container{position:relative;margin-bottom:15px}
+        #log-panel{background:#000;padding:12px;font-size:10px;height:120px;overflow-y:auto;border-radius:8px;font-family:'Courier New',monospace;border:1px solid #333;line-height:1.4}
+        #btn-download-log{position:absolute;top:5px;right:5px;width:30px;height:30px;font-size:12px;opacity:.7}
+        .log-success{color:#00ff41}.log-warn{color:#fbff00}.log-err{color:#ff3131}.log-info{color:#00d4ff}
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center}
+        .modal-content{background:var(--card);padding:25px;border-radius:20px;width:90%;max-width:400px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
     </style>
 </head>
 <body class="dark-mode">
 
-    <!-- ===== BOTÓN HOME ===== -->
-    <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home">
-        <i class="fas fa-home"></i>
-    </a>
+<a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn-home"><i class="fas fa-home"></i></a>
+<button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
+<input type="file" id="csv-file" class="hidden">
 
-    <button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
-    <input type="file" id="csv-file" class="hidden">
+<div id="login-screen" class="modal">
+    <div class="modal-content">
+        <h2 style="text-align:center;margin-bottom:20px;color:var(--primary)">GestiónUF Pro</h2>
+        <input id="login-user" placeholder="Usuario">
+        <input id="login-pass" type="password" placeholder="Contraseña">
+        <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
+        <button id="btn-create-user-trigger" class="btn ghost" style="width:100%;margin-top:10px">NUEVO USUARIO (ADMIN)</button>
+    </div>
+</div>
 
-    <!-- LOGIN -->
-    <div id="login-screen" class="modal">
-        <div class="modal-content">
-            <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
-            <input id="login-user" placeholder="Usuario">
-            <input id="login-pass" type="password" placeholder="Contraseña">
-            <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
-            <button id="btn-create-user-trigger" class="btn ghost" style="width:100%; margin-top:10px">NUEVO USUARIO (ADMIN)</button>
+<div id="modal-create-user" class="modal hidden">
+    <div class="modal-content">
+        <h3 style="text-align:center;margin-bottom:15px">Registrar Acceso</h3>
+        <input id="new-username" placeholder="Usuario">
+        <input id="new-password" type="password" placeholder="Contraseña">
+        <select id="new-role"><option value="operador">Operador (Gestión)</option><option value="admin">Administrador (Total)</option></select>
+        <div class="grid-btns-2">
+            <button id="btn-save-user" class="btn primary">CREAR</button>
+            <button id="btn-cancel-user" class="btn danger">CANCELAR</button>
         </div>
     </div>
+</div>
 
-    <!-- MODAL CREACIÓN USUARIO -->
-    <div id="modal-create-user" class="modal hidden">
-        <div class="modal-content">
-            <h3 style="text-align:center; margin-bottom:15px">Registrar Acceso</h3>
-            <input id="new-username" placeholder="Usuario">
-            <input id="new-password" type="password" placeholder="Contraseña">
-            <select id="new-role">
-                <option value="operador">Operador (Gestión)</option>
-                <option value="admin">Administrador (Total)</option>
-            </select>
-            <div class="grid-btns-2">
-                <button id="btn-save-user" class="btn primary">CREAR</button>
-                <button id="btn-cancel-user" class="btn danger">CANCELAR</button>
-            </div>
+<div id="main-screen" class="wrap hidden">
+    <div class="main-header">
+        <div id="conn-status" style="font-size:10px;text-align:center;margin-bottom:8px;color:var(--success)">● EN LÍNEA - SEGURIDAD ACTIVA</div>
+        <div class="grid-btns">
+            <button id="btn-log-toggle" class="btn ghost">LOGS</button>
+            <button id="btn-theme" class="btn ghost">TEMA</button>
+            <button id="btn-logout-trigger" class="btn danger">CERRAR</button>
+        </div>
+        <div class="grid-btns">
+            <button id="btn-add" class="btn primary">NUEVA UF</button>
+            <button id="btn-import" class="btn ghost admin-only">IMPORTAR</button>
+            <button id="btn-export" class="btn ghost admin-only">RESPALDO</button>
+        </div>
+        <input id="search-input" placeholder="Buscar por Unidad o Apellido...">
+        <div class="grid-btns">
+            <button id="btn-search" class="btn primary">BUSCAR</button>
+            <button id="btn-clear" class="btn ghost">LIMPIAR</button>
+            <button id="btn-filter-empty" class="btn warning">SIN DATOS</button>
+        </div>
+        <button id="btn-delete-all" class="btn danger admin-only" style="width:100%">BORRAR TODA LA NUBE</button>
+    </div>
+    <div class="content-body">
+        <div id="log-container" class="hidden">
+            <button id="btn-download-log" class="btn ghost admin-only" title="Descargar Log"><i class="fas fa-download"></i></button>
+            <div id="log-panel"></div>
+        </div>
+        <div id="list"></div>
+    </div>
+</div>
+
+<div id="modal-logout" class="modal hidden">
+    <div class="modal-content" style="text-align:center">
+        <i class="fas fa-sign-out-alt" style="font-size:40px;color:var(--danger);margin-bottom:15px"></i>
+        <h3>Finalizar Sesión</h3>
+        <p style="margin:10px 0;font-size:14px;opacity:.8">¿Desea cerrar el sistema de forma segura?</p>
+        <div class="grid-btns-2">
+            <button id="btn-logout-confirm" class="btn danger">SALIR</button>
+            <button id="btn-logout-cancel" class="btn ghost">CANCELAR</button>
         </div>
     </div>
+</div>
 
-    <!-- MAIN APP -->
-    <div id="main-screen" class="wrap hidden">
-        <div class="main-header">
-            <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● EN LÍNEA - SEGURIDAD ACTIVA</div>
-            <div class="grid-btns">
-                <button id="btn-log-toggle" class="btn ghost">LOGS</button>
-                <button id="btn-theme" class="btn ghost">TEMA</button>
-                <button id="btn-logout-trigger" class="btn danger">CERRAR</button>
-            </div>
-            <div class="grid-btns">
-                <button id="btn-add" class="btn primary">NUEVA UF</button>
-                <button id="btn-import" class="btn ghost admin-only">IMPORTAR</button>
-                <button id="btn-export" class="btn ghost admin-only">RESPALDO</button>
-            </div>
-            <input id="search-input" placeholder="Buscar por Unidad o Apellido...">
-            <div class="grid-btns">
-                <button id="btn-search" class="btn primary">BUSCAR</button>
-                <button id="btn-clear" class="btn ghost">LIMPIAR</button>
-                <button id="btn-filter-empty" class="btn warning">SIN DATOS</button>
-            </div>
-            <button id="btn-delete-all" class="btn danger admin-only" style="width:100%">BORRAR TODA LA NUBE</button>
-        </div>
-
-        <div class="content-body">
-            <div id="log-container" class="hidden">
-                <button id="btn-download-log" class="btn ghost admin-only" title="Descargar Log"><i class="fas fa-download"></i></button>
-                <div id="log-panel"></div>
-            </div>
-            <div id="list"></div>
+<div id="modal-confirm" class="modal hidden">
+    <div class="modal-content" style="text-align:center">
+        <h3>Seguridad Requerida</h3>
+        <p id="confirm-msg" style="margin:10px 0;font-size:13px"></p>
+        <input id="confirm-pass" type="password" placeholder="Clave Administrativa">
+        <div class="grid-btns-2">
+            <button id="btn-confirm-yes" class="btn primary">AUTORIZAR</button>
+            <button id="btn-confirm-no" class="btn danger">VOLVER</button>
         </div>
     </div>
+</div>
 
-    <!-- MODAL SALIDA -->
-    <div id="modal-logout" class="modal hidden">
-        <div class="modal-content" style="text-align:center">
-            <i class="fas fa-sign-out-alt" style="font-size:40px; color:var(--danger); margin-bottom:15px"></i>
-            <h3>Finalizar Sesión</h3>
-            <p style="margin:10px 0; font-size:14px; opacity:0.8">¿Desea cerrar el sistema de forma segura?</p>
-            <div class="grid-btns-2">
-                <button id="btn-logout-confirm" class="btn danger">SALIR</button>
-                <button id="btn-logout-cancel" class="btn ghost">CANCELAR</button>
-            </div>
+<div id="modal-form" class="modal hidden">
+    <div class="modal-content">
+        <h3 id="form-title" style="text-align:center;margin-bottom:15px">Datos de Unidad</h3>
+        <input id="f-uf" placeholder="Unidad (Ej: 01-A)">
+        <input id="f-prop" placeholder="Propietario">
+        <input id="f-telp" placeholder="Tel. Propietario">
+        <input id="f-inq" placeholder="Inquilino">
+        <input id="f-teli" placeholder="Tel. Inquilino">
+        <div class="grid-btns-2">
+            <button id="btn-save" class="btn primary">GUARDAR</button>
+            <button id="btn-cancel" class="btn danger">DESCARTAR</button>
         </div>
     </div>
+</div>
 
-    <!-- MODAL CONFIRMACIÓN (ADMIN) -->
-    <div id="modal-confirm" class="modal hidden">
-        <div class="modal-content" style="text-align:center">
-            <h3>Seguridad Requerida</h3>
-            <p id="confirm-msg" style="margin:10px 0; font-size:13px"></p>
-            <input id="confirm-pass" type="password" placeholder="Clave Administrativa">
-            <div class="grid-btns-2">
-                <button id="btn-confirm-yes" class="btn primary">AUTORIZAR</button>
-                <button id="btn-confirm-no" class="btn danger">VOLVER</button>
-            </div>
-        </div>
-    </div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import{getFirestore,collection,addDoc,onSnapshot,query,updateDoc,doc,deleteDoc,orderBy,getDocs,writeBatch,where}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    <!-- MODAL UF -->
-    <div id="modal-form" class="modal hidden">
-        <div class="modal-content">
-            <h3 id="form-title" style="text-align:center; margin-bottom:15px">Datos de Unidad</h3>
-            <input id="f-uf" placeholder="Unidad (Ej: 01-A)">
-            <input id="f-prop" placeholder="Propietario">
-            <input id="f-telp" placeholder="Tel. Propietario">
-            <input id="f-inq" placeholder="Inquilino">
-            <input id="f-teli" placeholder="Tel. Inquilino">
-            <div class="grid-btns-2">
-                <button id="btn-save" class="btn primary">GUARDAR</button>
-                <button id="btn-cancel" class="btn danger">DESCARTAR</button>
-            </div>
-        </div>
-    </div>
+const firebaseConfig={apiKey:"AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo",authDomain:"gestionuf-remoto.firebaseapp.com",projectId:"gestionuf-remoto",storageBucket:"gestionuf-remoto.firebasestorage.app",messagingSenderId:"724452752860",appId:"1:724452752860:web:4d25585addcdcbd146e319"};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, orderBy, getDocs, writeBatch, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+let departamentos=[],editId=null,pendingAction=null;
+const MASTER_CODE="1131552679";
+const userRole=localStorage.getItem("uf_user_role")||"operador";
 
-        const firebaseConfig = { apiKey: "AIzaSyDxw26xM3pliNxo79LdvWkr0uOGdvCgiIo", authDomain: "gestionuf-remoto.firebaseapp.com", projectId: "gestionuf-remoto", storageBucket: "gestionuf-remoto.firebasestorage.app", messagingSenderId: "724452752860", appId: "1:724452752860:web:4d25585addcdcbd146e319" };
-        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+function writeLog(msg,type='success'){
+    const lp=document.getElementById("log-panel");
+    if(lp){lp.innerHTML+=`<div class="log-${type}">» [${new Date().toLocaleTimeString()}] ${msg}</div>`;lp.scrollTop=lp.scrollHeight;}
+}
+window.writeLog=writeLog;
 
-        let departamentos = [], editId = null, pendingAction = null;
-        const MASTER_CODE = "1131552679";
-        const userRole = localStorage.getItem("uf_user_role") || "operador";
+function applyPermissions(){
+    if(userRole!=='admin'){document.querySelectorAll(".admin-only").forEach(el=>el.remove());}
+}
 
-        const writeLog = (msg, type = 'success') => {
-            const lp = document.getElementById("log-panel");
-            if(lp) {
-                lp.innerHTML += `<div class="log-${type}">» [${new Date().toLocaleTimeString()}] ${msg}</div>`;
-                lp.scrollTop = lp.scrollHeight;
-            }
-        };
-        window.writeLog = writeLog;
+async function login(){
+    const u=document.getElementById("login-user").value;
+    const p=document.getElementById("login-pass").value;
+    if(!u||!p)return;
+    try{
+        const q2=query(collection(db,"usuarios"),where("usuario","==",u),where("password","==",p));
+        const snap=await getDocs(q2);
+        if(!snap.empty){
+            const data=snap.docs[0].data();
+            localStorage.setItem("uf_auth","true");
+            localStorage.setItem("uf_user_role",data.role);
+            localStorage.setItem("uf_username",data.usuario);
+            location.reload();
+        }else{alert("Usuario o Contraseña incorrectos");writeLog("Intento fallido: "+u,"err");}
+    }catch(e){alert("Error de conexión");writeLog("Error login: "+e.message,"err");}
+}
 
-        const applyPermissions = () => {
-            if(userRole !== 'admin') {
-                document.querySelectorAll(".admin-only").forEach(el => el.remove());
-            }
-        };
+document.getElementById("btn-login").onclick=login;
+document.getElementById("login-pass").onkeyup=(e)=>{if(e.key==="Enter")login();};
 
-        const login = async () => {
-            const u = document.getElementById("login-user").value;
-            const p = document.getElementById("login-pass").value;
-            if(!u || !p) return;
-            try {
-                const q2 = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
-                const snap = await getDocs(q2);
-                if (!snap.empty) {
-                    const data = snap.docs[0].data();
-                    localStorage.setItem("uf_auth", "true");
-                    localStorage.setItem("uf_user_role", data.role);
-                    localStorage.setItem("uf_username", data.usuario);
-                    location.reload();
-                } else {
-                    alert("Usuario o Contraseña incorrectos");
-                    writeLog("Intento de acceso fallido: " + u, "err");
-                }
-            } catch(e) {
-                alert("Error de conexión");
-                writeLog("Error login: " + e.message, "err");
-            }
-        };
-        document.getElementById("btn-login").onclick = login;
-        document.getElementById("login-pass").onkeyup = (e) => e.key
+document.getElementById("btn-create-user-trigger").onclick=()=>{
+    document.getElementById("modal-create-user").classList.remove("hidden");
+};
+document.getElementById("btn-cancel-user").onclick=()=>{
+    document.getElementById("modal-create-user").classList.add("hidden");
+};
+document.getElementById("btn-save-user").onclick=async()=>{
+    const u=document.getElementById("new-username").value;
+    const p=document.getElementById("new-password").value;
+    const r=document.getElementById("new-role").value;
+    if(!u||!p){alert("Complete todos los campos");return;}
+    try{
+        await addDoc(collection(db,"usuarios"),{usuario:u,password:p,role:r});
+        alert("Usuario creado correctamente");
+        document.getElementById("modal-create-user").classList.add("hidden");
+        writeLog("Usuario creado: "+u,"success");
+    }catch(e){alert("Error al crear usuario");writeLog("Error crear usuario: "+e.message,"err");}
+};
+
+if(localStorage.getItem("uf_auth")==="true"){
+    document.getElementById("login-screen").classList.add("hidden");
+    document.getElementById("main-screen").classList.remove("hidden");
+    applyPermissions();
+    writeLog("Sesión activa: "+localStorage.getItem("uf_username"),"info");
+    writeLog("Rol: "+userRole,"info");
+}
+
+document.getElementById("btn-logout-trigger").onclick=()=>{document.getElementById("modal-logout").classList.
