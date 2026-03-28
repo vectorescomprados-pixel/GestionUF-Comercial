@@ -12,156 +12,70 @@
         body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
         .wrap { width: 95%; max-width: 450px; position: relative; }
         .hidden { display: none !important; }
-
-        /* HEADER FIJO */
         .main-header { position: fixed; top: 0; width: 95%; max-width: 450px; background: var(--card); z-index: 1000; padding: 15px; border-bottom: 2px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 0 0 20px 20px; }
         .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 12px; font-weight: bold; }
         .user-tag { background: var(--primary); color: white; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
-
-        /* BUSQUEDA */
         .search-container { position: relative; margin-bottom: 15px; }
         .search-box { width: 100%; height: 50px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 0 45px 0 15px; color: var(--text); font-size: 16px; outline: none; }
         .search-icon { position: absolute; right: 15px; top: 15px; color: var(--primary); font-size: 18px; }
-
-        /* GRILLA DE BOTONES */
         .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
         .btn { height: 45px; border-radius: 10px; border: none; font-weight: bold; font-size: 11px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 5px; text-transform: uppercase; }
-        .btn-p { background: var(--primary); }
-        .btn-s { background: #4b5563; }
-        .btn-d { background: var(--danger); }
-        .btn-w { background: var(--warning); color: #000; }
-
-        /* LISTADO */
+        .btn-p { background: var(--primary); } .btn-s { background: #4b5563; } .btn-d { background: var(--danger); } .btn-w { background: var(--warning); color: #000; }
         .content-body { margin-top: 360px; padding-bottom: 30px; }
-        .item-card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); border-left: 5px solid var(--primary); position: relative; animation: fadeIn 0.3s ease; }
+        .item-card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); border-left: 5px solid var(--primary); position: relative; }
         .item-card h3 { color: var(--primary); margin-bottom: 5px; font-size: 18px; }
         .item-card p { font-size: 14px; opacity: 0.8; margin-bottom: 3px; }
         .item-tools { position: absolute; top: 15px; right: 15px; display: flex; gap: 15px; font-size: 18px; }
-
-        /* LOGS */
         #log-container { background: #000; color: #00ff41; font-family: monospace; font-size: 11px; padding: 10px; height: 100px; overflow-y: auto; border-radius: 10px; margin-bottom: 15px; border: 1px solid #333; }
-        .log-info { color: #00ff41; } .log-warn { color: #ffae00; } .log-error { color: #ff3e3e; }
-
-        /* MODALES */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card); width: 100%; max-width: 400px; border-radius: 20px; padding: 25px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .modal-content h2 { margin-bottom: 20px; color: var(--primary); }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; opacity: 0.7; }
-        .input-std { width: 100%; height: 45px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0 12px; color: var(--text); font-size: 15px; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-content { background: var(--card); width: 100%; max-width: 400px; border-radius: 20px; padding: 25px; text-align: center; }
+        .input-std { width: 100%; height: 45px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0 12px; color: var(--text); font-size: 15px; margin-bottom: 10px; }
     </style>
 </head>
 <body class="dark-mode">
 
     <div id="login-screen" class="modal">
-        <div class="modal-content" style="text-align:center">
+        <div class="modal-content">
             <div style="font-size: 50px; color: var(--primary); margin-bottom: 10px;"><i class="fas fa-building-shield"></i></div>
-            <h2>GestiónUF Pro</h2>
-            <div class="input-group">
-                <input id="login-user" class="input-std" placeholder="Usuario">
-            </div>
-            <div class="input-group">
-                <input id="login-pass" class="input-std" type="password" placeholder="Contraseña">
-            </div>
-            <button id="btn-login" class="btn btn-p" style="width:100%; height:50px; font-size:14px">INGRESAR AL PANEL</button>
+            <h2>GestiónUF Pro</h2><br>
+            <input id="login-user" class="input-std" placeholder="Usuario">
+            <input id="login-pass" class="input-std" type="password" placeholder="Contraseña">
+            <button id="btn-login" class="btn btn-p" style="width:100%">INGRESAR</button>
         </div>
     </div>
 
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
             <div class="status-bar">
-                <div id="display-user" class="user-tag">USUARIO</div>
-                <div style="display:flex; gap:10px">
-                    <i id="btn-log-toggle" class="fas fa-terminal" style="cursor:pointer"></i>
-                    <i id="btn-theme" class="fas fa-moon" style="cursor:pointer"></i>
+                <div id="display-user" class="user-tag">---</div>
+                <div style="display:flex; gap:15px">
+                    <i id="btn-log-toggle" class="fas fa-terminal"></i>
+                    <i id="btn-theme" class="fas fa-moon"></i>
                 </div>
             </div>
-
             <div id="log-container" class="hidden"></div>
-
             <div class="action-grid">
                 <button id="btn-nueva" class="btn btn-p"><i class="fas fa-plus"></i> NUEVA UF</button>
                 <button id="btn-import-trigger" class="btn btn-s admin-only hidden"><i class="fas fa-file-import"></i> IMPORTAR</button>
                 <button id="btn-export" class="btn btn-s"><i class="fas fa-file-export"></i> RESPALDO</button>
             </div>
-
             <div class="search-container">
-                <input id="search-input" class="search-box" placeholder="Buscar unidad, propietario...">
+                <input id="search-input" class="search-box" placeholder="Buscar unidad...">
                 <i class="fas fa-search search-icon"></i>
             </div>
-
             <div class="action-grid">
                 <button id="btn-search" class="btn btn-p">BUSCAR</button>
                 <button id="btn-clear" class="btn btn-s">LIMPIAR</button>
                 <button id="btn-filter-empty" class="btn btn-w">SIN DATOS</button>
             </div>
-
-            <div class="action-grid admin-only hidden" style="grid-template-columns: 1fr 1fr;">
-                <button id="btn-create-user-trigger" class="btn btn-s"><i class="fas fa-user-plus"></i> GESTIÓN USUARIOS</button>
-                <button id="btn-delete-all" class="btn btn-d"><i class="fas fa-trash-can"></i> BORRAR TODO</button>
+            <div class="action-grid admin-only hidden">
+                <button id="btn-create-user-trigger" class="btn btn-s" style="grid-column: span 2">GESTIÓN USUARIOS</button>
+                <button id="btn-delete-all" class="btn btn-d">BORRAR TODO</button>
             </div>
-            
-            <button id="btn-logout-trigger" class="btn btn-d" style="width:100%; margin-top:5px; height:35px; font-size:10px">CERRAR SESIÓN SEGURA</button>
+            <button id="btn-logout-trigger" class="btn btn-d" style="width:100%; margin-top:5px">CERRAR SESIÓN</button>
             <input type="file" id="csv-file" class="hidden" accept=".csv">
         </div>
-
-        <div id="list-container" class="content-body">
-            </div>
-    </div>
-
-    <div id="modal-uf" class="modal hidden">
-        <div class="modal-content">
-            <h2 id="form-title">Nueva Unidad</h2>
-            <div class="input-group">
-                <label>UNIDAD FUNCIONAL (UF)</label>
-                <input id="uf-val" class="input-std" placeholder="Ej: 101">
-            </div>
-            <div class="input-group">
-                <label>PROPIETARIO</label>
-                <input id="prop-val" class="input-std" placeholder="Nombre completo">
-            </div>
-            <div class="input-group">
-                <label>TELÉFONO PROPIETARIO</label>
-                <input id="telp-val" class="input-std" placeholder="Ej: 1131552679">
-            </div>
-            <div class="input-group">
-                <label>INQUILINO / OCUPANTE</label>
-                <input id="inq-val" class="input-std" placeholder="Nombre completo">
-            </div>
-            <div class="input-group">
-                <label>TELÉFONO INQUILINO</label>
-                <input id="teli-val" class="input-std" placeholder="Ej: 1122334455">
-            </div>
-            <div class="action-grid" style="grid-template-columns: 1fr 1fr; margin-top:20px;">
-                <button id="btn-save" class="btn btn-p">GUARDAR</button>
-                <button id="btn-cancel" class="btn btn-d">CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-confirm" class="modal hidden">
-        <div class="modal-content" style="text-align:center">
-            <i class="fas fa-shield-halved" style="font-size:40px; color:var(--warning); margin-bottom:15px"></i>
-            <h3 id="confirm-msg">¿Confirmar acción administrativa?</h3>
-            <p style="font-size:12px; margin:10px 0; opacity:0.7">Se requiere Clave Maestra para continuar</p>
-            <input id="admin-pass" type="password" class="input-std" placeholder="Clave Maestra" style="text-align:center; margin-bottom:20px">
-            <div class="action-grid" style="grid-template-columns: 1fr 1fr;">
-                <button id="btn-confirm-yes" class="btn btn-p">AUTORIZAR</button>
-                <button id="btn-confirm-no" class="btn btn-s">VOLVER</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-logout" class="modal hidden">
-        <div class="modal-content" style="text-align:center">
-            <h3>¿Cerrar Sesión?</h3><br>
-            <div class="action-grid" style="grid-template-columns: 1fr 1fr;">
-                <button id="btn-logout-confirm" class="btn btn-d">SALIR</button>
-                <button id="btn-logout-cancel" class="btn btn-s">VOLVER</button>
-            </div>
-        </div>
+        <div id="list-container" class="content-body"></div>
     </div>
 
     <script type="module">
@@ -173,169 +87,62 @@
         const db = getFirestore(app);
 
         let dptos = [];
-        let editId = null;
-        let pendingAction = null;
         const MASTER_CODE = "1131552679";
 
-        const writeLog = (msg, type = "info") => {
-            const log = document.getElementById("log-container");
-            const time = new Date().toLocaleTimeString();
-            log.innerHTML += `<div class="log-${type}">[${time}] ${msg}</div>`;
-            log.scrollTop = log.scrollHeight;
-        };
-
-        // --- MANEJO DE LOGIN Y ROLES ---
+        // LÓGICA DE LOGIN EXACTA DEL BACKUP
         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("login-user").value;
             const p = document.getElementById("login-pass").value;
-
-            if(!u || !p) return alert("Complete los datos");
-
             const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
             const snap = await getDocs(q);
-
             if(!snap.empty) {
                 const userData = snap.docs.data();
                 localStorage.setItem("uf_user", userData.usuario);
                 localStorage.setItem("uf_role", userData.rol || "operador");
                 location.reload();
-            } else {
-                alert("Usuario o Clave incorrectos");
-            }
+            } else alert("Error de acceso");
         };
 
         if(localStorage.getItem("uf_user")) {
-            const currentRole = localStorage.getItem("uf_role");
+            const role = localStorage.getItem("uf_role");
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
-            document.getElementById("display-user").innerText = `${localStorage.getItem("uf_user")} (${currentRole})`;
+            document.getElementById("display-user").innerText = localStorage.getItem("uf_user");
 
-            if(currentRole === "admin") {
+            if(role === "admin") {
                 document.querySelectorAll(".admin-only").forEach(el => el.classList.remove("hidden"));
             }
 
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 dptos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 render(dptos);
-                writeLog("Sincronizado con la nube", "success");
             });
         }
 
         function render(data) {
-            const container = document.getElementById("list-container");
-            container.innerHTML = "";
+            const cont = document.getElementById("list-container");
+            cont.innerHTML = "";
             data.forEach(d => {
-                const card = document.createElement("div");
-                card.className = "item-card";
-                card.innerHTML = `
-                    <h3>UF: ${d.UF}</h3>
-                    <p><b>Prop:</b> ${d.Propietario || '---'}</p>
-                    <p><b>Inq:</b> ${d.Inquilino || '---'}</p>
+                const div = document.createElement("div");
+                div.className = "item-card";
+                div.innerHTML = `<h3>UF: ${d.UF}</h3><p>${d.Propietario || '---'}</p>
                     <div class="item-tools">
-                        <i class="fas fa-edit" style="color:var(--primary)" onclick="window.editUF('${d.id}')"></i>
-                        <i class="fas fa-trash" style="color:var(--danger)" onclick="window.askConfirm('¿Borrar UF ${d.UF}?', 'delete', '${d.id}')"></i>
-                    </div>
-                `;
-                container.appendChild(card);
+                        <i class="fas fa-edit" style="color:var(--primary)" onclick="editUF('${d.id}')"></i>
+                        <i class="fas fa-trash" style="color:var(--danger)" onclick="deleteUF('${d.id}')"></i>
+                    </div>`;
+                cont.appendChild(div);
             });
         }
 
-        // --- SEGURIDAD ---
-        window.askConfirm = (msg, action, id = null) => {
-            pendingAction = { action, id };
-            document.getElementById("confirm-msg").innerText = msg;
-            document.getElementById("admin-pass").value = "";
-            document.getElementById("modal-confirm").classList.remove("hidden");
+        // FUNCIONES DE ACCIÓN
+        window.deleteUF = async (id) => {
+            const pass = prompt("Clave Maestra para borrar:");
+            if(pass === MASTER_CODE) await deleteDoc(doc(db, "departamentos", id));
         };
 
-        document.getElementById("btn-confirm-yes").onclick = async () => {
-            if(document.getElementById("admin-pass").value !== MASTER_CODE) return alert("CLAVE MAESTRA INCORRECTA");
-            
-            document.getElementById("modal-confirm").classList.add("hidden");
-            const { action, id } = pendingAction;
-
-            if(action === 'delete') await deleteDoc(doc(db, "departamentos", id));
-            if(action === 'deleteAll') {
-                const s = await getDocs(collection(db, "departamentos"));
-                const b = writeBatch(db); s.forEach(d => b.delete(d.ref)); await b.commit();
-            }
-            if(action === 'import') document.getElementById("csv-file").click();
-            writeLog(`Acción ${action} ejecutada por Admin`);
-        };
-
-        // --- IMPORT/EXPORT ---
-        document.getElementById("btn-import-trigger").onclick = () => askConfirm("Importar base de datos", "import");
-        
-        document.getElementById("csv-file").onchange = (e) => {
-            const reader = new FileReader();
-            reader.onload = async (ev) => {
-                const batch = writeBatch(db);
-                const lines = ev.target.result.split(/\r?\n/).slice(1);
-                lines.forEach(l => {
-                    if(!l.trim()) return;
-                    const p = l.split(l.includes(';') ? ';' : ',');
-                    batch.set(doc(collection(db, "departamentos")), {
-                        UF: p?.trim() || "000", Propietario: p?.trim() || "",
-                        TelefonoPropietario: p?.trim() || "", Inquilino: p?.trim() || "",
-                        TelefonoInquilino: p?.trim() || ""
-                    });
-                });
-                await batch.commit();
-                writeLog("Importación exitosa", "success");
-            };
-            reader.readAsText(e.target.files);
-        };
-
-        document.getElementById("btn-export").onclick = () => {
-            let csv = "UF,Propietario,TelProp,Inquilino,TelInq\n";
-            dptos.forEach(d => csv += `${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}\n`);
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-            a.download = "Respaldo_UF.csv"; a.click();
-        };
-
-        // --- CRUD ---
-        window.editUF = (id) => {
-            editId = id;
-            const d = dptos.find(x => x.id === id);
-            document.getElementById("uf-val").value = d.UF;
-            document.getElementById("prop-val").value = d.Propietario || "";
-            document.getElementById("telp-val").value = d.TelefonoPropietario || "";
-            document.getElementById("inq-val").value = d.Inquilino || "";
-            document.getElementById("teli-val").value = d.TelefonoInquilino || "";
-            document.getElementById("modal-uf").classList.remove("hidden");
-        };
-
-        document.getElementById("btn-nueva").onclick = () => { editId = null; document.getElementById("modal-uf").classList.remove("hidden"); };
-        document.getElementById("btn-cancel").onclick = () => document.getElementById("modal-uf").classList.add("hidden");
-
-        document.getElementById("btn-save").onclick = async () => {
-            const data = {
-                UF: document.getElementById("uf-val").value,
-                Propietario: document.getElementById("prop-val").value,
-                TelefonoPropietario: document.getElementById("telp-val").value,
-                Inquilino: document.getElementById("inq-val").value,
-                TelefonoInquilino: document.getElementById("teli-val").value
-            };
-            if(editId) await updateDoc(doc(db, "departamentos", editId), data);
-            else await addDoc(collection(db, "departamentos"), data);
-            document.getElementById("modal-uf").classList.add("hidden");
-        };
-
-        // --- UI TOOLS ---
-        document.getElementById("btn-search").onclick = () => {
-            const v = document.getElementById("search-input").value.toLowerCase();
-            render(dptos.filter(d => d.UF.includes(v) || (d.Propietario||"").toLowerCase().includes(v)));
-        };
-        document.getElementById("btn-clear").onclick = () => { document.getElementById("search-input").value = ""; render(dptos); };
-        document.getElementById("btn-filter-empty").onclick = () => render(dptos.filter(d => !d.Inquilino));
+        document.getElementById("btn-logout-trigger").onclick = () => { localStorage.clear(); location.reload(); };
         document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("dark-mode");
         document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
-        document.getElementById("btn-logout-trigger").onclick = () => document.getElementById("modal-logout").classList.remove("hidden");
-        document.getElementById("btn-logout-cancel").onclick = () => document.getElementById("modal-logout").classList.add("hidden");
-        document.getElementById("btn-logout-confirm").onclick = () => { localStorage.clear(); location.reload(); };
-        document.getElementById("btn-confirm-no").onclick = () => document.getElementById("modal-confirm").classList.add("hidden");
-
     </script>
 </body>
 </html>
