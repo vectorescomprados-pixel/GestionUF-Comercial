@@ -42,7 +42,6 @@
 
     <button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
 <input type="file" id="csv-file" class="hidden">
-    <!-- LOGIN -->
     <div id="login-screen" class="modal">
         <div class="modal-content">
             <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
@@ -53,7 +52,6 @@
         </div>
     </div>
 
-    <!-- MODAL CREACIÓN USUARIO -->
     <div id="modal-create-user" class="modal hidden">
         <div class="modal-content">
             <h3 style="text-align:center; margin-bottom:15px">Registrar Acceso</h3>
@@ -70,7 +68,6 @@
         </div>
     </div>
 
-    <!-- MAIN APP -->
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
             <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● EN LÍNEA - SEGURIDAD ACTIVA</div>
@@ -102,7 +99,6 @@
         </div>
     </div>
 
-    <!-- MODAL SALIDA -->
     <div id="modal-logout" class="modal hidden">
         <div class="modal-content" style="text-align:center">
             <i class="fas fa-sign-out-alt" style="font-size:40px; color:var(--danger); margin-bottom:15px"></i>
@@ -115,7 +111,6 @@
         </div>
     </div>
 
-    <!-- MODAL CONFIRMACIÓN (ADMIN) -->
     <div id="modal-confirm" class="modal hidden">
         <div class="modal-content" style="text-align:center">
             <h3>Seguridad Requerida</h3>
@@ -128,7 +123,6 @@
         </div>
     </div>
 
-    <!-- MODAL UF -->
     <div id="modal-form" class="modal hidden">
         <div class="modal-content">
             <h3 id="form-title" style="text-align:center; margin-bottom:15px">Datos de Unidad</h3>
@@ -155,7 +149,6 @@
         const MASTER_CODE = "1131552679";
         const userRole = localStorage.getItem("uf_user_role") || "operador";
 
-        // --- MOTOR DE LOGS MEJORADO ---
         const writeLog = (msg, type = 'success') => {
             const lp = document.getElementById("log-panel");
             if(lp) {
@@ -170,7 +163,6 @@
             }
         };
 
-        // --- ACCESO ---
         const login = async () => {
             const u = document.getElementById("login-user").value;
             const p = document.getElementById("login-pass").value;
@@ -178,7 +170,7 @@
             const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
             const snap = await getDocs(q);
             if (!snap.empty) {
-                const data = snap.docs[0].data();
+                const data = snap.docs.data();
                 localStorage.setItem("uf_auth", "true");
                 localStorage.setItem("uf_user_role", data.role);
                 localStorage.setItem("uf_username", data.usuario);
@@ -191,11 +183,9 @@
         document.getElementById("btn-login").onclick = login;
         document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
 
-        // --- COHETE ---
         window.onscroll = () => { document.getElementById("btn-rocket").style.display = (window.scrollY > 300) ? "flex" : "none"; };
         document.getElementById("btn-rocket").onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
-        // --- RENDERIZADO ---
         function render(data) {
             const list = document.getElementById("list");
             list.innerHTML = "";
@@ -228,7 +218,6 @@
             });
         }
 
-        // --- BÚSQUEDA Y FILTROS ---
         const buscar = () => {
             const v = document.getElementById("search-input").value.toLowerCase();
             const res = departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v));
@@ -250,7 +239,6 @@
             writeLog(`Filtro: ${vacios.length} unidades sin contacto`, "warn");
         };
 
-        // --- ACCIONES PROTEGIDAS ---
         window.askConfirm = (msg, type, id = null) => {
             pendingAction = { type, id };
             document.getElementById("confirm-msg").innerText = msg;
@@ -284,11 +272,11 @@
             }
         };
 
-        // --- FUNCIONES DE BOTONES ---
         if(localStorage.getItem("uf_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
-            document.getElementById("home-btn").classList.add("hidden");
+            // No ocultar el botón home si la sesión está iniciada
+            document.getElementById("home-btn").classList.remove("hidden");
             applyPermissions();
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -343,7 +331,6 @@
             }
         };
 
-        // --- IMPORTACIÓN CSV ---
         const btnImp = document.getElementById("btn-import");
         if(btnImp) btnImp.onclick = () => document.getElementById("csv-file").click();
         document.getElementById("csv-file").onchange = (e) => {
@@ -355,20 +342,19 @@
                     if(!l.trim()) return;
                     const parts = l.split(l.includes(';') ? ';' : ',');
                     batch.set(doc(collection(db, "departamentos")), {
-                        UF: parts[0]?.trim() || "S/D",
-                        Propietario: parts[1]?.trim() || "",
-                        TelefonoPropietario: parts[2]?.trim() || "",
-                        Inquilino: parts[3]?.trim() || "",
-                        TelefonoInquilino: parts[4]?.trim() || ""
+                        UF: parts?.trim() || "S/D",
+                        Propietario: parts?.trim() || "",
+                        TelefonoPropietario: parts?.trim() || "",
+                        Inquilino: parts?.trim() || "",
+                        TelefonoInquilino: parts?.trim() || ""
                     });
                 });
                 await batch.commit();
                 writeLog(`Importación masiva: ${lines.length} registros`, "success");
             };
-            reader.readAsText(e.target.files[0]);
+            reader.readAsText(e.target.files);
         };
 
-        // --- EXPORTACIÓN Y OTROS ---
         const btnExp = document.getElementById("btn-export");
         if(btnExp) btnExp.onclick = () => askConfirm("¿Desea descargar un respaldo en CSV?", "export");
 
@@ -391,7 +377,6 @@
         document.getElementById("btn-create-user-trigger").onclick = () => askConfirm("Clave Maestra para gestión de usuarios", "openUserForm");
         document.getElementById("btn-delete-all") && (document.getElementById("btn-delete-all").onclick = () => askConfirm("¡PELIGRO! Esto borrará todos los datos de la nube.", "deleteAll"));
 
-        // CIERRE DE MODALES
         document.querySelectorAll("#btn-cancel, #btn-confirm-no, #btn-logout-cancel, #btn-cancel-user").forEach(b => b.onclick = () => {
             document.querySelectorAll(".modal").forEach(m => m.id !== "login-screen" && m.classList.add("hidden"));
         });
