@@ -48,11 +48,9 @@
             <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
             <button id="btn-create-user-trigger" class="btn ghost" style="width:100%; margin-top:10px">NUEVO USUARIO (ADMIN)</button>
             
-            <div style="margin-top:20px; border-top: 1px solid var(--border); padding-top:15px">
-                <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn ghost" style="text-decoration:none; background:#475569">
-                    <i class="fas fa-home"></i> VOLVER AL INICIO
-                </a>
-            </div>
+            <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn ghost" style="width:100%; margin-top:20px; text-decoration:none; background:#475569">
+                <i class="fas fa-home"></i> VOLVER AL INICIO
+            </a>
         </div>
     </div>
 
@@ -153,7 +151,7 @@
         const MASTER_CODE = "1131552679";
         const userRole = localStorage.getItem("uf_user_role") || "operador";
 
-        // --- MOTOR DE LOGS ---
+        // --- MOTOR DE LOGS MEJORADO ---
         const writeLog = (msg, type = 'success') => {
             const lp = document.getElementById("log-panel");
             if(lp) {
@@ -168,7 +166,7 @@
             }
         };
 
-        // --- LOGIN LÓGICA ---
+        // --- ACCESO ---
         const login = async () => {
             const u = document.getElementById("login-user").value;
             const p = document.getElementById("login-pass").value;
@@ -189,9 +187,11 @@
         document.getElementById("btn-login").onclick = login;
         document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
 
+        // --- COHETE ---
         window.onscroll = () => { document.getElementById("btn-rocket").style.display = (window.scrollY > 300) ? "flex" : "none"; };
         document.getElementById("btn-rocket").onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
+        // --- RENDERIZADO ---
         function render(data) {
             const list = document.getElementById("list");
             list.innerHTML = "";
@@ -224,10 +224,12 @@
             });
         }
 
+        // --- BÚSQUEDA Y FILTROS ---
         const buscar = () => {
             const v = document.getElementById("search-input").value.toLowerCase();
             const res = departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v));
             render(res);
+            writeLog(`Búsqueda: "${v}" (${res.length} resultados)`, "info");
         };
         document.getElementById("btn-search").onclick = buscar;
         document.getElementById("search-input").onkeyup = (e) => e.key === "Enter" && buscar();
@@ -235,13 +237,16 @@
         document.getElementById("btn-clear").onclick = () => {
             document.getElementById("search-input").value = "";
             render(departamentos);
+            writeLog("Vista de lista restablecida", "info");
         };
 
         document.getElementById("btn-filter-empty").onclick = () => {
             const vacios = departamentos.filter(d => !String(d.TelefonoPropietario||"").trim() && !String(d.TelefonoInquilino||"").trim());
             render(vacios);
+            writeLog(`Filtro: ${vacios.length} unidades sin contacto`, "warn");
         };
 
+        // --- ACCIONES PROTEGIDAS ---
         window.askConfirm = (msg, type, id = null) => {
             pendingAction = { type, id };
             document.getElementById("confirm-msg").innerText = msg;
@@ -250,22 +255,32 @@
         };
 
         document.getElementById("btn-confirm-yes").onclick = async () => {
-            if(document.getElementById("confirm-pass").value !== MASTER_CODE) return alert("Clave Incorrecta");
+            if(document.getElementById("confirm-pass").value !== MASTER_CODE) {
+                writeLog("Autorización fallida para acción protegida", "err");
+                return alert("Clave Incorrecta");
+            }
             document.getElementById("modal-confirm").classList.add("hidden");
 
-            if(pendingAction.type === 'delete') await deleteDoc(doc(db, "departamentos", pendingAction.id));
-            else if(pendingAction.type === 'deleteAll') {
+            if(pendingAction.type === 'delete') {
+                await deleteDoc(doc(db, "departamentos", pendingAction.id));
+                writeLog("Registro eliminado permanentemente", "err");
+            } else if(pendingAction.type === 'deleteAll') {
                 const s = await getDocs(collection(db, "departamentos"));
                 const b = writeBatch(db); s.forEach(d => b.delete(d.ref)); await b.commit();
-            } else if(pendingAction.type === 'openUserForm') document.getElementById("modal-create-user").classList.remove("hidden");
-            else if(pendingAction.type === 'export') {
+                writeLog("VACIADO TOTAL DE BASE DE DATOS", "err");
+            } else if(pendingAction.type === 'openUserForm') {
+                document.getElementById("modal-create-user").classList.remove("hidden");
+                writeLog("Acceso a panel de creación de usuarios", "info");
+            } else if(pendingAction.type === 'export') {
                 const csv = "UF,Propietario,TelProp,Inquilino,TelInq\n" + departamentos.map(d => `${d.UF},${d.Propietario},${d.TelefonoPropietario},${d.Inquilino},${d.TelefonoInquilino}`).join("\n");
                 const link = document.createElement("a");
                 link.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-                link.download = `Respaldo_UF.csv`; link.click();
+                link.download = `Respaldo_UF_${new Date().toISOString().slice(0,10)}.csv`; link.click();
+                writeLog("Respaldo CSV descargado", "success");
             }
         };
 
+        // --- FUNCIONES DE BOTONES ---
         if(localStorage.getItem("uf_auth") === "true") {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("main-screen").classList.remove("hidden");
@@ -273,6 +288,7 @@
             onSnapshot(query(collection(db, "departamentos"), orderBy("UF", "asc")), (snap) => {
                 departamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 render(departamentos);
+                writeLog("Datos sincronizados con la nube", "info");
             });
         }
 
@@ -290,6 +306,7 @@
             document.getElementById("f-inq").value = d.Inquilino || "";
             document.getElementById("f-teli").value = d.TelefonoInquilino || "";
             document.getElementById("modal-form").classList.remove("hidden");
+            writeLog(`Editando UF: ${d.UF}`, "info");
         };
 
         document.getElementById("btn-save").onclick = async () => {
@@ -301,9 +318,12 @@
                 TelefonoInquilino: document.getElementById("f-teli").value 
             };
             if(!d.UF) return alert("El campo UF es obligatorio");
+            
             if(editId) await updateDoc(doc(db, "departamentos", editId), d);
             else await addDoc(collection(db, "departamentos"), d);
+            
             document.getElementById("modal-form").classList.add("hidden");
+            writeLog(`Registro guardado exitosamente: ${d.UF}`, "success");
         };
 
         document.getElementById("btn-save-user").onclick = async () => {
@@ -312,11 +332,13 @@
             const r = document.getElementById("new-role").value;
             if(u && p) {
                 await addDoc(collection(db, "usuarios"), { usuario: u, password: p, role: r });
-                alert("Usuario creado");
+                alert("Usuario creado correctamente");
+                writeLog(`Nuevo usuario creado: ${u} (${r})`, "success");
                 document.getElementById("modal-create-user").classList.add("hidden");
             }
         };
 
+        // --- IMPORTACIÓN CSV ---
         const btnImp = document.getElementById("btn-import");
         if(btnImp) btnImp.onclick = () => document.getElementById("csv-file").click();
         document.getElementById("csv-file").onchange = (e) => {
@@ -336,26 +358,43 @@
                     });
                 });
                 await batch.commit();
+                writeLog(`Importación masiva: ${lines.length} registros`, "success");
             };
             reader.readAsText(e.target.files);
         };
 
+        // --- EXPORTACIÓN Y OTROS ---
         const btnExp = document.getElementById("btn-export");
-        if(btnExp) btnExp.onclick = () => askConfirm("¿Desea descargar un respaldo?", "export");
+        if(btnExp) btnExp.onclick = () => askConfirm("¿Desea descargar un respaldo en CSV?", "export");
+
+        document.getElementById("btn-download-log") && (document.getElementById("btn-download-log").onclick = () => {
+            const blob = new Blob([document.getElementById("log-panel").innerText], { type: 'text/plain' });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = `Log_UF_${new Date().toLocaleTimeString().replace(/:/g,'-')}.txt`;
+            a.click();
+            writeLog("Historial de logs exportado", "success");
+        });
 
         document.getElementById("btn-logout-trigger").onclick = () => document.getElementById("modal-logout").classList.remove("hidden");
         document.getElementById("btn-logout-confirm").onclick = () => {
+            writeLog("Sesión cerrada", "warn");
             localStorage.clear();
             location.reload();
         };
 
-        document.getElementById("btn-create-user-trigger").onclick = () => askConfirm("Clave Maestra", "openUserForm");
+        document.getElementById("btn-create-user-trigger").onclick = () => askConfirm("Clave Maestra para gestión de usuarios", "openUserForm");
+        document.getElementById("btn-delete-all") && (document.getElementById("btn-delete-all").onclick = () => askConfirm("¡PELIGRO! Esto borrará todos los datos de la nube.", "deleteAll"));
 
+        // CIERRE DE MODALES
         document.querySelectorAll("#btn-cancel, #btn-confirm-no, #btn-logout-cancel, #btn-cancel-user").forEach(b => b.onclick = () => {
             document.querySelectorAll(".modal").forEach(m => m.id !== "login-screen" && m.classList.add("hidden"));
         });
 
-        document.getElementById("btn-theme").onclick = () => document.body.classList.toggle("dark-mode");
+        document.getElementById("btn-theme").onclick = () => {
+            document.body.classList.toggle("dark-mode");
+            writeLog("Cambio de tema visual", "info");
+        };
         document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
 
     </script>
