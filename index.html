@@ -33,9 +33,44 @@
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    </style>
+    
+
+
+
+/* Inyección Home */
+.btn-home {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 9999999;
+            background: rgba(37, 99, 235, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+.btn-home { display: none; }
+</style>
 </head>
 <body class="dark-mode">
+<a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" id="btn-home-seguro" class="btn-home"><i class="fas fa-home"></i></a>
+
+
+    
+
+    
+
+
+
+
+
 
     <button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
     <input type="file" id="csv-file" class="hidden">
@@ -169,68 +204,22 @@
         };
 
         // --- ACCESO ---
-
-/* --- REPARACIÓN DEFINITIVA DEL ACCESO --- */
-const login = async () => {
-    const userField = document.getElementById("login-user");
-    const passField = document.getElementById("login-pass");
-
-    if (!userField || !passField) return;
-
-    const u = userField.value;
-    const p = passField.value;
-
-    if (!u || !p) {
-        alert("Por favor, ingrese usuario y contraseña");
-        return;
-    }
-
-    try {
-        const q = query(
-            collection(db, "usuarios"), 
-            where("usuario", "==", u), 
-            where("password", "==", p)
-        );
-        
-        const snap = await getDocs(q);
-
-        if (!snap.empty) {
-            // Sintaxis correcta: snap.docs.data()
-            const data = snap.docs.data();
-            
-            localStorage.setItem("uf_auth", "true");
-            localStorage.setItem("uf_user_role", data.role);
-            localStorage.setItem("uf_username", data.usuario);
-            
-            location.reload();
-        } else { 
-            alert("Usuario o Contraseña incorrectos"); 
-            if (typeof writeLog === "function") {
+        const login = async () => {
+            const u = document.getElementById("login-user").value;
+            const p = document.getElementById("login-pass").value;
+            if(!u || !p) return;
+            const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+            const snap = await getDocs(q);
+            if (!snap.empty) {
+                const data = snap.docs[0].data();
+                localStorage.setItem("uf_auth", "true");
+                localStorage.setItem("uf_user_role", data.role);
+                localStorage.setItem("uf_username", data.usuario);
+                location.reload();
+            } else { 
+                alert("Usuario o Contraseña incorrectos"); 
                 writeLog("Intento de acceso fallido: " + u, "err");
             }
-        }
-    } catch (error) {
-        console.error("Error en el proceso de login:", error);
-    }
-};
-
-// Asignación de eventos con verificación de existencia del botón
-const btnLogin = document.getElementById("btn-login");
-if (btnLogin) {
-    btnLogin.onclick = login;
-}
-
-const passInput = document.getElementById("login-pass");
-if (passInput) {
-    passInput.onkeyup = (e) => {
-        if (e.key === "Enter") login();
-    };
-}
-/* --- FIN DE LA REPARACIÓN --- */
-
-// Vinculación de eventos
-document.getElementById("btn-login").onclick = login;
-document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
         };
         document.getElementById("btn-login").onclick = login;
         document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
@@ -446,25 +435,46 @@ document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && logi
         document.getElementById("btn-log-toggle").onclick = () => document.getElementById("log-container").classList.toggle("hidden");
 
     </script>
+
+
+    
+
+    <script>
+        // Sensor de Seguridad Codediff: Sincroniza visibilidad con el Login
+        function monitorHomeInyectado() {
+            // Buscamos el login por ID común o por clase modal
+            const login = document.getElementById('login-screen') || document.querySelector('.modal');
+            const btn = document.getElementById('btn-home-seguro');
+            if(login && btn) {
+                // Si el login NO está oculto (clase hidden), el botón debe verse
+                const estaEnLogin = !login.classList.contains('hidden');
+                btn.style.display = estaEnLogin ? 'flex' : 'none';
+            }
+        }
+        setInterval(monitorHomeInyectado, 500);
+    </script>
+
+<script>
+    (function() {
+        function checkVisibility() {
+            const btn = document.getElementById('btn-home-seguro');
+            const login = document.getElementById('login-screen') || document.querySelector('.modal');
+            const main = document.getElementById('main-screen') || document.querySelector('.wrap');
+
+            if (!btn) return;
+
+            // REGLA DE ORO: Si la pantalla principal NO tiene 'hidden', ocultar Home SIEMPRE.
+            const appActiva = main && !main.classList.contains('hidden');
+            const loginVisible = login && !login.classList.contains('hidden');
+
+            if (loginVisible && !appActiva) {
+                btn.style.display = 'flex';
+            } else {
+                btn.style.display = 'none';
+            }
+        }
+        setInterval(checkVisibility, 250);
+    })();
+</script>
 </body>
 </html>
-                const data = snap.docs[0].data();
-                localStorage.setItem("uf_auth", "true");
-                localStorage.setItem("uf_user_role", data.role);
-                localStorage.setItem("uf_username", data.usuario);
-                location.reload();
-            } else { 
-                alert("Usuario o Contraseña incorrectos"); 
-                writeLog("Intento de acceso fallido: " + u, "err");
-            }
-        };
-        document.getElementById("btn-login").onclick = login;
-        document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
-
-        // --- COHETE ---
-        window.onscroll = () => { document.getElementById("btn-rocket").style.display = (window.scrollY > 300) ? "flex" : "none"; };
-        document.getElementById("btn-rocket").onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
-
-        // --- RENDERIZADO ---
-        function render(data) {
-            const list = document.getElementById("list");
