@@ -40,8 +40,6 @@
     <button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
     <input type="file" id="csv-file" class="hidden">
 
-
-/* REPARADO */
     <!-- LOGIN -->
     <div id="login-screen" class="modal">
         <div class="modal-content">
@@ -62,31 +60,6 @@
             <select id="new-role">
                 <option value="operador">Operador (Gestión)</option>
                 <option value="admin">Administrador (Total)</option>
-/* FIN */
-
-        <div class="modal-content">
-            <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
-            <input id="login-user" placeholder="Usuario">
-            <input id="login-pass" type="password" placeholder="Contraseña">
-            <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
-            <button id="btn-create-user-trigger" class="btn ghost" style="width:100%; margin-top:10px">NUEVO USUARIO (ADMIN)</button>
-            
-            <div style="margin-top:20px; border-top: 1px solid var(--border); padding-top:15px; text-align:center">
-                <a href="https://vectorescomprados-pixel.github.io/Gestion-de-Consorcios/" class="btn ghost" style="text-decoration:none; background:#475569; width:100%">
-                    <i class="fas fa-home"></i> VOLVER AL INICIO
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-create-user" class="modal hidden">
-        <div class="modal-content">
-            <h3 style="text-align:center; margin-bottom:15px">Registrar Acceso</h3>
-            <input id="new-username" placeholder="Usuario">
-            <input id="new-password" type="password" placeholder="Contraseña">
-            <select id="new-role">
-                <option value="operador">Operador (Gestión)</option>
-                <option value="admin">Administrador (Total)</option>
             </select>
             <div class="grid-btns-2">
                 <button id="btn-save-user" class="btn primary">CREAR</button>
@@ -95,6 +68,7 @@
         </div>
     </div>
 
+    <!-- MAIN APP -->
     <div id="main-screen" class="wrap hidden">
         <div class="main-header">
             <div id="conn-status" style="font-size:10px; text-align:center; margin-bottom:8px; color:var(--success)">● EN LÍNEA - SEGURIDAD ACTIVA</div>
@@ -126,6 +100,7 @@
         </div>
     </div>
 
+    <!-- MODAL SALIDA -->
     <div id="modal-logout" class="modal hidden">
         <div class="modal-content" style="text-align:center">
             <i class="fas fa-sign-out-alt" style="font-size:40px; color:var(--danger); margin-bottom:15px"></i>
@@ -138,6 +113,7 @@
         </div>
     </div>
 
+    <!-- MODAL CONFIRMACIÓN (ADMIN) -->
     <div id="modal-confirm" class="modal hidden">
         <div class="modal-content" style="text-align:center">
             <h3>Seguridad Requerida</h3>
@@ -150,6 +126,7 @@
         </div>
     </div>
 
+    <!-- MODAL UF -->
     <div id="modal-form" class="modal hidden">
         <div class="modal-content">
             <h3 id="form-title" style="text-align:center; margin-bottom:15px">Datos de Unidad</h3>
@@ -192,27 +169,44 @@
         };
 
         // --- ACCESO ---
+
+/* REPARADO */
         const login = async () => {
             const u = document.getElementById("login-user").value;
             const p = document.getElementById("login-pass").value;
             if(!u || !p) return;
-            
-            try {
-                const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
-                const snap = await getDocs(q);
-                
-                if (!snap.empty) {
-                    const data = snap.docs.data(); 
-                    localStorage.setItem("uf_auth", "true");
-                    localStorage.setItem("uf_user_role", data.role);
-                    localStorage.setItem("uf_username", data.usuario);
-                    location.reload();
-                } else { 
-                    alert("Usuario o Contraseña incorrectos"); 
-                    writeLog("Intento de acceso fallido: " + u, "err");
-                }
-            } catch (err) {
-                console.error("Error en login:", err);
+            const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+            const snap = await getDocs(q);
+            if (!snap.empty) {
+                const data = snap.docs[0].data();
+                localStorage.setItem("uf_auth", "true");
+                localStorage.setItem("uf_user_role", data.role);
+                localStorage.setItem("uf_username", data.usuario);
+                location.reload();
+            } else { 
+                alert("Usuario o Contraseña incorrectos"); 
+                writeLog("Intento de acceso fallido: " + u, "err");
+            }
+        };
+        document.getElementById("btn-login").onclick = login;
+        document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
+
+/* FIN */
+
+            const u = document.getElementById("login-user").value;
+            const p = document.getElementById("login-pass").value;
+            if(!u || !p) return;
+            const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
+            const snap = await getDocs(q);
+            if (!snap.empty) {
+                const data = snap.docs[0].data();
+                localStorage.setItem("uf_auth", "true");
+                localStorage.setItem("uf_user_role", data.role);
+                localStorage.setItem("uf_username", data.usuario);
+                location.reload();
+            } else { 
+                alert("Usuario o Contraseña incorrectos"); 
+                writeLog("Intento de acceso fallido: " + u, "err");
             }
         };
         document.getElementById("btn-login").onclick = login;
@@ -381,17 +375,17 @@
                     if(!l.trim()) return;
                     const parts = l.split(l.includes(';') ? ';' : ',');
                     batch.set(doc(collection(db, "departamentos")), {
-                        UF: parts?.trim() || "S/D",
-                        Propietario: parts?.trim() || "",
-                        TelefonoPropietario: parts?.trim() || "",
-                        Inquilino: parts?.trim() || "",
-                        TelefonoInquilino: parts?.trim() || ""
+                        UF: parts[0]?.trim() || "S/D",
+                        Propietario: parts[1]?.trim() || "",
+                        TelefonoPropietario: parts[2]?.trim() || "",
+                        Inquilino: parts[3]?.trim() || "",
+                        TelefonoInquilino: parts[4]?.trim() || ""
                     });
                 });
                 await batch.commit();
                 writeLog(`Importación masiva: ${lines.length} registros`, "success");
             };
-            reader.readAsText(e.target.files);
+            reader.readAsText(e.target.files[0]);
         };
 
         // --- EXPORTACIÓN Y OTROS ---
