@@ -40,7 +40,30 @@
     <button id="btn-rocket" class="btn primary"><i class="fas fa-rocket"></i></button>
     <input type="file" id="csv-file" class="hidden">
 
+
+/* REPARADO */
+    <!-- LOGIN -->
     <div id="login-screen" class="modal">
+        <div class="modal-content">
+            <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
+            <input id="login-user" placeholder="Usuario">
+            <input id="login-pass" type="password" placeholder="Contraseña">
+            <button id="btn-login" class="btn primary" style="width:100%">INICIAR SESIÓN</button>
+            <button id="btn-create-user-trigger" class="btn ghost" style="width:100%; margin-top:10px">NUEVO USUARIO (ADMIN)</button>
+        </div>
+    </div>
+
+    <!-- MODAL CREACIÓN USUARIO -->
+    <div id="modal-create-user" class="modal hidden">
+        <div class="modal-content">
+            <h3 style="text-align:center; margin-bottom:15px">Registrar Acceso</h3>
+            <input id="new-username" placeholder="Usuario">
+            <input id="new-password" type="password" placeholder="Contraseña">
+            <select id="new-role">
+                <option value="operador">Operador (Gestión)</option>
+                <option value="admin">Administrador (Total)</option>
+/* FIN */
+
         <div class="modal-content">
             <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">GestiónUF Pro</h2>
             <input id="login-user" placeholder="Usuario">
