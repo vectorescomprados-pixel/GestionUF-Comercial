@@ -170,44 +170,67 @@
 
         // --- ACCESO ---
 
-/* REPARADO */
-        const login = async () => {
-            const u = document.getElementById("login-user").value;
-            const p = document.getElementById("login-pass").value;
-            if(!u || !p) return;
-            const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
-            const snap = await getDocs(q);
-            if (!snap.empty) {
-                const data = snap.docs[0].data();
-                localStorage.setItem("uf_auth", "true");
-                localStorage.setItem("uf_user_role", data.role);
-                localStorage.setItem("uf_username", data.usuario);
-                location.reload();
-            } else { 
-                alert("Usuario o Contraseña incorrectos"); 
+/* --- REPARACIÓN DEFINITIVA DEL ACCESO --- */
+const login = async () => {
+    const userField = document.getElementById("login-user");
+    const passField = document.getElementById("login-pass");
+
+    if (!userField || !passField) return;
+
+    const u = userField.value;
+    const p = passField.value;
+
+    if (!u || !p) {
+        alert("Por favor, ingrese usuario y contraseña");
+        return;
+    }
+
+    try {
+        const q = query(
+            collection(db, "usuarios"), 
+            where("usuario", "==", u), 
+            where("password", "==", p)
+        );
+        
+        const snap = await getDocs(q);
+
+        if (!snap.empty) {
+            // Sintaxis correcta: snap.docs.data()
+            const data = snap.docs.data();
+            
+            localStorage.setItem("uf_auth", "true");
+            localStorage.setItem("uf_user_role", data.role);
+            localStorage.setItem("uf_username", data.usuario);
+            
+            location.reload();
+        } else { 
+            alert("Usuario o Contraseña incorrectos"); 
+            if (typeof writeLog === "function") {
                 writeLog("Intento de acceso fallido: " + u, "err");
             }
-        };
-        document.getElementById("btn-login").onclick = login;
-        document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
+        }
+    } catch (error) {
+        console.error("Error en el proceso de login:", error);
+    }
+};
 
-/* FIN */
+// Asignación de eventos con verificación de existencia del botón
+const btnLogin = document.getElementById("btn-login");
+if (btnLogin) {
+    btnLogin.onclick = login;
+}
 
-            const u = document.getElementById("login-user").value;
-            const p = document.getElementById("login-pass").value;
-            if(!u || !p) return;
-            const q = query(collection(db, "usuarios"), where("usuario", "==", u), where("password", "==", p));
-            const snap = await getDocs(q);
-            if (!snap.empty) {
-                const data = snap.docs[0].data();
-                localStorage.setItem("uf_auth", "true");
-                localStorage.setItem("uf_user_role", data.role);
-                localStorage.setItem("uf_username", data.usuario);
-                location.reload();
-            } else { 
-                alert("Usuario o Contraseña incorrectos"); 
-                writeLog("Intento de acceso fallido: " + u, "err");
-            }
+const passInput = document.getElementById("login-pass");
+if (passInput) {
+    passInput.onkeyup = (e) => {
+        if (e.key === "Enter") login();
+    };
+}
+/* --- FIN DE LA REPARACIÓN --- */
+
+// Vinculación de eventos
+document.getElementById("btn-login").onclick = login;
+document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
         };
         document.getElementById("btn-login").onclick = login;
         document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
@@ -425,3 +448,23 @@
     </script>
 </body>
 </html>
+                const data = snap.docs[0].data();
+                localStorage.setItem("uf_auth", "true");
+                localStorage.setItem("uf_user_role", data.role);
+                localStorage.setItem("uf_username", data.usuario);
+                location.reload();
+            } else { 
+                alert("Usuario o Contraseña incorrectos"); 
+                writeLog("Intento de acceso fallido: " + u, "err");
+            }
+        };
+        document.getElementById("btn-login").onclick = login;
+        document.getElementById("login-pass").onkeyup = (e) => e.key === "Enter" && login();
+
+        // --- COHETE ---
+        window.onscroll = () => { document.getElementById("btn-rocket").style.display = (window.scrollY > 300) ? "flex" : "none"; };
+        document.getElementById("btn-rocket").onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
+
+        // --- RENDERIZADO ---
+        function render(data) {
+            const list = document.getElementById("list");
