@@ -264,7 +264,7 @@
         // --- BÚSQUEDA Y FILTROS ---
         const buscar = () => {
             const v = document.getElementById("search-input").value.toLowerCase();
-            const res = departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v));
+            const res = departamentos.filter(d => d.UF.toLowerCase().includes(v) || (d.Propietario||"").toLowerCase().includes(v) || (d.Inquilino||"").toLowerCase().includes(v));
             render(res);
             writeLog(`Búsqueda: "${v}" (${res.length} resultados)`, "info");
         };
